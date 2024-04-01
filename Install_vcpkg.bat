@@ -12,8 +12,11 @@ cmd /c "cd vcpkg && bootstrap-vcpkg.bat -disableMetrics"
 ECHO Initializing vcpkg packages
 ECHO =============================
 cd vcpkg
-vcpkg install sfml
-vcpkg install imgui-SFML
+vcpkg install imgui
+vcpkg install opengl
+vcpkg install glfw3
+vcpkg install glew
+vcpkg install glad
 
 ECHO Initializing CMake project
 ECHO =============================
