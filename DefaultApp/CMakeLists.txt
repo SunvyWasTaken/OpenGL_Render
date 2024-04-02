@@ -21,7 +21,7 @@ macro(GroupSources curdir)
 endmacro()
 
 # Execute the macro
-GroupSources(src)
+GroupSources(SOURCES)
 
 find_package(OpenGL REQUIRED)
 find_package(imgui CONFIG REQUIRED)
