@@ -23,9 +23,9 @@ endmacro()
 # Execute the macro
 GroupSources(src)
 
-find_package(OpenGL)
+find_package(OpenGL REQUIRED)
 find_package(imgui CONFIG REQUIRED)
-find_package(glew CONFIG REQUIRED)
+find_package(GLEW CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 
@@ -37,8 +37,8 @@ set(LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 target_link_libraries(${PROJECT_NAME} PRIVATE
 	OpenGL::GL
 	imgui::imgui
-	glew::glew
-	glfw3::glfw3
+	GLEW::GLEW
+	glfw
 	glad::glad
 )
 
