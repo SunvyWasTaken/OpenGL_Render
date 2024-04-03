@@ -2,8 +2,9 @@
 
 #include <iostream>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 OGLWindow::OGLWindow(int width, int height, const std::string& title)
 	: m_width(width), m_height(height), m_title(title), m_windowOpenGL(nullptr)
@@ -22,10 +23,18 @@ void OGLWindow::ClearBackBuffer()
 
 	//Clear the back buffer and assign the new color to it
 	glClear(GL_COLOR_BUFFER_BIT);
+
+	//Create new imgui frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
 }
 
 void OGLWindow::SwapBuffer()
 {
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 	glfwSwapBuffers(m_windowOpenGL);
 }
 
@@ -60,10 +69,29 @@ void OGLWindow::Init()
 	//Load glad so it configures OpenGL
 	gladLoadGL();
 	glViewport(0, 0, m_width, m_height);
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	(void)io;
+	ImGui::StyleColorsDark();
+
+	ImGui_ImplGlfw_InitForOpenGL(m_windowOpenGL, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
+}
+
+
+void OGLWindow::Draw()
+{
+	
 }
 
 void OGLWindow::_Destroy()
 {
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
 	glfwDestroyWindow(m_windowOpenGL);
 	glfwTerminate();
 }

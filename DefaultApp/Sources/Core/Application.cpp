@@ -2,9 +2,18 @@
 
 #include <stdexcept>
 
+#include "../Editor/Tools/ExempleToolImpl.h"
+#include "../Editor/ToolsManager.h"
+#include "../Editor/Tools/ToolWindow.h"
+
 Application::Application()
-	: m_window(new OGLWindow(800, 800, "Procedural map generation"))
+	: m_window(new OGLWindow(800, 800, "Procedural map generation")), m_toolsManager(new ToolsManager())
 {
+	ToolWindow* ExempleEditor = new ExempleToolImpl("Exemple Window Editor Implementation");
+	ExempleEditor->AddToEditorManager(m_toolsManager.get());
+
+	ToolWindow* ExempleEditorSecond = new ToolWindow("Exemple Second Window Editor Implementation");
+	ExempleEditorSecond->AddToEditorManager(m_toolsManager.get());
 }
 
 Application::~Application()
@@ -34,6 +43,8 @@ void Application::Run()
 void Application::_Draw(OGLWindow& window)
 {
 	// TODO: or write code here...
+	m_toolsManager->Render();
+	window.Draw();
 }
 
 void Application::_PollEvent()

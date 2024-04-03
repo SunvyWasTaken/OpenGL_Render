@@ -2,6 +2,8 @@
 #include <memory>
 #include "../Window/OGLWindow.h"
 
+class ToolsManager;
+
 class Application
 {
 public:
@@ -15,4 +17,5 @@ private:
 	void _PollEvent();
 
 	std::unique_ptr<OGLWindow> m_window;
+	std::unique_ptr<ToolsManager> m_toolsManager;
 };

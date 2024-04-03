@@ -3,6 +3,8 @@
 #include <memory>
 #include <string>
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 class OGLWindow
 {
 public:
@@ -14,10 +16,11 @@ public:
 	void SwapBuffer();
 
 	int isWindowShouldClose();
+	void Draw();
 	void PollEvent();
 
 private:
-	class GLFWwindow* m_windowOpenGL;
+	GLFWwindow* m_windowOpenGL;
 
 	int m_width, m_height;
 	std::string m_title;
