@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "../Window/OGLWindow.h"
+#include "Window/OGLWindow.h"
 
 class ToolsManager;
 

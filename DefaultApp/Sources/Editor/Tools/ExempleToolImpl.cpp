@@ -21,5 +21,5 @@ void ExempleToolImpl::Draw()
 		samples[n] = sinf(n * 0.2f + ImGui::GetTime() * 1.5f);
 	ImGui::PlotLines("Samples", samples, 100);
 	ImGui::Text("Sheesh");
-
+	ImGui::Text("New Text");
 }

@@ -1,11 +1,9 @@
 #include "ToolWindow.h"
 
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
-#include <iostream>
+#include "Editor/ToolsManager.h"
 
-#include "../ToolsManager.h"
+#include <imgui.h>
+#include <iostream>
 
 ToolWindow::ToolWindow(const std::string& title, bool open)
 	: m_title(title), m_open(open)
@@ -20,11 +18,6 @@ ToolWindow::~ToolWindow()
 void ToolWindow::Begin()
 {
 	ImGui::Begin(m_title.c_str(), &m_open);
-}
-
-void ToolWindow::Draw()
-{
-	
 }
 
 void ToolWindow::End()

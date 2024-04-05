@@ -4,7 +4,7 @@
 class ExempleToolImpl : public ToolWindow
 {
 public:
-	explicit ExempleToolImpl(const std::string& title = "Window Editor", bool open = false);
+	explicit ExempleToolImpl(const std::string& title, bool open = false);
 	~ExempleToolImpl();
 
 	void Draw() override;

@@ -11,7 +11,7 @@ public:
 	virtual ~ToolWindow();
 
 	void Begin();
-	virtual void Draw();
+	virtual void Draw() = 0;
 	void End();
 
 	void AddToEditorManager(ToolsManager* toolsManager);

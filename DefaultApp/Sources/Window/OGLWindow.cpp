@@ -83,7 +83,6 @@ void OGLWindow::Init()
 
 void OGLWindow::Draw()
 {
-	
 }
 
 void OGLWindow::_Destroy()
