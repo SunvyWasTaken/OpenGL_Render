@@ -12,11 +12,7 @@ cmd /c "cd vcpkg && bootstrap-vcpkg.bat -disableMetrics"
 ECHO Initializing vcpkg packages
 ECHO =============================
 cd vcpkg
-vcpkg install imgui
-vcpkg install opengl
-vcpkg install glfw3
-vcpkg install glew
-vcpkg install glad
+vcpkg install
 
 ECHO Initializing CMake project
 ECHO =============================

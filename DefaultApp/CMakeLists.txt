@@ -4,6 +4,8 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 
 file(GLOB_RECURSE SOURCES "*.h" "*.cpp")
 
+include_directories(SOURCES)
+
 macro(GroupSources curdir)
     file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir}
     ${PROJECT_SOURCE_DIR}/${curdir}/* ${PROJECT_SOURCE_DIR}/${curdir}/${curdir}/*)
@@ -21,7 +23,7 @@ macro(GroupSources curdir)
 endmacro()
 
 # Execute the macro
-GroupSources(src)
+GroupSources(SOURCES)
 
 find_package(OpenGL REQUIRED)
 find_package(imgui CONFIG REQUIRED)
