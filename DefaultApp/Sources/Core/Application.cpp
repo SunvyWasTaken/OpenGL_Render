@@ -5,6 +5,8 @@
 #include "Editor/Tools/ExempleToolImpl.h"
 #include "Editor/ToolsManager.h"
 #include "Editor/Tools/ToolWindow.h"
+#include "LowLevel_Renderer/Primitive/Triangle.h"
+#include "LowLevel_Renderer/Primitive/Vertex.h"
 
 Application::Application()
 	: m_window(new OGLWindow(800, 800, "Procedural map generation")), m_toolsManager(new ToolsManager())
@@ -24,13 +26,26 @@ void Application::Run()
 
 	m_window->Init();
 
+	using VertexF = Vertex<float>;
+	using TriangleF = Triangle<float>;
+
+	VertexF p0{ { -0.5f, -0.5f, 0.5f}, {1.f, 0.f, 0.f} };
+	VertexF p1{ { 0.5f, -0.5f, 0.5f}, {0.f, 1.f, 0.f} };
+	VertexF p2{ { 0.5f, 0.5f, 0.5f}, {0.f, 0.f, 1.f} };
+
+	TriangleF triangle(p0, p1, p2);
+
 	while (!m_window->isWindowShouldClose())
 	{
 		m_window->ClearBackBuffer();
 
 		// TODO: write code here...
 
+		triangle.render();
+
 		_Draw(*m_window);
+
+		//glFlush();
 
 		m_window->SwapBuffer();
 		_PollEvent();
@@ -39,7 +54,6 @@ void Application::Run()
 
 void Application::_Draw(OGLWindow& window)
 {
-	// TODO: or write code here...
 	m_toolsManager->Render();
 }
 
