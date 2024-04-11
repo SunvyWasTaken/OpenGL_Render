@@ -33,8 +33,8 @@ public:
 		glBufferData(GL_ARRAY_BUFFER, sizeof(m_points), m_points.data(), GL_STATIC_DRAW);
 
 		ShaderInfo shaders[] = {
-			{GL_VERTEX_SHADER, "default.vert"},
-			{GL_VERTEX_SHADER, "default.frag"},
+			{GL_VERTEX_SHADER, "D:/C++/OpenGL_Render/DefaultApp/Resources/Shader/default.vert"},
+			{GL_FRAGMENT_SHADER, "D:/C++/OpenGL_Render/DefaultApp/Resources/Shader/default.frag"},
 			{GL_NONE, nullptr}
 		};
 

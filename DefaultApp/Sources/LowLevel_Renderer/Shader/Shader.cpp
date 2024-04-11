@@ -36,7 +36,7 @@ unsigned int Shader::loadShader(ShaderInfo* shaderInfo)
 		auto shaderId = glCreateShader(entry->type);
 		entry->shaderId = shaderId;
 
-		auto str = readShaderFile(shaderInfo->filename);
+		auto str = readShaderFile(entry->filename);
 		const char* shaderData = str.c_str();
 
 		glShaderSource(shaderId, 1, &shaderData, nullptr);
@@ -53,6 +53,7 @@ unsigned int Shader::loadShader(ShaderInfo* shaderInfo)
 			GLchar* logBuffer = new GLchar[infoLogSize + 1];
 			glGetShaderInfoLog(shaderId, infoLogSize, &infoLogSize, logBuffer);
 
+			std::cout << "FileName : " << entry->filename << std::endl;
 			std::cerr << logBuffer << std::endl;
 
 			delete[] logBuffer;

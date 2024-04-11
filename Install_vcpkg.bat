@@ -21,3 +21,4 @@ cmake -DCMAKE_TOOLCHAIN_FILE=%currentPath%/vcpkg/scripts/buildsystems/vcpkg.cmak
 
 ECHO =============================
 ECHO Install done
+pause
