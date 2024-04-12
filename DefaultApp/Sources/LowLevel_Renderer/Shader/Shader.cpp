@@ -6,12 +6,17 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <filesystem>
+
+
 
 namespace
 {
 	std::string readShaderFile(const char* filename)
 	{
-		std::ifstream inputFile(filename);
+		std::filesystem::path path = std::filesystem::current_path() / "Ressources\\Shader" / filename;
+
+		std::ifstream inputFile(path.c_str());
 		if (!inputFile.is_open())
 			throw std::runtime_error("Impossible to read shader file");
 

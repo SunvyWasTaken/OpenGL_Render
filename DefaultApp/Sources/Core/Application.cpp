@@ -45,7 +45,7 @@ void Application::Run()
 
 		_Draw(*m_window);
 
-		//glFlush();
+		glFlush();
 
 		m_window->SwapBuffer();
 		_PollEvent();
