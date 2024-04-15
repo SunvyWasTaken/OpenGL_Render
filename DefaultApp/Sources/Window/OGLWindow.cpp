@@ -3,8 +3,8 @@
 #include <iostream>
 
 #include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
+//#include <imgui_impl_glfw.h>
+//#include <imgui_impl_opengl3.h>
 
 OGLWindow::OGLWindow(int width, int height, const std::string& title)
 	: m_width(width), m_height(height), m_title(title), m_windowOpenGL(nullptr)
@@ -25,15 +25,15 @@ void OGLWindow::ClearBackBuffer()
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	//Create new imgui frame
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
+	//ImGui_ImplOpenGL3_NewFrame();
+	//ImGui_ImplGlfw_NewFrame();
+	//ImGui::NewFrame();
 }
 
 void OGLWindow::SwapBuffer()
 {
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	//ImGui::Render();
+	//ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	glfwSwapBuffers(m_windowOpenGL);
 }
@@ -76,8 +76,8 @@ void OGLWindow::Init()
 	(void)io;
 	ImGui::StyleColorsDark();
 
-	ImGui_ImplGlfw_InitForOpenGL(m_windowOpenGL, true);
-	ImGui_ImplOpenGL3_Init("#version 330");
+	//ImGui_ImplGlfw_InitForOpenGL(m_windowOpenGL, true);
+	//ImGui_ImplOpenGL3_Init("#version 330");
 }
 
 
@@ -87,9 +87,9 @@ void OGLWindow::Draw()
 
 void OGLWindow::_Destroy()
 {
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
+	//ImGui_ImplOpenGL3_Shutdown();
+	//ImGui_ImplGlfw_Shutdown();
+	//ImGui::DestroyContext();
 
 	glfwDestroyWindow(m_windowOpenGL);
 	glfwTerminate();
