@@ -2,10 +2,10 @@
 
 #include <stdexcept>
 
-#include "../../../build/DefaultApp/Plane.h"
 #include "Editor/Tools/ExempleToolImpl.h"
 #include "Editor/ToolsManager.h"
 #include "Editor/Tools/ToolWindow.h"
+#include "LowLevel_Renderer/Primitive/Plane.h"
 #include "LowLevel_Renderer/Primitive/Triangle.h"
 #include "LowLevel_Renderer/Primitive/Vertex.h"
 
