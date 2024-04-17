@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 
+#include "../../../build/DefaultApp/Plane.h"
 #include "Editor/Tools/ExempleToolImpl.h"
 #include "Editor/ToolsManager.h"
 #include "Editor/Tools/ToolWindow.h"
@@ -35,15 +36,27 @@ void Application::Run()
 
 	TriangleF triangle(p0, p1, p2);
 
+	using PlaneF = Plane<float>;
+	VertexF planeP0{ { -0.5f,	-0.5f,	0.5f },		{ 0.8f,		0.3f,	0.02f} };
+	VertexF planeP1{ {  0.5f,	-0.5f,	0.5f },		{ 0.8f,		0.3f,	0.02f} };
+	VertexF planeP2{ {  0.5f,	 0.5f,	0.5f },		{ 1.0f,		0.6f,	0.32f} };
+	VertexF planeP3{ { -0.5f,	 0.5f,	0.5f },		{ 0.9f,		0.45f,	0.17f} };
+
+	PlaneF plane({planeP0, planeP1, planeP2, planeP3}, { 0, 1, 2, 0, 3, 2 });
+
 	while (!m_window->isWindowShouldClose())
 	{
 		m_window->ClearBackBuffer();
 
 		// TODO: write code here...
 
-		triangle.render();
+		//triangle.render();
+		plane.render();
 
 		_Draw(*m_window);
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);	//Set view mode in wireframe
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);	//Set view mode with full triangle
 
 		glFlush();
 

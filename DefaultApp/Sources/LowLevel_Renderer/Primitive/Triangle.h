@@ -4,7 +4,6 @@
 #include "LowLevel_Renderer/Shader/Shader.h"
 
 #include <array>
-#include <fstream>
 #include <glad/glad.h>
 
 #include "Triangle.h"

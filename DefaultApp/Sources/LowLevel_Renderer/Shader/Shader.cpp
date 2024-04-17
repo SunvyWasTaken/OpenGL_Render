@@ -9,7 +9,6 @@
 #include <filesystem>
 
 
-
 namespace
 {
 	std::string readShaderFile(const char* filename)
