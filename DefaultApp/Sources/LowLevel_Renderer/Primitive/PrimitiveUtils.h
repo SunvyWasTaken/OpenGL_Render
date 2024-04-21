@@ -19,5 +19,5 @@
 	glEnableVertexAttribArray(0); \
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_type), reinterpret_cast<char*>(nullptr) + sizeof(vertex_type::m_point)); \
 	glEnableVertexAttribArray(1); \
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertex_type), (void*)(6 * sizeof(float))); \
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertex_type), reinterpret_cast<char*>(nullptr) + sizeof(vertex_type::m_point) + sizeof(vertex_type::m_color)); \
 	glEnableVertexAttribArray(2);

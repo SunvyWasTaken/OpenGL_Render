@@ -15,12 +15,8 @@ Texture::Texture(const std::string& path, GLenum slot)
 	glGenTextures(1, &m_texture);
 
 	//Assigns the texture to a texture unit
-	glActiveTexture(slot);
+	//glActiveTexture(slot);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
-
-	//Assign the image to OpengGL Texture object
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImage, heightImage, 0, GL_RGBA, GL_UNSIGNED_INT, bytes);
-	glGenerateMipmap(GL_TEXTURE_2D);
 
 	//Configure the alogo that is used to make the image smaller or bigger
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -29,6 +25,10 @@ Texture::Texture(const std::string& path, GLenum slot)
 	//Configure the way the texture repeats
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	//Assign the image to OpengGL Texture object
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImage, heightImage, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+	glGenerateMipmap(GL_TEXTURE_2D);
 
 	//Delete the image data as it is already in the OpenGL Texture object
 	stbi_image_free(bytes);
