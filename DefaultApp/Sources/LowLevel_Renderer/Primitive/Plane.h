@@ -1,9 +1,13 @@
 #pragma once
+#include <array>
+
 #include "LowLevel_Renderer/Primitive/Vertex.h"
 #include "LowLevel_Renderer/Shader/Shader.h"
 
-#include <array>
 #include <glad/glad.h>
+
+#include "PrimitiveUtils.h"
+#include "LowLevel_Renderer/Texture/Texture.h"
 
 template <typename T>
 class Plane
@@ -11,8 +15,8 @@ class Plane
 	using vertex_type = Vertex<T>;
 
 public:
-	Plane(const std::array<vertex_type, 4>& points, const std::array<GLuint, 6>& indices)
-		: m_points(points), m_vao(0), m_vbo(0), m_shaderProgram(0), m_indices(indices)
+	Plane()
+	: m_vao(0), m_vbo(0), m_shaderProgram(0)
 	{
 		load();
 	}
@@ -27,17 +31,24 @@ public:
 
 	void load()
 	{
-		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
+		m_texture = Texture("Ressources\\r.png", GL_TEXTURE0);
 
-		glGenBuffers(1, &m_vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+		std::array<vertex_type, 4> vertices = {
+			vertex_type( { -0.5f,	-0.5f,	0.f }, { 1.0f,	0.0f,	0.0f }, { -0.5f,	 -0.5f } ),
+			vertex_type( { -0.5f,	0.5f,	0.f }, { 0.0f,	1.0f,	0.0f }, { -0.5f,	  0.5f } ),
+			vertex_type( { 0.5f,	0.5f,	0.f }, { 0.8f,	0.3f,	1.0f }, {  0.5f,  0.5f } ),
+			vertex_type( { 0.5f,	-0.5f,	0.f }, { 0.5f,	0.5f,	0.5f }, {  0.5f, -0.5f } )
+		};
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(m_points), m_points.data(), GL_STATIC_DRAW);
+		std::array<GLuint, 6> indices = {
+			0, 1, 2,
+			2, 3, 0
+		};
 
-		glGenBuffers(1, &m_ebo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_indices), m_indices.data(), GL_STATIC_DRAW);
+
+		LOAD_VERTEX_ARRAYS(m_vao)
+		LOAD_ARRAY_BUFFER(m_vbo, vertices, vertex_type)
+		LOAD_ELEMENT_ARRAY_BUFFER(m_ebo, indices)
 
 		ShaderInfo shaders[] = {
 			{GL_VERTEX_SHADER,  "default.vert"},
@@ -49,16 +60,15 @@ public:
 		glUseProgram(m_shaderProgram);
 
 		// /!\ Attention, ca marche que si t = float, -> dommage
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_type), 0);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_type), reinterpret_cast<char*>(nullptr) + sizeof(vertex_type::m_point));
-		glEnableVertexAttribArray(1);
+		LOAD_BASIC_VERTEX_ATTRIB_POINTER()
 
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 		m_uniID = glGetUniformLocation(m_shaderProgram, "scale");
+		m_texture.bind();
+		m_texture.textUnit(m_shaderProgram, "tex0");
 	}
 
 	void render()
@@ -71,15 +81,16 @@ public:
 		glUniformMatrix4fv(mvpLocation, 1, 0, MVP.data());*/
 
 		//glDrawArrays(GL_TRIANGLES, 0, (int)(m_points.size()));
-		glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, 0);
+
+		m_texture.bind();
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 
 private:
-	std::array<vertex_type, 4> m_points;
-	std::array<GLuint, 6> m_indices;
 	GLuint m_vao;
 	GLuint m_vbo;
 	GLuint m_ebo;
 	GLuint m_shaderProgram;
 	GLuint m_uniID;
+	Texture m_texture;
 };
