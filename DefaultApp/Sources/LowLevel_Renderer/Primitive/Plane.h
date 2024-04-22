@@ -8,6 +8,7 @@
 
 #include "PrimitiveUtils.h"
 #include "LowLevel_Renderer/Texture/Texture.h"
+#include "Math/Matrix.h"
 
 template <typename T>
 class Plane
@@ -34,10 +35,10 @@ public:
 		m_texture = Texture("Ressources\\sc.png", GL_TEXTURE0);
 
 		std::array<vertex_type, 4> vertices = {
-			vertex_type( { -0.9f,	-0.9f,	0.f }, { 1.0f,  0.0f,	0.0f }, {  0.0f,	  0.0f } ),
-			vertex_type( { -0.9f,	0.9f,	0.f }, { 0.0f,	 1.0f,	0.0f }, {  0.0f,	  1.0f } ),
-			vertex_type( { 0.9f,	0.9f,	0.f }, { 0.8f,	 0.3f,	1.0f }, {  1.0f,  1.0f } ),
-			vertex_type( { 0.9f,	-0.9f,	0.f }, { 0.5f,	 0.5f,	0.5f }, {  1.0f,  0.0f } )
+			vertex_type( { -0.9f,	-0.9f,	-5.0f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,	  0.0f } ),
+			vertex_type( { -0.9f,	0.9f,	-5.0f }, { 0.0f,	1.0f,	0.0f }, {  0.0f,	  1.0f } ),
+			vertex_type( { 0.9f,	0.9f,	-5.0f }, { 0.8f,	0.3f,	1.0f }, {  1.0f,  1.0f } ),
+			vertex_type( { 0.9f,	-0.9f,	-5.0f }, { 0.5f,	0.5f,	0.5f }, {  1.0f,  0.0f } )
 		};
 
 		std::array<GLuint, 6> indices = {
@@ -71,14 +72,16 @@ public:
 		m_texture.textUnit(m_shaderProgram, "tex0");
 	}
 
-	void render()
+	void render(const Math::Mat4<T>& vp)
 	{
+		GLuint mvpLocation = glGetUniformLocation(m_shaderProgram, "MVP");
+
 		glBindVertexArray(m_vao);
 
 		glUniform1f(m_uniID, 1.f);
 
-		/*GLuint mvpLocation = glGetUniformLocation(m_program, "MVP");
-		glUniformMatrix4fv(mvpLocation, 1, 0, MVP.data());*/
+		auto mvp = vp;
+		glUniformMatrix4fv(mvpLocation, 1, 0, mvp.data());
 
 		//glDrawArrays(GL_TRIANGLES, 0, (int)(m_points.size()));
 
