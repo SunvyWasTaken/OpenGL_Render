@@ -8,6 +8,7 @@
 #include "LowLevel_Renderer/Primitive/Plane.h"
 #include "LowLevel_Renderer/Primitive/Triangle.h"
 #include "LowLevel_Renderer/Primitive/Vertex.h"
+#include "LowLevel_Renderer/Viewports/Viewport.h"
 
 Application::Application()
 	: m_window(new OGLWindow(800, 800, "Procedural map generation")), m_toolsManager(new ToolsManager())
@@ -34,6 +35,17 @@ void Application::Run()
 	using PlaneF = Plane<float>;
 	PlaneF plane{};
 
+	float aspectRation = 800 / 800;
+	float fov = 45.f / 180.f * 3.141592f;
+	float nearPlane = 0.01f;
+	float farPlane = 10.f;
+		
+	Viewport viewport(aspectRation, fov, nearPlane, farPlane); //projection matrix
+	Math::Mat4<float> camera = Math::Mat4<float>::identity();  //view matrix
+	Math::Mat4<float> model = Math::Mat4<float>::identity();   //model matrix
+
+	auto pvm = viewport.getMatrixProjection() * camera * model;
+
 	while (!m_window->isWindowShouldClose())
 	{
 		m_window->ClearBackBuffer();
@@ -41,7 +53,7 @@ void Application::Run()
 		// TODO: write code here...
 
 		//triangle.render();
-		plane.render();
+		plane.render(pvm);
 
 		_Draw(*m_window);
 
