@@ -31,13 +31,13 @@ public:
 
 	void load()
 	{
-		m_texture = Texture("Ressources\\test.bmp", GL_TEXTURE0);
+		m_texture = Texture("Ressources\\sc.png", GL_TEXTURE0);
 
 		std::array<vertex_type, 4> vertices = {
-			vertex_type( { -0.9f,	-0.9f,	0.f }, { 1.0f,  0.0f,	0.0f }, { -0.5f,	 -0.5f } ),
-			vertex_type( { -0.9f,	0.9f,	0.f }, { 0.0f,	 1.0f,	0.0f }, { -0.5f,	  0.5f } ),
-			vertex_type( { 0.9f,	0.9f,	0.f }, { 0.8f,	 0.3f,	1.0f }, {  0.5f,  0.5f } ),
-			vertex_type( { 0.9f,	-0.9f,	0.f }, { 0.5f,	 0.5f,	0.5f }, {  0.5f, -0.5f } )
+			vertex_type( { -0.9f,	-0.9f,	0.f }, { 1.0f,  0.0f,	0.0f }, {  0.0f,	  0.0f } ),
+			vertex_type( { -0.9f,	0.9f,	0.f }, { 0.0f,	 1.0f,	0.0f }, {  0.0f,	  1.0f } ),
+			vertex_type( { 0.9f,	0.9f,	0.f }, { 0.8f,	 0.3f,	1.0f }, {  1.0f,  1.0f } ),
+			vertex_type( { 0.9f,	-0.9f,	0.f }, { 0.5f,	 0.5f,	0.5f }, {  1.0f,  0.0f } )
 		};
 
 		std::array<GLuint, 6> indices = {

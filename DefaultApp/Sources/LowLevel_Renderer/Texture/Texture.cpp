@@ -9,7 +9,7 @@ Texture::Texture(const std::string& path, GLenum slot)
 {
 	int widthImage, heightImage, numColCh;
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char* bytes = stbi_load(path.c_str(), &widthImage, &heightImage, &numColCh, 0);
+	unsigned char* bytes = stbi_load(path.c_str(), &widthImage, &heightImage, &numColCh, STBI_rgb_alpha);
 
 	//Generates an OpenGL texture object
 	glGenTextures(1, &m_texture);
