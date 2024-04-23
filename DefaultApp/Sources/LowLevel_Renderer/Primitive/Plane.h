@@ -35,10 +35,10 @@ public:
 		m_texture = Texture("Ressources\\sc.png", GL_TEXTURE0);
 
 		std::array<vertex_type, 4> vertices = {
-			vertex_type( { -0.9f,	-0.9f,	-5.0f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,	  0.0f } ),
-			vertex_type( { -0.9f,	0.9f,	-5.0f }, { 0.0f,	1.0f,	0.0f }, {  0.0f,	  1.0f } ),
-			vertex_type( { 0.9f,	0.9f,	-5.0f }, { 0.8f,	0.3f,	1.0f }, {  1.0f,  1.0f } ),
-			vertex_type( { 0.9f,	-0.9f,	-5.0f }, { 0.5f,	0.5f,	0.5f }, {  1.0f,  0.0f } )
+			vertex_type( { -0.9f,	-0.9f,	0.0f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f } ),
+			vertex_type( { -0.9f,	0.9f,	0.0f }, { 0.0f,	1.0f,	0.0f }, {  0.0f,		1.0f } ),
+			vertex_type( { 0.9f,	0.9f,	0.0f }, { 0.8f,	0.3f,	1.0f }, {  1.0f,		1.0f } ),
+			vertex_type( { 0.9f,	-0.9f,	0.0f }, { 0.5f,	0.5f,	0.5f }, {  1.0f,		0.0f } )
 		};
 
 		std::array<GLuint, 6> indices = {
@@ -70,6 +70,8 @@ public:
 		m_uniID = glGetUniformLocation(m_shaderProgram, "scale");
 		m_texture.bind();
 		m_texture.textUnit(m_shaderProgram, "tex0");
+
+		m_matrixModel = Math::Mat4<T>::identity();
 	}
 
 	void render(const Math::Mat4<T>& vp)
@@ -78,18 +80,30 @@ public:
 
 		glBindVertexArray(m_vao);
 
-		glUniform1f(m_uniID, 1.f);
+		//glUniform1f(m_uniID, 1.f);
 
-		auto mvp = vp;
+		Math::Mat4<float> translationMatrix = Math::Mat4<T>::translate({ 0.0f, 0.0f, -5.0f });
+		Math::Mat4<float> rotationMatrix = Math::Mat4<float>::rotationFromAxis<Math::ForwardAxis>(angle);
+		Math::Mat4<float> scaleMatrix = Math::Mat4<float>::scale({ 1.f, 1.f, 1.f });
+		m_matrixModel = translationMatrix * rotationMatrix * scaleMatrix;
+
+		auto mvp = vp * m_matrixModel;
 		glUniformMatrix4fv(mvpLocation, 1, 0, mvp.data());
-
-		//glDrawArrays(GL_TRIANGLES, 0, (int)(m_points.size()));
 
 		m_texture.bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 
+	void update()
+	{
+		angle = 0.0025f;
+	}
+
+	float angle = 0.f;
+
 private:
+	Math::Mat4<T> m_matrixModel;
+
 	GLuint m_vao;
 	GLuint m_vbo;
 	GLuint m_ebo;

@@ -44,7 +44,7 @@ void Application::Run()
 	Math::Mat4<float> camera = Math::Mat4<float>::identity();  //view matrix
 	Math::Mat4<float> model = Math::Mat4<float>::identity();   //model matrix
 
-	auto pvm = viewport.getMatrixProjection() * camera * model;
+	auto pvm = viewport.getMatrixProjection() * camera;
 
 	while (!m_window->isWindowShouldClose())
 	{
@@ -53,6 +53,8 @@ void Application::Run()
 		// TODO: write code here...
 
 		//triangle.render();
+
+		plane.update();
 		plane.render(pvm);
 
 		_Draw(*m_window);
