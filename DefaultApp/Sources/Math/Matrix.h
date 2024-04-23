@@ -2,8 +2,28 @@
 #include <array>
 #include <cmath>
 
+#include "Point.h"
+
 namespace Math
 {
+	struct RightAxis // X axis
+	{
+		static constexpr int r1 = 1;
+		static constexpr int r2 = 2;
+	};
+
+	struct UpAxis // Y axis
+	{
+		static constexpr int r1 = 0;
+		static constexpr int r2 = 2;
+	};
+
+	struct ForwardAxis // Z axis
+	{
+		static constexpr int r1 = 0;
+		static constexpr int r2 = 1;
+	};
+
 	template <typename MatType>
 	class Mat4
 	{
@@ -19,6 +39,11 @@ namespace Math
 		static Mat4 identity();
 
 		static Mat4 projection(const MatType& aspectRation, const MatType& fov, const MatType& nearPlane, const MatType& farPlane);
+
+		static Mat4 translate(const Point3D<MatType>& points);
+		template <typename Axis>
+		static Mat4 rotationFromAxis(const MatType& angle);
+		static Mat4 scale(const Point3D<MatType>& scale);
 
 	private:
 		std::array<MatType, 16> m_coefs;
@@ -67,6 +92,43 @@ namespace Math
 		matrixProjection(2, 3) = (2.f * nearPlane * farPlane) / (nearPlane - farPlane);
 		matrixProjection(3, 2) = -1.f;
 		return matrixProjection;
+	}
+
+	template <typename MatType>
+	Mat4<MatType> Mat4<MatType>::translate(const Point3D<MatType>& points)
+	{
+		Mat4 trans = identity();
+		trans(0, 3) = points.x;
+		trans(1, 3) = points.y;
+		trans(2, 3) = points.z;
+
+		return trans;
+	}
+
+	template <typename MatType>
+	template <typename Axis>
+	Mat4<MatType> Mat4<MatType>::rotationFromAxis(const MatType& angle)
+	{
+		static_assert(std::is_same_v<Axis, RightAxis> || std::is_same_v<Axis, UpAxis> || std::is_same_v<Axis, ForwardAxis>, "Axis type not good!");
+
+		Mat4 rot = identity();
+		rot(Axis::r1, Axis::r1) = std::cos(angle);
+		rot(Axis::r1, Axis::r2) = -std::sin(angle);
+		rot(Axis::r2, Axis::r1) = std::sin(angle);
+		rot(Axis::r2, Axis::r2) = std::cos(angle);
+
+		return rot;
+	}
+
+	template <typename MatType>
+	Mat4<MatType> Mat4<MatType>::scale(const Point3D<MatType>& scale)
+	{
+		Mat4 matScale = identity();
+		matScale(0, 0) = scale.x;
+		matScale(1, 1) = scale.y;
+		matScale(2, 2) = scale.z;
+
+		return matScale;
 	}
 
 	template <typename MatType>
