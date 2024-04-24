@@ -28,12 +28,12 @@ void Application::Run()
 
 	m_window->Init();
 
-	using VertexF = Vertex<float>;
+	using P3D = Math::Point3D<float>;
 	using TriangleF = Triangle<float>;
 	TriangleF triangle{};
+	triangle.transform.position = P3D{ 2.5f, 2.5f, -8.f };
 
 	using PlaneF = Plane<float>;
-	using P3D = Math::Point3D<float>;
 	PlaneF plane{};
 	plane.transform.position = P3D{ 0.f, 0.f, -5.f };
 
@@ -54,10 +54,11 @@ void Application::Run()
 
 		// TODO: write code here...
 
-		//triangle.render();
+		triangle.transform.rotation.y += 0.0025f;
+		plane.transform.rotation.x += 0.001f;
 
-		plane.update();
 		plane.render(pvm);
+		triangle.render(pvm);
 
 		_Draw(*m_window);
 

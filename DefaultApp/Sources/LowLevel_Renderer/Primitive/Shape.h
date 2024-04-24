@@ -1,31 +1,38 @@
 #pragma once
-#include <array>
-#include <glad/glad.h>
 
 #include "Vertex.h"
+#include "LowLevel_Renderer/Texture/Texture.h"
+#include <glad/glad.h>
+
+#include "Math/Transform.h"
 
 template <typename ShapeType>
 class Shape
 {
 	using vertex_type = Vertex<ShapeType>;
+	using Transform = Math::Transform<ShapeType>;
 
 public:
 	Shape();
 	virtual ~Shape();
 
-	virtual void load();
-	virtual void render();
+	virtual void load() {};
+	virtual void update() {};
+	virtual void render(const Math::Mat4<ShapeType>& vp) {};
+
+	Transform transform;
 
 protected:
 	GLuint m_vao;
 	GLuint m_vbo;
+	GLuint m_ebo;
 	GLuint m_shaderProgram;
-	GLuint m_uniID;
+	Texture m_texture;
 };
 
 template <typename ShapeType>
 Shape<ShapeType>::Shape()
-	: m_vao(0), m_vbo(0), m_shaderProgram(0), m_uniID(0)
+	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shaderProgram(0), m_texture(Texture{})
 {
 }
 
@@ -34,11 +41,6 @@ Shape<ShapeType>::~Shape()
 {
 	glDeleteVertexArrays(1, &m_vao);
 	glDeleteBuffers(1, &m_vbo);
+	glDeleteBuffers(1, &m_ebo);
 	glDeleteProgram(m_shaderProgram);
-}
-
-template <typename ShapeType>
-void Shape<ShapeType>::load()
-{
-	
 }
