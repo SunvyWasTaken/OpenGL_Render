@@ -22,7 +22,7 @@ void OGLWindow::ClearBackBuffer()
 	glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 
 	//Clear the back buffer and assign the new color to it
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Create new imgui frame
 	ImGui_ImplOpenGL3_NewFrame();
@@ -68,6 +68,7 @@ void OGLWindow::Init()
 
 	//Load glad so it configures OpenGL
 	gladLoadGL();
+	glEnable(GL_DEPTH_TEST);
 	glViewport(0, 0, m_width, m_height);
 
 	IMGUI_CHECKVERSION();

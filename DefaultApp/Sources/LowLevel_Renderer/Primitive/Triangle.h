@@ -39,7 +39,7 @@ public:
 		};
 
 		LOAD_VERTEX_ARRAYS(m_vao)
-		LOAD_ARRAY_BUFFER(m_vbo, vertices, vertex_type)
+		LOAD_ARRAY_BUFFER(m_vbo, vertices)
 
 		ShaderInfo shaders[] = {
 			{GL_VERTEX_SHADER,  "default.vert"},

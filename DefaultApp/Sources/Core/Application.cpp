@@ -5,6 +5,7 @@
 #include "Editor/Tools/ExempleToolImpl.h"
 #include "Editor/ToolsManager.h"
 #include "Editor/Tools/ToolWindow.h"
+#include "LowLevel_Renderer/Primitive/Cube.h"
 #include "LowLevel_Renderer/Primitive/Plane.h"
 #include "LowLevel_Renderer/Primitive/Triangle.h"
 #include "LowLevel_Renderer/Primitive/Vertex.h"
@@ -37,6 +38,9 @@ void Application::Run()
 	PlaneF plane{};
 	plane.transform.position = P3D{ 0.f, 0.f, -5.f };
 
+	Cube<float> cube{};
+	cube.transform.position = P3D{ 0,0,-5.f };
+
 	float aspectRation = 800 / 800;
 	float fov = 45.f / 180.f * 3.141592f;
 	float nearPlane = 0.01f;
@@ -54,12 +58,14 @@ void Application::Run()
 
 		// TODO: write code here...
 
-		triangle.transform.rotation.y += 0.0025f;
-		plane.transform.rotation.x += 0.001f;
+		//triangle.transform.rotation.y += 0.0025f;
+		//plane.transform.rotation.x += 0.001f;
 
-		plane.render(pvm);
-		triangle.render(pvm);
-
+		//plane.render(pvm);
+		//triangle.render(pvm);
+		cube.transform.rotation.y += 0.0005f;
+		cube.transform.rotation.z += 0.0005f;
+		cube.render(pvm);
 		_Draw(*m_window);
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);	//Set view mode in wireframe
