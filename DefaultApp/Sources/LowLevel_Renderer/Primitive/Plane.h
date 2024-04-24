@@ -18,7 +18,7 @@ class Plane
 
 public:
 	Plane()
-		: transform(Math::Transform<T>()), m_vao(0), m_vbo(0), m_shaderProgram(0)
+		: transform(Math::Transform<T>()), m_vao(0), m_vbo(0), m_shaderProgram(0), m_texture(Texture{})
 	{
 		load();
 	}
@@ -68,11 +68,8 @@ public:
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-		m_uniID = glGetUniformLocation(m_shaderProgram, "scale");
 		m_texture.bind();
 		m_texture.textUnit(m_shaderProgram, "tex0");
-
-		m_matrixModel = Math::Mat4<T>::identity();
 	}
 
 	void render(const Math::Mat4<T>& vp)
@@ -80,13 +77,6 @@ public:
 		GLuint mvpLocation = glGetUniformLocation(m_shaderProgram, "MVP");
 
 		glBindVertexArray(m_vao);
-
-		//glUniform1f(m_uniID, 1.f);
-
-		Math::Mat4<float> translationMatrix = Math::Mat4<T>::translate({ 0.0f, 0.0f, -5.0f });
-		Math::Mat4<float> rotationMatrix = Math::Mat4<float>::rotationFromAxis<Math::ForwardAxis>(angle);
-		Math::Mat4<float> scaleMatrix = Math::Mat4<float>::scale({ 1.f, 1.f, 1.f });
-		m_matrixModel = translationMatrix * rotationMatrix * scaleMatrix;
 
 		auto mvp = vp * transform.getMatrix();
 		glUniformMatrix4fv(mvpLocation, 1, 0, mvp.data());
@@ -105,12 +95,9 @@ public:
 	Math::Transform<T> transform;
 
 private:
-	Math::Mat4<T> m_matrixModel;
-
 	GLuint m_vao;
 	GLuint m_vbo;
 	GLuint m_ebo;
 	GLuint m_shaderProgram;
-	GLuint m_uniID;
 	Texture m_texture;
 };
