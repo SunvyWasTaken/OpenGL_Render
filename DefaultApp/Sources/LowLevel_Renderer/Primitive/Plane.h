@@ -9,6 +9,7 @@
 #include "PrimitiveUtils.h"
 #include "LowLevel_Renderer/Texture/Texture.h"
 #include "Math/Matrix.h"
+#include "Math/Transform.h"
 
 template <typename T>
 class Plane
@@ -17,7 +18,7 @@ class Plane
 
 public:
 	Plane()
-	: m_vao(0), m_vbo(0), m_shaderProgram(0)
+		: transform(Math::Transform<T>()), m_vao(0), m_vbo(0), m_shaderProgram(0)
 	{
 		load();
 	}
@@ -87,7 +88,7 @@ public:
 		Math::Mat4<float> scaleMatrix = Math::Mat4<float>::scale({ 1.f, 1.f, 1.f });
 		m_matrixModel = translationMatrix * rotationMatrix * scaleMatrix;
 
-		auto mvp = vp * m_matrixModel;
+		auto mvp = vp * transform.getMatrix();
 		glUniformMatrix4fv(mvpLocation, 1, 0, mvp.data());
 
 		m_texture.bind();
@@ -100,6 +101,8 @@ public:
 	}
 
 	float angle = 0.f;
+
+	Math::Transform<T> transform;
 
 private:
 	Math::Mat4<T> m_matrixModel;

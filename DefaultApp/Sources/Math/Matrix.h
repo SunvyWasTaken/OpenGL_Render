@@ -41,8 +41,11 @@ namespace Math
 		static Mat4 projection(const MatType& aspectRation, const MatType& fov, const MatType& nearPlane, const MatType& farPlane);
 
 		static Mat4 translate(const Point3D<MatType>& points);
+
 		template <typename Axis>
 		static Mat4 rotationFromAxis(const MatType& angle);
+		static Mat4 rotation(const Point3D<MatType>& rotations);
+
 		static Mat4 scale(const Point3D<MatType>& scale);
 
 	private:
@@ -118,6 +121,12 @@ namespace Math
 		rot(Axis::r2, Axis::r2) = std::cos(angle);
 
 		return rot;
+	}
+
+	template <typename MatType>
+	Mat4<MatType> Mat4<MatType>::rotation(const Point3D<MatType>& rotations)
+	{
+		return rotationFromAxis<RightAxis>(rotations.x) * rotationFromAxis<UpAxis>(rotations.y) * rotationFromAxis<ForwardAxis>(rotations.z);
 	}
 
 	template <typename MatType>

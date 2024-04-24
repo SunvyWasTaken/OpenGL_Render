@@ -33,7 +33,9 @@ void Application::Run()
 	TriangleF triangle{};
 
 	using PlaneF = Plane<float>;
+	using P3D = Math::Point3D<float>;
 	PlaneF plane{};
+	plane.transform.position = P3D{ 0.f, 0.f, -5.f };
 
 	float aspectRation = 800 / 800;
 	float fov = 45.f / 180.f * 3.141592f;
