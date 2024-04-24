@@ -4,7 +4,7 @@
 	glGenVertexArrays(1, &vao); \
 	glBindVertexArray(vao);
 
-#define LOAD_ARRAY_BUFFER(vbo, vertices, vertex_type) \
+#define LOAD_ARRAY_BUFFER(vbo, vertices) \
 	glGenBuffers(1, &vbo); \
 	glBindBuffer(GL_ARRAY_BUFFER, vbo); \
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertex_type), vertices.data(), GL_STATIC_DRAW);
@@ -21,3 +21,14 @@
 	glEnableVertexAttribArray(1); \
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertex_type), reinterpret_cast<char*>(nullptr) + sizeof(vertex_type::m_point) + sizeof(vertex_type::m_color)); \
 	glEnableVertexAttribArray(2);
+
+#define DELETE_BUFFER() \
+	glDeleteVertexArrays(1, &m_vao); \
+	glDeleteBuffers(1, &m_vbo); \
+	glDeleteProgram(m_shaderProgram);
+
+#define DELETE_BUFFER_WITH_ELEMENTS() \
+	glDeleteVertexArrays(1, &m_vao); \
+	glDeleteBuffers(1, &m_vbo); \
+	glDeleteBuffers(1, &m_ebo); \
+	glDeleteProgram(m_shaderProgram);

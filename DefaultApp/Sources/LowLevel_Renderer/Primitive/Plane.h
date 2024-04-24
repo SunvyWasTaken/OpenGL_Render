@@ -1,15 +1,14 @@
 #pragma once
-#include <array>
 
 #include "LowLevel_Renderer/Primitive/Vertex.h"
 #include "LowLevel_Renderer/Shader/Shader.h"
-
-#include <glad/glad.h>
-
 #include "PrimitiveUtils.h"
 #include "LowLevel_Renderer/Texture/Texture.h"
 #include "Math/Matrix.h"
 #include "Math/Transform.h"
+
+#include <array>
+#include <glad/glad.h>
 
 template <typename T>
 class Plane
@@ -47,9 +46,8 @@ public:
 			2, 3, 0
 		};
 
-
 		LOAD_VERTEX_ARRAYS(m_vao)
-		LOAD_ARRAY_BUFFER(m_vbo, vertices, vertex_type)
+		LOAD_ARRAY_BUFFER(m_vbo, vertices)
 		LOAD_ELEMENT_ARRAY_BUFFER(m_ebo, indices)
 
 		ShaderInfo shaders[] = {
