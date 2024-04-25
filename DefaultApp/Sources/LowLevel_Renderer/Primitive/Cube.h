@@ -51,37 +51,56 @@ void Cube<Type>::load()
 {
 	m_texture = Texture("Ressources\\sc.png", GL_TEXTURE0);
 
-	std::array<vertex_type, 8> vertices = {
+	std::array<vertex_type, 24> vertices = {
 		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	 1.f }, { 0.0f,	1.0f,	0.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	1.f,	 1.f }, { 0.0f,	1.0f,	0.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }),
+		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }),
+		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }),
+		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }),
 
-		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	-1.f }, { 0.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	1.f,	-1.f }, { 0.0f,	0.0f,	1.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	-1.f }, { 0.0f,	0.0f,	1.0f }, {  1.0f,		0.0f })
+		vertex_type({ 1.f,		-1.f,	-1.f }, { 0.0f,	1.0f,	0.0f }, {  0.0f,		0.0f }),
+		vertex_type({ 1.f,		1.f,	-1.f }, { 0.0f,	1.0f,	0.0f }, {  0.0f,		1.0f }),
+		vertex_type({ 1.f,		1.f,	 1.f }, { 0.0f,	1.0f,	0.0f }, {  1.0f,		1.0f }),
+		vertex_type({ 1.f,		-1.f,	 1.f }, { 0.0f,	1.0f,	0.0f }, {  1.0f,		0.0f }),
 
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.5f,	0.0f }, {  0.0f,		0.0f }),
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.5f,	0.0f }, {  0.0f,		1.0f }),
+		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	0.5f,	0.0f }, {  1.0f,		1.0f }),
+		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	0.5f,	0.0f }, {  1.0f,		0.0f }),
+
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 0.0f,	0.0f,	1.0f }, {  0.0f,		0.0f }),
+		vertex_type({ -1.f,	1.f,	-1.f }, { 0.0f,	0.0f,	1.0f }, {  0.0f,		1.0f }),
+		vertex_type({ -1.f,	1.f,	 1.f }, { 0.0f,	0.0f,	1.0f }, {  1.0f,		1.0f }),
+		vertex_type({ -1.f,	-1.f,	 1.f }, { 0.0f,	0.0f,	1.0f }, {  1.0f,		0.0f }),
+
+		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }),
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }),
+		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }),
+		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }),
+
+		vertex_type({ -1.f,	-1.f,	1.f },	{ 1.0f,	1.0f,	0.0f }, {  0.0f,		0.0f }),
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	0.0f }, {  0.0f,		1.0f }),
+		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	0.0f }, {  1.0f,		1.0f }),
+		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	0.0f }, {  1.0f,		0.0f })
 	};
 
 	std::array<GLuint, 36> indices = {
 		0, 1, 2, //Front
 		2, 3, 0,
 
-		4, 5, 1, //Left
-		1, 0, 4,
+		4, 5, 6, //Right
+		6, 7, 4,
 
-		7, 6, 5, //Back
-		5, 4, 7,
+		8, 9, 10, //Back
+		10, 11, 8,
 
-		3, 2, 6, //Right
-		6, 7, 3,
+		12, 13, 14, //Left
+		14, 15, 12,
 
-		1, 5, 6, //Top
-		6, 2, 1,
+		16, 17, 18, //Top
+		18, 19, 16,
 
-		4, 0, 3, //Bottom
-		3, 7, 4
+		20, 21, 22, //Bottom
+		22, 23, 20
 	};
 
 	LOAD_VERTEX_ARRAYS(m_vao)
@@ -118,6 +137,7 @@ void Cube<Type>::render(const Math::Mat4<Type>& vp)
 {
 	GLuint mvpLocation = glGetUniformLocation(m_shaderProgram, "MVP");
 
+	glUseProgram(m_shaderProgram);
 	glBindVertexArray(m_vao);
 
 	auto mvp = vp * transform.getMatrix();
