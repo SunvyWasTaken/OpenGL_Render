@@ -63,8 +63,8 @@ void Application::Run()
 
 		//plane.render(pvm);
 		//triangle.render(pvm);
-		cube.transform.rotation.y += 0.0005f;
-		cube.transform.rotation.z += 0.0005f;
+		//cube.transform.rotation.y += 0.0005f;
+		//cube.transform.rotation.x += 0.0005f;
 		cube.render(pvm);
 		_Draw(*m_window);
 
