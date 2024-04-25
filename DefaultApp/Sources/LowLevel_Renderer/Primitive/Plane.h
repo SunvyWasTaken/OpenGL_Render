@@ -74,6 +74,7 @@ public:
 	{
 		GLuint mvpLocation = glGetUniformLocation(m_shaderProgram, "MVP");
 
+		glUseProgram(m_shaderProgram);
 		glBindVertexArray(m_vao);
 
 		auto mvp = vp * transform.getMatrix();
