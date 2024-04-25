@@ -86,10 +86,7 @@ public:
 
 	void update()
 	{
-		angle = 0.0025f;
 	}
-
-	float angle = 0.f;
 
 	Math::Transform<T> transform;
 
