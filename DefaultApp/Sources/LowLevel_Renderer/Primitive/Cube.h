@@ -22,9 +22,10 @@ public:
 
 	void load();
 	void update();
-	void render(const Math::Mat4<Type>& vp);
+	void render(const ContextRenderer& contextRenderer);
 
 	Transform transform;
+	Math::Color<Type> color{1.0f,1.0f,1.0f,1.0f};
 private:
 	GLuint m_vao;
 	GLuint m_vbo;
@@ -52,35 +53,35 @@ void Cube<Type>::load()
 	m_texture = Texture("Ressources\\sc.png", GL_TEXTURE0);
 
 	std::array<vertex_type, 24> vertices = {
-		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }),
+		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }),
+		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }),
+		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }),
+		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }),
 
-		vertex_type({ 1.f,		-1.f,	-1.f }, { 0.0f,	1.0f,	0.0f }, {  0.0f,		0.0f }),
-		vertex_type({ 1.f,		1.f,	-1.f }, { 0.0f,	1.0f,	0.0f }, {  0.0f,		1.0f }),
-		vertex_type({ 1.f,		1.f,	 1.f }, { 0.0f,	1.0f,	0.0f }, {  1.0f,		1.0f }),
-		vertex_type({ 1.f,		-1.f,	 1.f }, { 0.0f,	1.0f,	0.0f }, {  1.0f,		0.0f }),
+		vertex_type({ 1.f,		-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }),
+		vertex_type({ 1.f,		1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }),
+		vertex_type({ 1.f,		1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }),
+		vertex_type({ 1.f,		-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }),
 
-		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.5f,	0.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.5f,	0.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	0.5f,	0.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	0.5f,	0.0f }, {  1.0f,		0.0f }),
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }),
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }),
+		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }),
+		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }),
 
-		vertex_type({ -1.f,	-1.f,	-1.f }, { 0.0f,	0.0f,	1.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	-1.f }, { 0.0f,	0.0f,	1.0f }, {  0.0f,		1.0f }),
-		vertex_type({ -1.f,	1.f,	 1.f }, { 0.0f,	0.0f,	1.0f }, {  1.0f,		1.0f }),
-		vertex_type({ -1.f,	-1.f,	 1.f }, { 0.0f,	0.0f,	1.0f }, {  1.0f,		0.0f }),
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }),
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }),
+		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }),
+		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }),
 
 		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }),
 		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }),
 		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }),
 		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }),
 
-		vertex_type({ -1.f,	-1.f,	1.f },	{ 1.0f,	1.0f,	0.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	0.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	0.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	0.0f }, {  1.0f,		0.0f })
+		vertex_type({ -1.f,	-1.f,	1.f },	{ 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }),
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }),
+		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }),
+		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f })
 	};
 
 	std::array<GLuint, 36> indices = {
@@ -108,8 +109,8 @@ void Cube<Type>::load()
 	LOAD_ELEMENT_ARRAY_BUFFER(m_ebo, indices)
 
 	ShaderInfo shaders[] = {
-		{GL_VERTEX_SHADER,  "default.vert"},
-		{GL_FRAGMENT_SHADER, "default.frag"},
+		{GL_VERTEX_SHADER,  "light.vert"},
+		{GL_FRAGMENT_SHADER, "light.frag"},
 		{GL_NONE, nullptr}
 	};
 
@@ -133,15 +134,18 @@ void Cube<Type>::update()
 }
 
 template <typename Type>
-void Cube<Type>::render(const Math::Mat4<Type>& vp)
+void Cube<Type>::render(const ContextRenderer& contextRenderer)
 {
-	GLuint mvpLocation = glGetUniformLocation(m_shaderProgram, "MVP");
-
 	glUseProgram(m_shaderProgram);
 	glBindVertexArray(m_vao);
 
-	auto mvp = vp * transform.getMatrix();
-	glUniformMatrix4fv(mvpLocation, 1, 0, mvp.data());
+	const GLuint projectionLocation = glGetUniformLocation(m_shaderProgram, "projection");
+	glUniformMatrix4fv(projectionLocation, 1, 0, contextRenderer.projection.data());
+	const GLuint viewLocation = glGetUniformLocation(m_shaderProgram, "view");
+	glUniformMatrix4fv(viewLocation, 1, 0, contextRenderer.view.data());
+
+	const GLuint modelLocation = glGetUniformLocation(m_shaderProgram, "model");
+	glUniformMatrix4fv(modelLocation, 1, 0, transform.getMatrix().data());
 
 	m_texture.bind();
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
