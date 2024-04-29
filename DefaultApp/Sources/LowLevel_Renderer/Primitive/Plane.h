@@ -35,10 +35,10 @@ public:
 		m_texture = Texture("Ressources\\sc.png", GL_TEXTURE0);
 
 		std::array<vertex_type, 4> vertices = {
-			vertex_type( { -0.9f,	-0.9f,	0.0f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f } ),
-			vertex_type( { -0.9f,	0.9f,	0.0f }, { 0.0f,	1.0f,	0.0f }, {  0.0f,		1.0f } ),
-			vertex_type( { 0.9f,	0.9f,	0.0f }, { 0.8f,	0.3f,	1.0f }, {  1.0f,		1.0f } ),
-			vertex_type( { 0.9f,	-0.9f,	0.0f }, { 0.5f,	0.5f,	0.5f }, {  1.0f,		0.0f } )
+			vertex_type( { -0.9f,	0.0f,	 0.9f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f } ),
+			vertex_type( { -0.9f,	0.0f,	-0.9f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f } ),
+			vertex_type( { 0.9f,	0.0f,	-0.9f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f } ),
+			vertex_type( { 0.9f,	0.0f,	 0.9f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f } )
 		};
 
 		std::array<GLuint, 6> indices = {
@@ -70,15 +70,21 @@ public:
 		m_texture.textUnit(m_shaderProgram, "tex0");
 	}
 
-	void render(const Math::Mat4<T>& vp)
+	void render(const ContextRenderer& contextRenderer, Math::Color<T>& lightColor)
 	{
-		GLuint mvpLocation = glGetUniformLocation(m_shaderProgram, "MVP");
-
 		glUseProgram(m_shaderProgram);
 		glBindVertexArray(m_vao);
 
-		auto mvp = vp * transform.getMatrix();
-		glUniformMatrix4fv(mvpLocation, 1, 0, mvp.data());
+		const GLuint projectionLocation = glGetUniformLocation(m_shaderProgram, "projection");
+		glUniformMatrix4fv(projectionLocation, 1, 0, contextRenderer.projection.data());
+		const GLuint viewLocation = glGetUniformLocation(m_shaderProgram, "view");
+		glUniformMatrix4fv(viewLocation, 1, 0, contextRenderer.view.data());
+
+		const GLuint modelLocation = glGetUniformLocation(m_shaderProgram, "model");
+		glUniformMatrix4fv(modelLocation, 1, 0, transform.getMatrix().data());
+
+		const GLuint lightColorLocation = glGetUniformLocation(m_shaderProgram, "lightColor");
+		glUniform4fv(lightColorLocation, 1, reinterpret_cast<float*>(&lightColor));
 
 		m_texture.bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
