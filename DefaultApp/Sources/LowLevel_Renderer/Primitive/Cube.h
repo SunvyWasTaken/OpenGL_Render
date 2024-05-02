@@ -36,6 +36,7 @@ private:
 	GLuint m_ebo;
 	GLuint m_shaderProgram;
 	Texture m_texture;
+	Texture m_textureSpecular;
 };
 
 template <typename Type>
@@ -55,6 +56,7 @@ template <typename Type>
 void Cube<Type>::load()
 {
 	m_texture = Texture("Ressources\\mat_test_albedo.png", GL_TEXTURE0);
+	m_textureSpecular = Texture("Ressources\\mat_test_specular.png", GL_TEXTURE1);
 
 	std::array<vertex_type, 24> vertices = {
 		//Front
@@ -136,8 +138,9 @@ void Cube<Type>::load()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	m_texture.bind();
+	
 	m_texture.textUnit(m_shaderProgram, "tex0");
+	m_textureSpecular.textUnit(m_shaderProgram, "tex1");
 }
 
 template <typename Type>
@@ -160,9 +163,9 @@ void Cube<Type>::render(const ContextRenderer& contextRenderer, Cube<Type>& ligh
 	diffuseColor.g = lightColorU.g * 0.5f;
 	diffuseColor.b = lightColorU.b * 0.5f;
 	Math::Color<Type> ambientColor{};
-	diffuseColor.r = lightColorU.a * 0.5f;
-	diffuseColor.g = lightColorU.g * 0.5f;
-	diffuseColor.b = lightColorU.b * 0.5f;
+	diffuseColor.r = lightColorU.a * 0.8f;
+	diffuseColor.g = lightColorU.g * 0.8f;
+	diffuseColor.b = lightColorU.b * 0.8f;
 
 	GLuint projectionLocation = glGetUniformLocation(m_shaderProgram, "projection");
 	glUniformMatrix4fv(projectionLocation, 1, 0, contextRenderer.projection.data());
@@ -189,7 +192,7 @@ void Cube<Type>::render(const ContextRenderer& contextRenderer, Cube<Type>& ligh
 	glUniform1i(materialDiffuseLocation, 0);
 
 	GLuint materialSpecularLocation = glGetUniformLocation(m_shaderProgram, "material.specular");
-	glUniform3f(materialSpecularLocation, 0.5f, 0.5f, 0.5f);
+	glUniform1i(materialSpecularLocation, 1);
 
 	GLuint materialShininessLocation = glGetUniformLocation(m_shaderProgram, "material.shininess");
 	glUniform1f(materialShininessLocation, 32.f);
@@ -200,7 +203,9 @@ void Cube<Type>::render(const ContextRenderer& contextRenderer, Cube<Type>& ligh
 	glUniform3fv(lightDiffuseLocation, 1, reinterpret_cast<float*>(&diffuseColor));
 	GLuint lightSpecularLocation = glGetUniformLocation(m_shaderProgram, "light.specular");
 	glUniform3f(lightSpecularLocation, 1.f, 1.f, 1.f);
+	
+	m_texture.bind(GL_TEXTURE0);
+	m_textureSpecular.bind(GL_TEXTURE1);
 
-	m_texture.bind();
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }

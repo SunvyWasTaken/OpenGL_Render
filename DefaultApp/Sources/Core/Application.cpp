@@ -41,7 +41,7 @@ void Application::Run()
 	plane.transform.rotation = { 0.f, 0.0f, 0.0f };
 
 	Cube<float> light{ "light" };
-	light.transform.position = { -0.5f,0.8f,-3.0f };
+	light.transform.position = { -1.2f,0.3f,-4.5f };
 	light.transform.scale = { 0.1f, 0.1f, 0.1f };
 
 	Cube<float> cube{ "default" };

@@ -9,7 +9,7 @@ public:
 	Texture(const std::string& path, GLenum slot = GL_TEXTURE0);
 
 	void textUnit(GLuint shaderProgram, const char* uniform, GLuint unit = 0);
-	void bind();
+	void bind(GLuint slot = GL_TEXTURE0);
 
 private:
 	GLuint m_texture;
