@@ -9,6 +9,7 @@
 
 #include <glad/glad.h>
 #include <array>
+#include <cmath>
 
 template <typename Type>
 class Cube
@@ -150,6 +151,19 @@ void Cube<Type>::render(const ContextRenderer& contextRenderer, Cube<Type>& ligh
 	glUseProgram(m_shaderProgram);
 	glBindVertexArray(m_vao);
 
+	Math::Color<Type> lightColorU{};
+	lightColorU.r = std::sin(glfwGetTime() * 2.f);
+	lightColorU.g = sin(glfwGetTime() * 0.7f);
+	lightColorU.b = sin(glfwGetTime() * 1.3f);
+	Math::Color<Type> diffuseColor{};
+	diffuseColor.r = lightColorU.a * 0.5f;
+	diffuseColor.g = lightColorU.g * 0.5f;
+	diffuseColor.b = lightColorU.b * 0.5f;
+	Math::Color<Type> ambientColor{};
+	diffuseColor.r = lightColorU.a * 0.5f;
+	diffuseColor.g = lightColorU.g * 0.5f;
+	diffuseColor.b = lightColorU.b * 0.5f;
+
 	GLuint projectionLocation = glGetUniformLocation(m_shaderProgram, "projection");
 	glUniformMatrix4fv(projectionLocation, 1, 0, contextRenderer.projection.data());
 	GLuint viewLocation = glGetUniformLocation(m_shaderProgram, "view");
@@ -165,8 +179,27 @@ void Cube<Type>::render(const ContextRenderer& contextRenderer, Cube<Type>& ligh
 	glUniform3fv(lightPositionLocation, 1, reinterpret_cast<float*>(&light.transform.position));
 
 	GLuint CameraPositionLocation = glGetUniformLocation(m_shaderProgram, "viewPosition");
-	glUniform3fv(CameraPositionLocation, 1, reinterpret_cast<float*>(&camera.transform.position));	
+	glUniform3fv(CameraPositionLocation, 1, reinterpret_cast<float*>(&camera.transform.position));
 
+
+	GLuint materialAmbientLocation = glGetUniformLocation(m_shaderProgram, "material.ambient");
+	glUniform3f(materialAmbientLocation, 1.0f, 0.5f, 0.31f);
+
+	GLuint materialDiffuseLocation = glGetUniformLocation(m_shaderProgram, "material.diffuse");
+	glUniform3f(materialDiffuseLocation, 1.0f, 0.5f, 0.31f);
+
+	GLuint materialSpecularLocation = glGetUniformLocation(m_shaderProgram, "material.specular");
+	glUniform3f(materialSpecularLocation, 0.5f, 0.5f, 0.5f);
+
+	GLuint materialShininessLocation = glGetUniformLocation(m_shaderProgram, "material.shininess");
+	glUniform1f(materialShininessLocation, 32.f);
+
+	GLuint lightAmbientLocation = glGetUniformLocation(m_shaderProgram, "light.ambient");
+	glUniform3fv(lightAmbientLocation, 1, reinterpret_cast<float*>(&ambientColor));
+	GLuint lightDiffuseLocation = glGetUniformLocation(m_shaderProgram, "light.diffuse");
+	glUniform3fv(lightDiffuseLocation, 1, reinterpret_cast<float*>(&diffuseColor));
+	GLuint lightSpecularLocation = glGetUniformLocation(m_shaderProgram, "light.specular");
+	glUniform3f(lightSpecularLocation, 1.f, 1.f, 1.f);
 
 	m_texture.bind();
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
