@@ -39,10 +39,12 @@ void Texture::textUnit(GLuint shaderProgram, const char* uniform, GLuint unit)
 {
 	GLuint textUni = glGetUniformLocation(shaderProgram, uniform);
 	glUniform1f(textUni, unit);
+
 }
 
 
-void Texture::bind()
+void Texture::bind(GLuint slot)
 {
+	glActiveTexture(slot);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 }
