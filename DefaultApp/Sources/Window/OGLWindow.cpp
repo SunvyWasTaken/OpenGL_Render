@@ -6,6 +6,8 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
+#include "LowLevel_Renderer/Cameras/Camera.h"
+
 OGLWindow::OGLWindow(int width, int height, const std::string& title)
 	: m_width(width), m_height(height), m_title(title), m_windowOpenGL(nullptr)
 {
@@ -43,9 +45,31 @@ int OGLWindow::isWindowShouldClose()
 	return glfwWindowShouldClose(m_windowOpenGL);
 }
 
-void OGLWindow::PollEvent()
+void OGLWindow::PollEvent(Camera& cam)
 {
 	glfwPollEvents();
+
+	const float cameraSpeed = 0.0005f; // adjust accordingly
+	if (glfwGetKey(m_windowOpenGL, GLFW_KEY_W) == GLFW_PRESS)
+		cam.transform.position.z += cameraSpeed * 1.f;
+	if (glfwGetKey(m_windowOpenGL, GLFW_KEY_S) == GLFW_PRESS)
+		cam.transform.position.z -= cameraSpeed * 1.f;
+	if (glfwGetKey(m_windowOpenGL, GLFW_KEY_A) == GLFW_PRESS)
+		cam.transform.position.x += cameraSpeed * 1.f;
+	if (glfwGetKey(m_windowOpenGL, GLFW_KEY_D) == GLFW_PRESS)
+		cam.transform.position.x -= cameraSpeed * 1.f;
+	if (glfwGetKey(m_windowOpenGL, GLFW_KEY_SPACE) == GLFW_PRESS)
+		cam.transform.position.y += cameraSpeed * 1.f;
+	if (glfwGetKey(m_windowOpenGL, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		cam.transform.position.y -= cameraSpeed * 1.f;
+
+	double xpos, ypos;
+	glfwGetCursorPos(m_windowOpenGL, &xpos, &ypos);
+	/*if(xpos > 1)
+		cam.transform.rotation.y -= 0.025f * cameraSpeed;
+	else if(xpos < -1)
+		cam.transform.rotation.y += 0.025f * cameraSpeed;*/
+
 }
 
 void OGLWindow::Init()

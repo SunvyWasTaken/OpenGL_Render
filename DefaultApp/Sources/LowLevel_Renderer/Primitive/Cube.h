@@ -17,15 +17,18 @@ class Cube
 	using Transform = Math::Transform<Type>;
 
 public:
-	Cube();
+	Cube(const std::string& st);
 	~Cube();
 
 	void load();
 	void update();
-	void render(const ContextRenderer& contextRenderer);
+	void render(const ContextRenderer& contextRenderer, Cube<Type>& light, Camera& camera);
 
 	Transform transform;
-	Math::Color<Type> color{1.0f,1.0f,1.0f,1.0f};
+	Math::Color<Type> color{1.f,1.0f,1.0f};
+
+	std::string shaderType;
+	bool li = false;
 private:
 	GLuint m_vao;
 	GLuint m_vbo;
@@ -35,8 +38,8 @@ private:
 };
 
 template <typename Type>
-Cube<Type>::Cube()
-	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shaderProgram(0), m_texture(Texture{})
+Cube<Type>::Cube(const std::string& st)
+	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shaderProgram(0), m_texture(Texture{}), shaderType(st)
 {
 	load();
 }
@@ -53,35 +56,40 @@ void Cube<Type>::load()
 	m_texture = Texture("Ressources\\sc.png", GL_TEXTURE0);
 
 	std::array<vertex_type, 24> vertices = {
-		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }),
+		//Front
+		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, 0.f, 1.f} ),
+		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, 0.f, 1.f} ),
+		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, 0.f, 1.f} ),
+		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, 0.f, 1.f} ),
 
-		vertex_type({ 1.f,		-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }),
-		vertex_type({ 1.f,		1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }),
-		vertex_type({ 1.f,		1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }),
-		vertex_type({ 1.f,		-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }),
+		//Right
+		vertex_type({ 1.f,		-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 1.f, 0.f, 0.f} ),
+		vertex_type({ 1.f,		1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 1.f, 0.f, 0.f} ),
+		vertex_type({ 1.f,		1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 1.f, 0.f, 0.f} ),
+		vertex_type({ 1.f,		-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 1.f, 0.f, 0.f} ),
 
-		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }),
+		//Back
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, 0.f, -1.f} ),
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, 0.f, -1.f} ),
+		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, 0.f, -1.f} ),
+		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, 0.f, -1.f} ),
 
-		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }),
-		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }),
-		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }),
+		//Left
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { -1.f, 0.f, 0.f} ),
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { -1.f, 0.f, 0.f} ),
+		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { -1.f, 0.f, 0.f} ),
+		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { -1.f, 0.f, 0.f} ),
 
-		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }),
-
-		vertex_type({ -1.f,	-1.f,	1.f },	{ 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f })
+		//Top
+		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, 1.f, 0.f} ),
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, 1.f, 0.f} ),
+		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, 1.f, 0.f} ),
+		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, 1.f, 0.f} ),
+																	
+		vertex_type({ -1.f,	-1.f,	1.f },	{ 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, -1.f, 0.f} ),
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, -1.f, 0.f} ),
+		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, -1.f, 0.f} ),
+		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, -1.f, 0.f} )
 	};
 
 	std::array<GLuint, 36> indices = {
@@ -108,9 +116,12 @@ void Cube<Type>::load()
 	LOAD_ARRAY_BUFFER(m_vbo, vertices)
 	LOAD_ELEMENT_ARRAY_BUFFER(m_ebo, indices)
 
+	std::string vert = shaderType + ".vert";
+	std::string frag = shaderType + ".frag";
+
 	ShaderInfo shaders[] = {
-		{GL_VERTEX_SHADER,  "light.vert"},
-		{GL_FRAGMENT_SHADER, "light.frag"},
+		{GL_VERTEX_SHADER,  vert.c_str()},
+		{GL_FRAGMENT_SHADER, frag.c_str()},
 		{GL_NONE, nullptr}
 	};
 
@@ -134,18 +145,28 @@ void Cube<Type>::update()
 }
 
 template <typename Type>
-void Cube<Type>::render(const ContextRenderer& contextRenderer)
+void Cube<Type>::render(const ContextRenderer& contextRenderer, Cube<Type>& light, Camera& camera)
 {
 	glUseProgram(m_shaderProgram);
 	glBindVertexArray(m_vao);
 
-	const GLuint projectionLocation = glGetUniformLocation(m_shaderProgram, "projection");
+	GLuint projectionLocation = glGetUniformLocation(m_shaderProgram, "projection");
 	glUniformMatrix4fv(projectionLocation, 1, 0, contextRenderer.projection.data());
-	const GLuint viewLocation = glGetUniformLocation(m_shaderProgram, "view");
-	glUniformMatrix4fv(viewLocation, 1, 0, contextRenderer.view.data());
+	GLuint viewLocation = glGetUniformLocation(m_shaderProgram, "view");
+	glUniformMatrix4fv(viewLocation, 1, 0, camera.getMatrixView().data());
 
-	const GLuint modelLocation = glGetUniformLocation(m_shaderProgram, "model");
+	GLuint modelLocation = glGetUniformLocation(m_shaderProgram, "model");
 	glUniformMatrix4fv(modelLocation, 1, 0, transform.getMatrix().data());
+	
+	GLuint lightColorLocation = glGetUniformLocation(m_shaderProgram, "lightColor");
+	glUniform4fv(lightColorLocation, 1, reinterpret_cast<float*>(&light.color));
+
+	GLuint lightPositionLocation = glGetUniformLocation(m_shaderProgram, "lightPosition");
+	glUniform3fv(lightPositionLocation, 1, reinterpret_cast<float*>(&light.transform.position));
+
+	GLuint CameraPositionLocation = glGetUniformLocation(m_shaderProgram, "viewPosition");
+	glUniform3fv(CameraPositionLocation, 1, reinterpret_cast<float*>(&camera.transform.position));	
+
 
 	m_texture.bind();
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);

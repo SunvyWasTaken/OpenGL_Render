@@ -35,10 +35,10 @@ public:
 		m_texture = Texture("Ressources\\sc.png", GL_TEXTURE0);
 
 		std::array<vertex_type, 4> vertices = {
-			vertex_type( { -0.9f,	0.0f,	 0.9f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f } ),
-			vertex_type( { -0.9f,	0.0f,	-0.9f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f } ),
-			vertex_type( { 0.9f,	0.0f,	-0.9f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f } ),
-			vertex_type( { 0.9f,	0.0f,	 0.9f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f } )
+			vertex_type( { -1.f,	0.0f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }, { 0.f, 1.f, 0.f} ),
+			vertex_type( { -1.f,	0.0f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }, { 0.f, 1.f, 0.f}),
+			vertex_type( { 1.f,	0.0f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }, { 0.f, 1.f, 0.f}),
+			vertex_type( { 1.f,	0.0f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }, { 0.f, 1.f, 0.f})
 		};
 
 		std::array<GLuint, 6> indices = {
@@ -70,7 +70,7 @@ public:
 		m_texture.textUnit(m_shaderProgram, "tex0");
 	}
 
-	void render(const ContextRenderer& contextRenderer, Math::Color<T>& lightColor)
+	void render(const ContextRenderer& contextRenderer, Cube<T>& light, Camera& camera)
 	{
 		glUseProgram(m_shaderProgram);
 		glBindVertexArray(m_vao);
@@ -84,7 +84,13 @@ public:
 		glUniformMatrix4fv(modelLocation, 1, 0, transform.getMatrix().data());
 
 		const GLuint lightColorLocation = glGetUniformLocation(m_shaderProgram, "lightColor");
-		glUniform4fv(lightColorLocation, 1, reinterpret_cast<float*>(&lightColor));
+		glUniform4fv(lightColorLocation, 1, reinterpret_cast<float*>(&light.color));
+
+		const GLuint lightPositionLocation = glGetUniformLocation(m_shaderProgram, "lightPosition");
+		glUniform4fv(lightPositionLocation, 1, reinterpret_cast<float*>(&light.transform.position));
+
+		const GLuint CameraPositionLocation = glGetUniformLocation(m_shaderProgram, "viewPosition");
+		glUniform4fv(CameraPositionLocation, 1, reinterpret_cast<float*>(&camera.transform.position));
 
 		m_texture.bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
