@@ -54,7 +54,7 @@ Cube<Type>::~Cube()
 template <typename Type>
 void Cube<Type>::load()
 {
-	m_texture = Texture("Ressources\\sc.png", GL_TEXTURE0);
+	m_texture = Texture("Ressources\\mat_test_albedo.png", GL_TEXTURE0);
 
 	std::array<vertex_type, 24> vertices = {
 		//Front
@@ -151,10 +151,10 @@ void Cube<Type>::render(const ContextRenderer& contextRenderer, Cube<Type>& ligh
 	glUseProgram(m_shaderProgram);
 	glBindVertexArray(m_vao);
 
-	Math::Color<Type> lightColorU{};
-	lightColorU.r = std::sin(glfwGetTime() * 2.f);
+	Math::Color<Type> lightColorU{1.f, 1.f, 1.f};
+	/*lightColorU.r = std::sin(glfwGetTime() * 2.f);
 	lightColorU.g = sin(glfwGetTime() * 0.7f);
-	lightColorU.b = sin(glfwGetTime() * 1.3f);
+	lightColorU.b = sin(glfwGetTime() * 1.3f);*/
 	Math::Color<Type> diffuseColor{};
 	diffuseColor.r = lightColorU.a * 0.5f;
 	diffuseColor.g = lightColorU.g * 0.5f;
@@ -186,7 +186,7 @@ void Cube<Type>::render(const ContextRenderer& contextRenderer, Cube<Type>& ligh
 	glUniform3f(materialAmbientLocation, 1.0f, 0.5f, 0.31f);
 
 	GLuint materialDiffuseLocation = glGetUniformLocation(m_shaderProgram, "material.diffuse");
-	glUniform3f(materialDiffuseLocation, 1.0f, 0.5f, 0.31f);
+	glUniform1i(materialDiffuseLocation, 0);
 
 	GLuint materialSpecularLocation = glGetUniformLocation(m_shaderProgram, "material.specular");
 	glUniform3f(materialSpecularLocation, 0.5f, 0.5f, 0.5f);
