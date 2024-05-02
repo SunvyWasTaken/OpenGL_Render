@@ -6,6 +6,10 @@
 template <typename VertexType>
 struct Vertex
 {
+	using P3D = Math::Point3D<VertexType>;
+	using P2D = Math::Point2D<VertexType>;
+	using Color = Math::Color<VertexType>;
+
 	Vertex(const Math::Point3D<VertexType>& point, const Math::Color<VertexType>& color)
 		: m_point(point), m_color(color), m_textureCoords(Math::Point2D<VertexType>())
 	{
@@ -16,8 +20,13 @@ struct Vertex
 	{
 	}
 
+	Vertex(const P3D& point, const Color& color, const P2D& textureCoords, const P3D& normal)
+		: m_point(point), m_color(color), m_textureCoords(textureCoords), m_normal(normal)
+	{
+	}
 private:
-	Math::Point3D<VertexType> m_point;
-	Math::Color<VertexType> m_color;
-	Math::Point2D<VertexType> m_textureCoords;
+	P3D m_point;
+	Color m_color;
+	P2D m_textureCoords;
+	P3D m_normal;
 };

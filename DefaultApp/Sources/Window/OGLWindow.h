@@ -5,6 +5,8 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+class Camera;
+
 class OGLWindow
 {
 public:
@@ -17,7 +19,7 @@ public:
 
 	int isWindowShouldClose();
 	void Draw();
-	void PollEvent();
+	void PollEvent(Camera& cam);
 
 private:
 	GLFWwindow* m_windowOpenGL;

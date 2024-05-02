@@ -20,7 +20,9 @@
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_type), reinterpret_cast<char*>(nullptr) + sizeof(vertex_type::m_point)); \
 	glEnableVertexAttribArray(1); \
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertex_type), reinterpret_cast<char*>(nullptr) + sizeof(vertex_type::m_point) + sizeof(vertex_type::m_color)); \
-	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(2); \
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_type), reinterpret_cast<char*>(nullptr) + sizeof(vertex_type::m_point) + sizeof(vertex_type::m_color) + sizeof(vertex_type::m_textureCoords)); \
+	glEnableVertexAttribArray(3);
 
 #define DELETE_BUFFER() \
 	glDeleteVertexArrays(1, &m_vao); \
