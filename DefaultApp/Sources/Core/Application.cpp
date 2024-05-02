@@ -41,7 +41,7 @@ void Application::Run()
 	plane.transform.rotation = { 0.f, 0.0f, 0.0f };
 
 	Cube<float> light{ "light" };
-	light.transform.position = { -0.5f,0.8f,-5.0f };
+	light.transform.position = { -0.5f,0.8f,-3.0f };
 	light.transform.scale = { 0.1f, 0.1f, 0.1f };
 
 	Cube<float> cube{ "default" };
@@ -49,13 +49,12 @@ void Application::Run()
 	cube.transform.scale = { 0.5f, 0.5f, 0.5f };
 	cube.li = true;
 
-	float aspectRation = 800 / 800;
+	float aspectRatio = 800 / 800;
 	float fov = 45.f / 180.f * 3.141592f;
 	float nearPlane = 0.01f;
 	float farPlane = 10.f;
 		
-	Viewport viewport(aspectRation, fov, nearPlane, farPlane); //projection matrix
-	//Math::Mat4<float> camera = Math::Mat4<float>::identity();  //view matrix
+	Viewport viewport(aspectRatio, fov, nearPlane, farPlane); //projection matrix
 
 	camera.transform.position = { 0.f, -1.6f, 2.f };
 	camera.transform.rotation = { 0.3f, 0.f, 0.f };
