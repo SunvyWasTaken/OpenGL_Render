@@ -55,7 +55,7 @@ Cube<Type>::~Cube()
 template <typename Type>
 void Cube<Type>::load()
 {
-	m_texture = Texture("Ressources\\mat_test_albedo.png", GL_TEXTURE0);
+	m_texture = Texture("Ressources\\mat_test_diffuse.png", GL_TEXTURE0);
 	m_textureSpecular = Texture("Ressources\\mat_test_specular.png", GL_TEXTURE1);
 
 	std::array<vertex_type, 24> vertices = {
