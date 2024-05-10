@@ -7,6 +7,10 @@
 #include "Editor/Tools/ToolWindow.h"
 #include "LowLevel_Renderer/Primitive/Triangle.h"
 #include "LowLevel_Renderer/Primitive/Vertex.h"
+#include "Editor/Observer/SignalSlot.h"
+#include <iostream>
+
+DECLARE_MULTICAST_DELEGATE(TestSignalSlot)
 
 Application::Application()
 	: m_window(new OGLWindow(800, 800, "Procedural map generation")), m_toolsManager(new ToolsManager())
@@ -34,6 +38,14 @@ void Application::Run()
 	VertexF p2{ { 0.5f, 0.5f, 0.5f}, {0.f, 0.f, 1.f} };
 
 	TriangleF triangle(p0, p1, p2);
+
+	/*Test Signal Slot*/
+	TestSignalSlot signal;
+	signal.Bind([]() {
+		std::cout << "Application Started" << std::endl;
+		});
+
+	signal.Broadcast();
 
 	while (!m_window->isWindowShouldClose())
 	{
