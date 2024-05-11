@@ -103,6 +103,7 @@ public:
 		m_material.specularMap.bind(GL_TEXTURE1);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
 	}
 
 	Math::Transform<T> transform;
