@@ -8,6 +8,8 @@
 #include <stdexcept>
 #include <filesystem>
 
+#include "Math/Color.h"
+
 
 namespace
 {
@@ -27,7 +29,7 @@ namespace
 	}
 }
 
-unsigned int Shader::loadShader(ShaderInfo* shaderInfo)
+Shader* Shader::loadShader(ShaderInfo* shaderInfo)
 {
 	if (shaderInfo == nullptr)
 		throw std::runtime_error("Shader info not valid");
@@ -86,6 +88,61 @@ unsigned int Shader::loadShader(ShaderInfo* shaderInfo)
 		delete[] logBuffer;
 		throw std::runtime_error("Program does not linked");
 	}
+	
+	return new Shader(program);
+}
 
-	return program;
+Shader::Shader(unsigned programId)
+	: program(programId)
+{
+}
+
+void Shader::setFloat(const GLchar* variable, float value)
+{
+	glUniform1f(glGetUniformLocation(program, variable), value);
+}
+
+void Shader::setInt(const GLchar* variable, float value)
+{
+	glUniform1f(glGetUniformLocation(program, variable), value);
+}
+
+void Shader::setVec3(const GLchar* variable, Math::Point3D<float>& values)
+{
+	glUniform3fv(glGetUniformLocation(program, variable), 1, reinterpret_cast<float*>(&values));
+}
+
+void Shader::setVec3(const GLchar* variable, Math::Color<float>& values)
+{
+	glUniform3fv(glGetUniformLocation(program, variable), 1, reinterpret_cast<float*>(&values));
+}
+
+void Shader::setMat4(const GLchar* variable, const Math::Mat4<float>& values)
+{
+	glUniformMatrix4fv(glGetUniformLocation(program, variable), 1, 0, values.data());
+}
+
+void Shader::setFloat(const GLchar* variable, float value) const
+{
+	setFloat(variable, value);
+}
+
+void Shader::setInt(const GLchar* variable, float value) const
+{
+	setInt(variable, value);
+}
+
+void Shader::setVec3(const GLchar* variable, Math::Point3D<float>& values) const
+{
+	setVec3(variable, values);
+}
+
+void Shader::setVec3(const GLchar* variable, Math::Color<float>& values) const
+{
+	setVec3(variable, values);
+}
+
+void Shader::setMat4(const GLchar* variable, const Math::Mat4<float>& values) const
+{
+	setMat4(variable, values);
 }

@@ -29,8 +29,8 @@
 	glDeleteBuffers(1, &m_vbo); \
 	glDeleteProgram(m_shaderProgram);
 
-#define DELETE_BUFFER_WITH_ELEMENTS() \
+#define DELETE_BUFFER_WITH_ELEMENTS(shaderProgram) \
 	glDeleteVertexArrays(1, &m_vao); \
 	glDeleteBuffers(1, &m_vbo); \
 	glDeleteBuffers(1, &m_ebo); \
-	glDeleteProgram(m_shaderProgram);
+	glDeleteProgram(shaderProgram);
