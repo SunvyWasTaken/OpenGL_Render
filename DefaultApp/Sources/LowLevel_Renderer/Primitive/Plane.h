@@ -1,11 +1,12 @@
 #pragma once
 
-#include "LowLevel_Renderer/Primitive/Vertex.h"
+#include "Vertex.h"
 #include "LowLevel_Renderer/Shader/Shader.h"
 #include "PrimitiveUtils.h"
 #include "LowLevel_Renderer/Texture/Texture.h"
 #include "Math/Matrix.h"
 #include "Math/Transform.h"
+#include "LowLevel_Renderer/Materials/Material.h"
 
 #include <array>
 #include <glad/glad.h>
@@ -17,7 +18,7 @@ class Plane
 
 public:
 	Plane()
-		: transform(Math::Transform<T>()), m_vao(0), m_vbo(0), m_shaderProgram(0), m_texture(Texture{})
+		: transform(Math::Transform<T>()), m_vao(0), m_vbo(0), m_shaderProgram(0), m_texture(Texture{}), m_material(Material{})
 	{
 		load();
 	}
@@ -38,7 +39,11 @@ public:
 
 	void load()
 	{
-		m_texture = Texture("Ressources\\sc.png", GL_TEXTURE0);
+		m_material = Material{
+			Texture("Ressources\\mat_test_diffuse.png", GL_TEXTURE0),
+			Texture("Ressources\\mat_test_specular.png", GL_TEXTURE1),
+			32.f
+		};
 
 		std::array<vertex_type, 4> vertices = {
 			vertex_type( { -1.f,	0.0f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }, { 0.f, 1.f, 0.f} ),
@@ -72,13 +77,13 @@ public:
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-		m_texture.bind();
-		m_texture.textUnit(m_shaders->program, "tex0");
+		m_material.diffuseMap.textUnit(m_shaders->program, "tex0");
+		m_material.specularMap.textUnit(m_shaders->program, "tex1");
 	}
 
-	void render(const ContextRenderer& contextRenderer, Cube<T>& light, Camera& camera)
+	void render(ContextRenderer& contextRenderer)
 	{
-		glUseProgram(m_shaderProgram);
+		glUseProgram(m_shaders->program);
 		glBindVertexArray(m_vao);
 
 		/*const GLuint projectionLocation = glGetUniformLocation(m_shaderProgram, "projection");
@@ -98,8 +103,20 @@ public:
 		const GLuint CameraPositionLocation = glGetUniformLocation(m_shaderProgram, "viewPosition");
 		glUniform4fv(CameraPositionLocation, 1, reinterpret_cast<float*>(&camera.transform.position));*/
 
-		m_texture.bind();
+		m_shaders->setMat4("projection", contextRenderer.projection);
+		m_shaders->setMat4("view", contextRenderer.camera.getMatrixView());
+		m_shaders->setMat4("model", transform.getMatrix());
+
+		m_shaders->setVec3("viewPostion", contextRenderer.camera.transform.position);
+
+		m_shaders->setFloat("material.shininess", m_material.shininess);
+
+		contextRenderer.directionalLight.getUniform(m_shaders);
+
+		m_material.diffuseMap.bind(GL_TEXTURE0);
+		m_material.specularMap.bind(GL_TEXTURE1);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
 	}
 
 	void update()
@@ -115,4 +132,5 @@ private:
 	GLuint m_shaderProgram;
 	Shader* m_shaders;
 	Texture m_texture;
+	Material m_material;
 };
