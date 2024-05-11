@@ -25,7 +25,11 @@ public:
 
 	~Triangle() override
 	{
-		
+		if(m_shaders)
+		{
+			delete m_shaders;
+			m_shaders = nullptr;
+		}
 	}
 
 	void load() override
@@ -47,8 +51,8 @@ public:
 			{GL_NONE, nullptr}
 		};
 
-		m_shaderProgram = Shader::loadShader(shaders);
-		glUseProgram(m_shaderProgram);
+		m_shaders = Shader::loadShader(shaders);
+		glUseProgram(m_shaders->program);
 
 		// /!\ Attention, ca marche que si t = float, -> dommage
 		/*glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_type), 0);
@@ -62,12 +66,12 @@ public:
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 		m_texture.bind();
-		m_texture.textUnit(m_shaderProgram, "tex0");
+		m_texture.textUnit(m_shaders->program, "tex0");
 	}
 
 	void render(const Math::Mat4<T>& vp) override
 	{
-		GLuint mvpLocation = glGetUniformLocation(m_shaderProgram, "MVP");
+		GLuint mvpLocation = glGetUniformLocation(m_shaders->program, "MVP");
 
 		glBindVertexArray(m_vao);
 
@@ -84,5 +88,6 @@ private:
 	GLuint m_vao;
 	GLuint m_vbo;
 	GLuint m_shaderProgram;
+	Shader* m_shaders;
 	Texture m_texture;
 };

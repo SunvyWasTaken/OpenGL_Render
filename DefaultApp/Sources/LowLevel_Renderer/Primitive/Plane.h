@@ -27,7 +27,13 @@ public:
 		glDeleteVertexArrays(1, &m_vao);
 		glDeleteBuffers(1, &m_vbo);
 		glDeleteBuffers(1, &m_ebo);
-		glDeleteProgram(m_shaderProgram);
+		glDeleteProgram(m_shaders->program);
+
+		if(m_shaders)
+		{
+			delete m_shaders;
+			m_shaders = nullptr;
+		}
 	}
 
 	void load()
@@ -56,8 +62,8 @@ public:
 			{GL_NONE, nullptr}
 		};
 
-		m_shaderProgram = Shader::loadShader(shaders);
-		glUseProgram(m_shaderProgram);
+		m_shaders = Shader::loadShader(shaders);
+		glUseProgram(m_shaders->program);
 
 		// /!\ Attention, ca marche que si t = float, -> dommage
 		LOAD_BASIC_VERTEX_ATTRIB_POINTER()
@@ -67,7 +73,7 @@ public:
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 		m_texture.bind();
-		m_texture.textUnit(m_shaderProgram, "tex0");
+		m_texture.textUnit(m_shaders->program, "tex0");
 	}
 
 	void render(const ContextRenderer& contextRenderer, Cube<T>& light, Camera& camera)
@@ -75,7 +81,7 @@ public:
 		glUseProgram(m_shaderProgram);
 		glBindVertexArray(m_vao);
 
-		const GLuint projectionLocation = glGetUniformLocation(m_shaderProgram, "projection");
+		/*const GLuint projectionLocation = glGetUniformLocation(m_shaderProgram, "projection");
 		glUniformMatrix4fv(projectionLocation, 1, 0, contextRenderer.projection.data());
 		const GLuint viewLocation = glGetUniformLocation(m_shaderProgram, "view");
 		glUniformMatrix4fv(viewLocation, 1, 0, contextRenderer.view.data());
@@ -90,7 +96,7 @@ public:
 		glUniform4fv(lightPositionLocation, 1, reinterpret_cast<float*>(&light.transform.position));
 
 		const GLuint CameraPositionLocation = glGetUniformLocation(m_shaderProgram, "viewPosition");
-		glUniform4fv(CameraPositionLocation, 1, reinterpret_cast<float*>(&camera.transform.position));
+		glUniform4fv(CameraPositionLocation, 1, reinterpret_cast<float*>(&camera.transform.position));*/
 
 		m_texture.bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -107,5 +113,6 @@ private:
 	GLuint m_vbo;
 	GLuint m_ebo;
 	GLuint m_shaderProgram;
+	Shader* m_shaders;
 	Texture m_texture;
 };

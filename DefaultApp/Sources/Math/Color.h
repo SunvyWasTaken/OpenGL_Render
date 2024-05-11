@@ -15,6 +15,14 @@ namespace Math
 		{
 		}
 
+		Color operator*(float rhs);
+
 		T r, g, b, a;
 	};
+
+	template <typename T>
+	Color<T> Color<T>::operator*(float rhs)
+	{
+		return { r * rhs, g * rhs, b * rhs };
+	}
 }

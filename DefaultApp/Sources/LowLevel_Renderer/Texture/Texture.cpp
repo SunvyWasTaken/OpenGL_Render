@@ -39,7 +39,6 @@ void Texture::textUnit(GLuint shaderProgram, const char* uniform, GLuint unit)
 {
 	GLuint textUni = glGetUniformLocation(shaderProgram, uniform);
 	glUniform1f(textUni, unit);
-
 }
 
 

@@ -7,6 +7,7 @@
 #include "Editor/ToolsManager.h"
 #include "Editor/Tools/ToolWindow.h"
 #include "LowLevel_Renderer/Cameras/Camera.h"
+#include "LowLevel_Renderer/Lights/DirectionalLight.h"
 #include "LowLevel_Renderer/Primitive/Cube.h"
 #include "LowLevel_Renderer/Primitive/Plane.h"
 #include "LowLevel_Renderer/Primitive/Triangle.h"
@@ -31,23 +32,28 @@ void Application::Run()
 	m_window->Init();
 
 	using P3D = Math::Point3D<float>;
-	using TriangleF = Triangle<float>;
-	TriangleF triangle{};
-	triangle.transform.position = P3D{ 2.5f, 2.5f, -8.f };
+	//using TriangleF = Triangle<float>;
+	//TriangleF triangle{};
+	//triangle.transform.position = P3D{ 2.5f, 2.5f, -8.f };
 
-	using PlaneF = Plane<float>;
-	PlaneF plane{};
-	plane.transform.position = P3D{ 0.f, -1.f, -5.f };
-	plane.transform.rotation = { 0.f, 0.0f, 0.0f };
+	//using PlaneF = Plane<float>;
+	//PlaneF plane{};
+	//plane.transform.position = P3D{ 0.f, -1.f, -5.f };
+	//plane.transform.rotation = { 0.f, 0.0f, 0.0f };
 
-	Cube<float> light{ "light" };
-	light.transform.position = { -1.2f,0.3f,-4.5f };
-	light.transform.scale = { 0.1f, 0.1f, 0.1f };
+	DirectionalLight directionalLight;
+	directionalLight.direction = { -0.2f, -1.f, -0.3f };
+	directionalLight.diffuse = { 0.5f, 0.5f, 0.5f };
+	directionalLight.ambient = directionalLight.diffuse * 0.2f;
+	directionalLight.specular = 1.f;
 
-	Cube<float> cube{ "default" };
+	Cube<float> cube;
 	cube.transform.position = { 0.f, 0.f, -5.f };
 	cube.transform.scale = { 0.5f, 0.5f, 0.5f };
-	cube.li = true;
+
+	Cube<float> cube2;
+	cube2.transform.position = { 1.5f, -0.0f, -12.f };
+	cube2.transform.scale = { 0.5f, 0.5f, 0.5f };
 
 	float aspectRatio = 800 / 800;
 	float fov = 45.f / 180.f * 3.141592f;
@@ -66,7 +72,7 @@ void Application::Run()
 	{
 		m_window->ClearBackBuffer();
 
-		ContextRenderer contextRenderer{ viewport.getMatrixProjection(), camera.getMatrixView() };
+		ContextRenderer contextRenderer{ viewport.getMatrixProjection(), camera, directionalLight };
 
 
 		// TODO: write code here...
@@ -76,13 +82,10 @@ void Application::Run()
 
 		cube.transform.rotation.y = 0.5f;
 
-		light.render(contextRenderer, light, camera);
-		cube.render(contextRenderer, light, camera);
+		cube.render(contextRenderer);
+		cube2.render(contextRenderer);
 
-		//plane.render(contextRenderer, cube, camera);
-		//triangle.render(pvm);
-		//cube.transform.rotation.y += 0.0005f;
-		//cube.transform.rotation.x += 0.0005f;
+
 		_Draw(*m_window);
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);	//Set view mode in wireframe

@@ -5,11 +5,11 @@
 #include "LowLevel_Renderer/Texture/Texture.h"
 #include "Math/Transform.h"
 #include "LowLevel_Renderer/Shader/Shader.h"
-#include "Math/Matrix.h"
 
 #include <glad/glad.h>
 #include <array>
-#include <cmath>
+
+#include "LowLevel_Renderer/Materials/Material.h"
 
 template <typename Type>
 class Cube
@@ -18,30 +18,30 @@ class Cube
 	using Transform = Math::Transform<Type>;
 
 public:
-	Cube(const std::string& st);
+	Cube();
 	~Cube();
 
 	void load();
 	void update();
-	void render(const ContextRenderer& contextRenderer, Cube<Type>& light, Camera& camera);
+	void render(ContextRenderer& contextRenderer);
 
 	Transform transform;
-	Math::Color<Type> color{1.f,1.0f,1.0f};
 
-	std::string shaderType;
-	bool li = false;
 private:
 	GLuint m_vao;
 	GLuint m_vbo;
 	GLuint m_ebo;
 	GLuint m_shaderProgram;
+	Shader* m_shaders;
 	Texture m_texture;
 	Texture m_textureSpecular;
+
+	Material m_material;
 };
 
 template <typename Type>
-Cube<Type>::Cube(const std::string& st)
-	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shaderProgram(0), m_texture(Texture{}), shaderType(st)
+Cube<Type>::Cube()
+	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shaderProgram(0), m_texture(Texture{}), m_shaders(nullptr), m_material(Material{})
 {
 	load();
 }
@@ -49,14 +49,23 @@ Cube<Type>::Cube(const std::string& st)
 template <typename Type>
 Cube<Type>::~Cube()
 {
-	DELETE_BUFFER_WITH_ELEMENTS()
+	DELETE_BUFFER_WITH_ELEMENTS(m_shaders->program)
+
+	if(m_shaders)
+	{
+		delete m_shaders;
+		m_shaders = nullptr;
+	}
 }
 
 template <typename Type>
 void Cube<Type>::load()
 {
-	m_texture = Texture("Ressources\\mat_test_diffuse.png", GL_TEXTURE0);
-	m_textureSpecular = Texture("Ressources\\mat_test_specular.png", GL_TEXTURE1);
+	m_material = Material{
+		Texture("Ressources\\mat_test_diffuse.png", GL_TEXTURE0),
+		Texture("Ressources\\mat_test_specular.png", GL_TEXTURE1),
+		32.f
+	};
 
 	std::array<vertex_type, 24> vertices = {
 		//Front
@@ -119,17 +128,14 @@ void Cube<Type>::load()
 	LOAD_ARRAY_BUFFER(m_vbo, vertices)
 	LOAD_ELEMENT_ARRAY_BUFFER(m_ebo, indices)
 
-	std::string vert = shaderType + ".vert";
-	std::string frag = shaderType + ".frag";
-
 	ShaderInfo shaders[] = {
-		{GL_VERTEX_SHADER,  vert.c_str()},
-		{GL_FRAGMENT_SHADER, frag.c_str()},
+		{GL_VERTEX_SHADER,  "default.vert"},
+		{GL_FRAGMENT_SHADER, "default.frag"},
 		{GL_NONE, nullptr}
 	};
 
-	m_shaderProgram = Shader::loadShader(shaders);
-	glUseProgram(m_shaderProgram);
+	m_shaders = Shader::loadShader(shaders);
+	glUseProgram(m_shaders->program);
 
 	// /!\ Attention, ca marche que si t = float, -> dommage
 	LOAD_BASIC_VERTEX_ATTRIB_POINTER()
@@ -138,9 +144,9 @@ void Cube<Type>::load()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	
-	m_texture.textUnit(m_shaderProgram, "tex0");
-	m_textureSpecular.textUnit(m_shaderProgram, "tex1");
+
+	m_material.diffuseMap.textUnit(m_shaders->program, "tex0");
+	m_material.specularMap.textUnit(m_shaders->program, "tex1");
 }
 
 template <typename Type>
@@ -149,63 +155,29 @@ void Cube<Type>::update()
 }
 
 template <typename Type>
-void Cube<Type>::render(const ContextRenderer& contextRenderer, Cube<Type>& light, Camera& camera)
+void Cube<Type>::render(ContextRenderer& contextRenderer)
 {
-	glUseProgram(m_shaderProgram);
+	glUseProgram(m_shaders->program);
 	glBindVertexArray(m_vao);
 
-	Math::Color<Type> lightColorU{1.f, 1.f, 1.f};
-	/*lightColorU.r = std::sin(glfwGetTime() * 2.f);
-	lightColorU.g = sin(glfwGetTime() * 0.7f);
-	lightColorU.b = sin(glfwGetTime() * 1.3f);*/
-	Math::Color<Type> diffuseColor{};
-	diffuseColor.r = lightColorU.a * 0.5f;
-	diffuseColor.g = lightColorU.g * 0.5f;
-	diffuseColor.b = lightColorU.b * 0.5f;
-	Math::Color<Type> ambientColor{};
-	diffuseColor.r = lightColorU.a * 0.8f;
-	diffuseColor.g = lightColorU.g * 0.8f;
-	diffuseColor.b = lightColorU.b * 0.8f;
+	m_shaders->setMat4("projection", contextRenderer.projection);
+	m_shaders->setMat4("view", contextRenderer.camera.getMatrixView());
+	m_shaders->setMat4("model", transform.getMatrix());
 
-	GLuint projectionLocation = glGetUniformLocation(m_shaderProgram, "projection");
-	glUniformMatrix4fv(projectionLocation, 1, 0, contextRenderer.projection.data());
-	GLuint viewLocation = glGetUniformLocation(m_shaderProgram, "view");
-	glUniformMatrix4fv(viewLocation, 1, 0, camera.getMatrixView().data());
+	m_shaders->setVec3("viewPostion", contextRenderer.camera.transform.position);
 
-	GLuint modelLocation = glGetUniformLocation(m_shaderProgram, "model");
-	glUniformMatrix4fv(modelLocation, 1, 0, transform.getMatrix().data());
-	
-	GLuint lightColorLocation = glGetUniformLocation(m_shaderProgram, "lightColor");
-	glUniform4fv(lightColorLocation, 1, reinterpret_cast<float*>(&light.color));
+	m_shaders->setFloat("material.shininess", m_material.shininess);
 
-	GLuint lightPositionLocation = glGetUniformLocation(m_shaderProgram, "lightPosition");
-	glUniform3fv(lightPositionLocation, 1, reinterpret_cast<float*>(&light.transform.position));
+	contextRenderer.directionalLight.getUniform(m_shaders);
+	//GLuint lightConstantLocation = glGetUniformLocation(m_shaders->program, "light.constant");
+	//glUniform1f(lightConstantLocation, 1.f);
+	//GLuint lightLinearLocation = glGetUniformLocation(m_shaders->program, "light.linear");
+	//glUniform1f(lightLinearLocation, 0.09f);
+	//GLuint lightQuadraticLocation = glGetUniformLocation (m_shaders->program, "light.quadratic");
+	//glUniform1f(lightQuadraticLocation, 0.032f);
 
-	GLuint CameraPositionLocation = glGetUniformLocation(m_shaderProgram, "viewPosition");
-	glUniform3fv(CameraPositionLocation, 1, reinterpret_cast<float*>(&camera.transform.position));
-
-
-	GLuint materialAmbientLocation = glGetUniformLocation(m_shaderProgram, "material.ambient");
-	glUniform3f(materialAmbientLocation, 1.0f, 0.5f, 0.31f);
-
-	GLuint materialDiffuseLocation = glGetUniformLocation(m_shaderProgram, "material.diffuse");
-	glUniform1i(materialDiffuseLocation, 0);
-
-	GLuint materialSpecularLocation = glGetUniformLocation(m_shaderProgram, "material.specular");
-	glUniform1i(materialSpecularLocation, 1);
-
-	GLuint materialShininessLocation = glGetUniformLocation(m_shaderProgram, "material.shininess");
-	glUniform1f(materialShininessLocation, 32.f);
-
-	GLuint lightAmbientLocation = glGetUniformLocation(m_shaderProgram, "light.ambient");
-	glUniform3fv(lightAmbientLocation, 1, reinterpret_cast<float*>(&ambientColor));
-	GLuint lightDiffuseLocation = glGetUniformLocation(m_shaderProgram, "light.diffuse");
-	glUniform3fv(lightDiffuseLocation, 1, reinterpret_cast<float*>(&diffuseColor));
-	GLuint lightSpecularLocation = glGetUniformLocation(m_shaderProgram, "light.specular");
-	glUniform3f(lightSpecularLocation, 1.f, 1.f, 1.f);
-	
-	m_texture.bind(GL_TEXTURE0);
-	m_textureSpecular.bind(GL_TEXTURE1);
+	m_material.diffuseMap.bind(GL_TEXTURE0);
+	m_material.specularMap.bind(GL_TEXTURE1);
 
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }
