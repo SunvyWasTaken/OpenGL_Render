@@ -17,4 +17,20 @@ namespace Math
 
 		T x, y, z;
 	};
+
+	template <typename T>
+	struct Point2D
+	{
+		Point2D(const T& x_ = 0, const T& y_ = 0)
+			: x(x_), y(y_)
+		{
+		}
+
+		Point2D(const Point2D& point)
+			: x(point.x), y(point.y)
+		{
+		}
+
+		T x, y;
+	};
 }

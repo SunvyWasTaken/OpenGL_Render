@@ -2,15 +2,16 @@
 
 #include <stdexcept>
 
+#include "ContextRenderer.h"
 #include "Editor/Tools/ExempleToolImpl.h"
 #include "Editor/ToolsManager.h"
 #include "Editor/Tools/ToolWindow.h"
+#include "LowLevel_Renderer/Cameras/Camera.h"
+#include "LowLevel_Renderer/Lights/DirectionalLight.h"
+#include "LowLevel_Renderer/Primitive/Cube.h"
+#include "LowLevel_Renderer/Primitive/Plane.h"
 #include "LowLevel_Renderer/Primitive/Triangle.h"
-#include "LowLevel_Renderer/Primitive/Vertex.h"
-#include "Editor/Observer/SignalSlot.h"
-#include <iostream>
-
-DECLARE_MULTICAST_DELEGATE(TestSignalSlot)
+#include "LowLevel_Renderer/Viewports/Viewport.h"
 
 Application::Application()
 	: m_window(new OGLWindow(800, 800, "Procedural map generation")), m_toolsManager(new ToolsManager())
@@ -30,32 +31,65 @@ void Application::Run()
 
 	m_window->Init();
 
-	using VertexF = Vertex<float>;
-	using TriangleF = Triangle<float>;
+	using P3D = Math::Point3D<float>;
+	//using TriangleF = Triangle<float>;
+	//TriangleF triangle{};
+	//triangle.transform.position = P3D{ 2.5f, 2.5f, -8.f };
 
-	VertexF p0{ { -0.5f, -0.5f, 0.5f}, {1.f, 0.f, 0.f} };
-	VertexF p1{ { 0.5f, -0.5f, 0.5f}, {0.f, 1.f, 0.f} };
-	VertexF p2{ { 0.5f, 0.5f, 0.5f}, {0.f, 0.f, 1.f} };
+	//using PlaneF = Plane<float>;
+	//PlaneF plane{};
+	//plane.transform.position = P3D{ 0.f, -1.f, -5.f };
+	//plane.transform.rotation = { 0.f, 0.0f, 0.0f };
 
-	TriangleF triangle(p0, p1, p2);
+	DirectionalLight directionalLight;
+	directionalLight.direction = { -0.2f, -1.f, -0.3f };
+	directionalLight.diffuse = { 0.5f, 0.5f, 0.5f };
+	directionalLight.ambient = directionalLight.diffuse * 0.2f;
+	directionalLight.specular = 1.f;
 
-	/*Test Signal Slot*/
-	TestSignalSlot signal;
-	signal.Bind([]() {
-		std::cout << "Application Started" << std::endl;
-		});
+	Cube<float> cube;
+	cube.transform.position = { 0.f, 0.f, -5.f };
+	cube.transform.scale = { 0.5f, 0.5f, 0.5f };
 
-	signal.Broadcast();
+	Cube<float> cube2;
+	cube2.transform.position = { 1.5f, -0.0f, -12.f };
+	cube2.transform.scale = { 0.5f, 0.5f, 0.5f };
+
+	float aspectRatio = 800 / 800;
+	float fov = 45.f / 180.f * 3.141592f;
+	float nearPlane = 0.01f;
+	float farPlane = 10.f;
+		
+	Viewport viewport(aspectRatio, fov, nearPlane, farPlane); //projection matrix
+
+	camera.transform.position = { 0.f, -1.6f, 2.f };
+	camera.transform.rotation = { 0.3f, 0.f, 0.f };
+	Math::Mat4<float> model = Math::Mat4<float>::identity();   //model matrix
+
+	//ContextRenderer contextRenderer{ viewport.getMatrixProjection(), camera.getMatrixView() };
 
 	while (!m_window->isWindowShouldClose())
 	{
 		m_window->ClearBackBuffer();
 
+		ContextRenderer contextRenderer{ viewport.getMatrixProjection(), camera, directionalLight };
+
+
 		// TODO: write code here...
 
-		triangle.render();
+		//triangle.transform.rotation.y += 0.0025f;
+		//plane.transform.rotation.y += 0.001f;
+
+		cube.transform.rotation.y = 0.5f;
+
+		cube.render(contextRenderer);
+		cube2.render(contextRenderer);
+
 
 		_Draw(*m_window);
+
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);	//Set view mode in wireframe
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);	//Set view mode with full triangle
 
 		glFlush();
 
@@ -71,5 +105,5 @@ void Application::_Draw(OGLWindow& window)
 
 void Application::_PollEvent()
 {
-	m_window->PollEvent();
+	m_window->PollEvent(camera);
 }

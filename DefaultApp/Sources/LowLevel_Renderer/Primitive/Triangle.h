@@ -1,39 +1,49 @@
 #pragma once
 
-#include "Vertex.h"
-#include "LowLevel_Renderer/Shader/Shader.h"
-
-#include <array>
-#include <fstream>
-#include <glad/glad.h>
-
 #include "Triangle.h"
 
+#include "Vertex.h"
+#include "LowLevel_Renderer/Shader/Shader.h"
+#include "LowLevel_Renderer/Primitive/PrimitiveUtils.h"
+
+#include <array>
+#include <glad/glad.h>
+
+#include "Shape.h"
+
 template <typename T>
-class Triangle
+class Triangle : public Shape<T>
 {
 public:
 	using vertex_type = Vertex<T>;
 
-	Triangle(const vertex_type& p0, const vertex_type& p1, const vertex_type& p2)
-		: m_points{ p0, p1, p2 }, m_vao(0), m_vbo(0), m_shaderProgram(0)
+	Triangle()
+		: Shape<T>()
 	{
-		load();
+		Triangle::load();
 	}
 
-	~Triangle()
+	~Triangle() override
 	{
+		if(m_shaders)
+		{
+			delete m_shaders;
+			m_shaders = nullptr;
+		}
 	}
 
-	void load()
+	void load() override
 	{
-		glGenVertexArrays(1, &m_vao);
-		glBindVertexArray(m_vao);
+		m_texture = Texture("Ressources\\sc.png", GL_TEXTURE0);
 
-		glGenBuffers(1, &m_vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+		std::array<vertex_type, 3> vertices = {
+			vertex_type( { -0.5f,	-0.5f,	0.f }, { 1.f,	0.f,	0.f }, { 0.0f, 0.0f } ),
+			vertex_type( {	0.0f,	0.5f,	0.f }, { 0.f,	1.f,	0.f }, { 0.5f, 1.0f } ),
+			vertex_type( {	0.5f,	-0.5f,	0.f }, { 0.f,	0.f,	1.f }, { 1.0f, 0.0f } ),
+		};
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(m_points), m_points.data(), GL_STATIC_DRAW);
+		LOAD_VERTEX_ARRAYS(m_vao)
+		LOAD_ARRAY_BUFFER(m_vbo, vertices)
 
 		ShaderInfo shaders[] = {
 			{GL_VERTEX_SHADER,  "default.vert"},
@@ -41,29 +51,43 @@ public:
 			{GL_NONE, nullptr}
 		};
 
-		m_shaderProgram = Shader::loadShader(shaders);
-		glUseProgram(m_shaderProgram);
+		m_shaders = Shader::loadShader(shaders);
+		glUseProgram(m_shaders->program);
 
 		// /!\ Attention, ca marche que si t = float, -> dommage
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_type), 0);
+		/*glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_type), 0);
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_type), reinterpret_cast<char*>(nullptr) + sizeof(vertex_type::m_point));
-		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(1)*/;
+		LOAD_BASIC_VERTEX_ATTRIB_POINTER()
+
+		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		m_texture.bind();
+		m_texture.textUnit(m_shaders->program, "tex0");
 	}
 
-	void render()
+	void render(const Math::Mat4<T>& vp) override
 	{
+		GLuint mvpLocation = glGetUniformLocation(m_shaders->program, "MVP");
+
 		glBindVertexArray(m_vao);
 
-		/*GLuint mvpLocation = glGetUniformLocation(m_program, "MVP");
-		glUniformMatrix4fv(mvpLocation, 1, 0, MVP.data());*/
+		auto mvp = vp * transform.getMatrix();
+		glUniformMatrix4fv(mvpLocation, 1, 0, mvp.data());
 
-		glDrawArrays(GL_TRIANGLES, 0, (int)(m_points.size()));
+		m_texture.bind();
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 	}
 
+	Math::Transform<T> transform;
+
 private:
-	std::array<vertex_type, 3> m_points;
 	GLuint m_vao;
 	GLuint m_vbo;
 	GLuint m_shaderProgram;
+	Shader* m_shaders;
+	Texture m_texture;
 };
