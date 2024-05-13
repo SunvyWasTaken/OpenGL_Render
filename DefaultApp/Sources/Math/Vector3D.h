@@ -23,3 +23,6 @@ namespace Math
 	{
 	}
 }
+
+using Vector3Df = Math::Vector3D<double>;
+using uint = unsigned int;

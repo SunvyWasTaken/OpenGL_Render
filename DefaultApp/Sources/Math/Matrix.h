@@ -159,3 +159,5 @@ namespace Math
 		return result;
 	}
 }
+
+using Mat4f = Math::Mat4<float>;

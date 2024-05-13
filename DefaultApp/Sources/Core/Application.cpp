@@ -13,6 +13,8 @@
 #include "LowLevel_Renderer/Primitive/Triangle.h"
 #include "LowLevel_Renderer/Viewports/Viewport.h"
 
+#include "Procedural/FaultFormation/FaultFormation.h"
+
 Application::Application()
 	: m_window(new OGLWindow(800, 800, "Procedural map generation")), m_toolsManager(new ToolsManager())
 {
@@ -68,6 +70,12 @@ void Application::Run()
 
 	//ContextRenderer contextRenderer{ viewport.getMatrixProjection(), camera.getMatrixView() };
 
+	// TODO : Ici mettre le reste pour gen le terrain;
+
+	FaultFormation Terrain;
+
+	Terrain.GenerateTerrain(100, 2, 1, 10, 0.1);
+
 	while (!m_window->isWindowShouldClose())
 	{
 		m_window->ClearBackBuffer();
@@ -80,10 +88,12 @@ void Application::Run()
 		//triangle.transform.rotation.y += 0.0025f;
 		//plane.transform.rotation.y += 0.001f;
 
-		cube.transform.rotation.y = 0.5f;
+		//cube.transform.rotation.y = 0.5f;
 
-		cube.render(contextRenderer);
-		cube2.render(contextRenderer);
+		//cube.render(contextRenderer);
+		//cube2.render(contextRenderer);
+
+		Terrain.Render(camera);
 
 
 		_Draw(*m_window);

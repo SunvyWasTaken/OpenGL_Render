@@ -1,23 +1,10 @@
 #pragma once
 
+#include "Editor/StateMachine/StateMachine.h"
+
 #include <functional>
-#include <variant>
 #include <vector>
-
-template<typename... Types>
-struct Overload : public Types...
-{
-	using Types::operator()...;
-};
-
-template<typename... Types>
-Overload(Types...)->Overload<Types...>;
-
-template<typename Variant, typename... Matchers>
-void CheckVariant(Variant&& variant, Matchers&&... matchers)
-{
-	std::visit(Overload(std::forward<Matchers>(matchers)...), std::forward<Variant>(variant));
-}
+#include <stdexcept>
 
 template<typename... Args>
 class IMultiDelegate;
@@ -26,9 +13,9 @@ namespace Connection
 {
 	namespace State
 	{
-		struct Managed {};
-		struct Scoped {};
-		struct Undead {};
+		class Managed {};
+		class Scoped {};
+		class Undead {};
 	}
 
 	template<typename... Args>
@@ -310,5 +297,5 @@ private:
 };
 
 #ifndef DECLARE_MULTICAST_DELEGATE
-#define DECLARE_MULTICAST_DELEGATE(DelegateName, ...) class DelegateName : public IMultiDelegate<__VA_ARGS__> {};
+#define DECLARE_MULTICAST_DELEGATE(DelegateName, ...) class DelegateName : public IMultiDelegate<##__VA_ARGS__> {};
 #endif // !DECLARE_MULTICAST_DELEGATE
