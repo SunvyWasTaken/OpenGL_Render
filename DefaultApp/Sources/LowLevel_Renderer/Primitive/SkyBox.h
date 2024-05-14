@@ -31,7 +31,6 @@ private:
 	GLuint m_vao;
 	GLuint m_vbo;
 	GLuint m_ebo;
-	GLuint m_shaderProgram;
 	Shader* m_shader;
 	std::string m_skyBoxImagesPath;
 	GLuint m_texture;
@@ -39,7 +38,7 @@ private:
 
 template <typename Type>
 SkyBox<Type>::SkyBox()
-	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shaderProgram(0), m_shader(nullptr), m_skyBoxImagesPath("")
+	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shader(nullptr), m_skyBoxImagesPath("")
 {
 	load();
 }
