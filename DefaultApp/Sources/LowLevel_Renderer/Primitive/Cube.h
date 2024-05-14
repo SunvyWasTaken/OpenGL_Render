@@ -33,15 +33,13 @@ private:
 	GLuint m_ebo;
 	GLuint m_shaderProgram;
 	Shader* m_shaders;
-	Texture m_texture;
-	Texture m_textureSpecular;
 
 	Material m_material;
 };
 
 template <typename Type>
 Cube<Type>::Cube()
-	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shaderProgram(0), m_texture(Texture{}), m_shaders(nullptr), m_material(Material{})
+	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shaderProgram(0), m_shaders(nullptr), m_material(Material{})
 {
 	load();
 }
@@ -143,7 +141,6 @@ void Cube<Type>::load()
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
 
 	m_material.diffuseMap.textUnit(m_shaders->program, "tex0");
 	m_material.specularMap.textUnit(m_shaders->program, "tex1");
