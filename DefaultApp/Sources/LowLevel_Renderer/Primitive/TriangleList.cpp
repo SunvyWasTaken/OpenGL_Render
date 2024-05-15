@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <vector>
 
+using Mat4f = Math::Mat4<float>;
 
 TriangleList::TriangleList()
     : m_width(0)
@@ -17,6 +18,7 @@ TriangleList::TriangleList()
     , m_vao(0)
     , m_vbo(0)
     , m_ebo(0)
+    , m_material(Material{})
     , m_shaders(nullptr)
 {
 }
@@ -51,13 +53,13 @@ void TriangleList::Destroy()
     }
 }
 
-void TriangleList::ChangeVertice(const BaseTerrain* pTerrain, vertex_type& vertex, int x, int z)
+void TriangleList::ChangeVertice(vertex_type& vertex, int x, int z)
 {
-    float y = pTerrain->GetHeight(x, z);
+    float y = m_terrain->GetHeight(x, z);
 
-	float WorldScale = pTerrain->GetWorldScale();
-
-	vertex.m_point = vertex_type::P3D(x * WorldScale, y, z * WorldScale);
+	vertex.m_point = vertex_type::P3D(x * m_terrain->transform.scale.x, y * m_terrain->transform.scale.y, z * m_terrain->transform.scale.z) + m_terrain->transform.position;
+    vertex.m_color = vertex_type::Color(1, 1, 1);
+    vertex.m_textureCoords = vertex_type::P2D((float)x / (float)m_width, (float)z / (float)m_depth);
 }
 
 
@@ -65,10 +67,12 @@ void TriangleList::InitVertices(const BaseTerrain* pTerrain, std::vector<vertex_
 {
     int Index = 0;
 
-    for (int z = 0 ; z < m_depth ; z++) {
-        for (int x = 0 ; x < m_width ; x++) {
+    for (int z = 0 ; z < m_depth ; z++)
+    {
+        for (int x = 0 ; x < m_width ; x++)
+        {
             assert(Index < Vertices.size());
-			ChangeVertice(pTerrain, Vertices[Index], x, z);
+			ChangeVertice(Vertices[Index], x, z);
 			Index++;
         }
     }
@@ -117,17 +121,32 @@ void TriangleList::Render(ContextRenderer& contextRenderer)
 
 	m_shaders->setMat4("projection", contextRenderer.projection);
 	m_shaders->setMat4("view", contextRenderer.camera.getMatrixView());
+	//Mat4f mTransform = Mat4f::identity();
+	//Mat4f mTrans = Mat4f::translate(m_terrain->transform.position);
+	//Mat4f mRot = Mat4f::rotation(m_terrain->transform.rotation);
+ //   Mat4f mScale = Mat4f::scale(m_terrain->transform.scale * m_width);
 	m_shaders->setMat4("model", m_terrain->transform.getMatrix());
 
 	m_shaders->setVec3("viewPostion", contextRenderer.camera.transform.position);
+    m_shaders->setFloat("material.shininess", m_material.shininess);
 
 	contextRenderer.directionalLight.getUniform(m_shaders);
+
+	m_material.diffuseMap.bind(GL_TEXTURE0);
+	m_material.specularMap.bind(GL_TEXTURE1);
 
     glDrawElements(GL_TRIANGLES, (m_depth - 1) * (m_width - 1) * 6, GL_UNSIGNED_INT, NULL);
 }
 
 void TriangleList::Load()
 {
+	m_material = Material
+    {
+		Texture("Ressources\\mat_test_diffuse.png", GL_TEXTURE0),
+		Texture("Ressources\\mat_test_specular.png", GL_TEXTURE1),
+		32.f
+	};
+
 	std::vector<vertex_type> Vertices;
 	Vertices.resize(m_width * m_depth, vertex_type(vertex_type::P3D(0), vertex_type::Color()));
 
@@ -156,6 +175,9 @@ void TriangleList::Load()
 
 	LOAD_BASIC_VERTEX_ATTRIB_POINTER();
 
+	m_material.diffuseMap.textUnit(m_shaders->program, "tex0");
+	m_material.specularMap.textUnit(m_shaders->program, "tex1");
+
 	glBindVertexArray(0);
 
     // Kristo
@@ -165,4 +187,5 @@ void TriangleList::Load()
     // ogldev
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices[0]) * Vertices.size(), &Vertices[0], GL_STATIC_DRAW);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices[0]) * Indices.size(), &Indices[0], GL_STATIC_DRAW);
+
 }

@@ -14,13 +14,12 @@ void FaultFormation::GenerateTerrain(int TerrainSize, int Iterations, float MinH
 
 	CreateFaultFormationInternal(Iterations, MinHeight, MaxHeight, Filter);
 
-	m_heightMap.Normalize(MinHeight, MaxHeight);
-
-	m_triangleList.CreateTriangleList(m_terrainSize, m_terrainSize, this);
 }
 
 void FaultFormation::CreateFaultFormationInternal(int Iterations, float MinHeight, float MaxHeight, float Filter)
 {
+	m_minHeight = MinHeight;
+	m_maxHeight = MaxHeight;
 	float DeltaHeight = MaxHeight - MinHeight;
 
 	for (int CurIter = 0; CurIter < Iterations; CurIter++) {
@@ -50,6 +49,13 @@ void FaultFormation::CreateFaultFormationInternal(int Iterations, float MinHeigh
 	}
 
 	ApplyFIRFilter(Filter);
+
+
+	m_heightMap.Normalize(MinHeight, MaxHeight);
+
+	m_triangleList.Destroy();
+
+	m_triangleList.CreateTriangleList(m_terrainSize, m_terrainSize, this);
 }
 
 void FaultFormation::GenRandomTerrainPoints(TerrainPoint& p1, TerrainPoint& p2)

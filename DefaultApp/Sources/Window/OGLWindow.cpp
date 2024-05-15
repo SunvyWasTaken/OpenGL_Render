@@ -83,7 +83,7 @@ void OGLWindow::PollEvent(Camera& cam)
 	cam.transform.position = cam.transform.position + worldMovement;
 
 	static int oldState = GLFW_PRESS;
-	int newState = glfwGetMouseButton(m_windowOpenGL, GLFW_MOUSE_BUTTON_LEFT);
+	int newState = glfwGetMouseButton(m_windowOpenGL, GLFW_MOUSE_BUTTON_RIGHT);
 	if (newState == GLFW_PRESS && oldState == GLFW_RELEASE)
 	{
 		std::cout << "Mouse click" << std::endl;

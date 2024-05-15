@@ -20,11 +20,6 @@ void BaseTerrain::Destroy()
 	m_triangleList.Destroy();
 }
 
-void BaseTerrain::InitTerrain(float WorldScale)
-{
-	m_worldScale = WorldScale;
-}
-
 void BaseTerrain::Render(ContextRenderer& contextRenderer)
 {
 	m_triangleList.Render(contextRenderer);

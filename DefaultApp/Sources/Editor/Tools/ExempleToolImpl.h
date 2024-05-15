@@ -14,7 +14,7 @@ public:
 
 	FOnRegenaretedTerrain OnRegeneratedTerrain;
 
-	class BaseTerrain* CurrentTerrain;
+	class FaultFormation* CurrentTerrain;
 
 private:
 

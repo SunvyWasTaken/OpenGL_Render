@@ -1,7 +1,6 @@
 #include "ExempleToolImpl.h"
 
 #include "Core/ProceduralGeneration.h"
-#include "Procedural/BaseTerrain/BaseTerrain.h"
 
 #include <imgui.h>
 #include <vector>
@@ -49,20 +48,19 @@ void ExempleToolImpl::Draw()
 	//CheckVariant(var,
 	//	[&](FaultFormation obj)
 	//	{
-	//		ImGui::Text("Fault Formation");
-	//		ImGui::DragInt("Terrain Size", &TerrainSize, 1);
-	//		if (TerrainSize <= 0) { TerrainSize = 0; }
-	//		ImGui::DragInt("Iteration", &NbrIteration, 1);
-	//		if (NbrIteration <= 0) { NbrIteration = 0; }
-	//		ImGui::DragFloat("Min height", &MinHeight, 1);
-	//		if (MinHeight <= 0) { MinHeight = 0; }
-	//		ImGui::DragFloat("Max height", &MaxHeight, 1);
-	//		if (MaxHeight <= 0) { MaxHeight = 0; }
-	//		ImGui::DragFloat("Filter", &filter, 0.005f, 0.f, 1.f);
-	//		if (ImGui::Button("GenerateTerrain"))
-	//		{
-	//			obj.GenerateTerrain(TerrainSize, NbrIteration, MinHeight, MaxHeight, filter);
-	//		}
+	ImGui::Text("Fault Formation");
+
+	ImGui::DragInt("Iteration", &NbrIteration, 1);
+	if (NbrIteration <= 0) { NbrIteration = 0; }
+	ImGui::DragFloat("Min height", &MinHeight, 1);
+	if (MinHeight <= 0) { MinHeight = 0; }
+	ImGui::DragFloat("Max height", &MaxHeight, 1);
+	if (MaxHeight <= 0) { MaxHeight = 0; }
+	ImGui::DragFloat("Filter", &filter, 0.005f, 0.f, 1.f);
+	if (ImGui::Button("GenerateTerrain"))
+	{
+		CurrentTerrain->CreateFaultFormationInternal(NbrIteration, MinHeight, MaxHeight, filter);
+	}
 
 	//	},
 	//	[&](NoGeneration obj)

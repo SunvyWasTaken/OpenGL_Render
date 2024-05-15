@@ -18,6 +18,8 @@ private:
 	void _Draw(OGLWindow& window);
 	void _PollEvent();
 
+	class ExempleToolImpl* m_ExempleEditor;
+
 	std::unique_ptr<OGLWindow> m_window;
 	std::unique_ptr<ToolsManager> m_toolsManager;
 };
