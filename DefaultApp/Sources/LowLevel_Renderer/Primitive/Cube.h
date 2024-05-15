@@ -162,16 +162,17 @@ void Cube<Type>::render(ContextRenderer& contextRenderer)
 	m_shaders->setMat4("model", transform.getMatrix());
 
 	m_shaders->setVec3("viewPostion", contextRenderer.camera.transform.position);
+	m_shaders->setInt("pointLightsCount", contextRenderer.pointLights.size());
 
 	m_shaders->setFloat("material.shininess", m_material.shininess);
 
 	contextRenderer.directionalLight.getUniform(m_shaders);
-	//GLuint lightConstantLocation = glGetUniformLocation(m_shaders->program, "light.constant");
-	//glUniform1f(lightConstantLocation, 1.f);
-	//GLuint lightLinearLocation = glGetUniformLocation(m_shaders->program, "light.linear");
-	//glUniform1f(lightLinearLocation, 0.09f);
-	//GLuint lightQuadraticLocation = glGetUniformLocation (m_shaders->program, "light.quadratic");
-	//glUniform1f(lightQuadraticLocation, 0.032f);
+	
+
+	for(size_t i = 0; i < contextRenderer.pointLights.size(); ++i)
+	{
+		contextRenderer.pointLights[i].getUniform(m_shaders, i);
+	}
 
 	m_material.diffuseMap.bind(GL_TEXTURE0);
 	m_material.specularMap.bind(GL_TEXTURE1);

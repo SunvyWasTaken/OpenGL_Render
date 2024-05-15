@@ -13,6 +13,8 @@
 #include "ProceduralGeneration.h"
 #include <stdexcept>
 
+#include "LowLevel_Renderer/Lights/PointLight.h"
+
 Application::Application()
 	: m_window(new OGLWindow(1240, 720, "Procedural map generation")), m_toolsManager(new ToolsManager())
 {
@@ -47,8 +49,19 @@ void Application::Run()
 	directionalLight.ambient = directionalLight.diffuse * 0.2f;
 	directionalLight.specular = 1.f;
 
-	//SkyBox<float> skybox;
-	//skybox.transform.scale = { 50.f,50.f,50.f };
+	PointLight pointLight;
+	pointLight.position = { 1.f, 0.5f, -5.f };
+	pointLight.diffuse = { 0.f, 0.f, 1.f };
+	pointLight.ambient = pointLight.diffuse * 2.f;
+	pointLight.specular = 1.f;
+
+	PointLight pointLight2;
+	pointLight2.position = { -1.f, 0.5f, -5.f };
+	pointLight2.diffuse = { 1.f, 0.f, 0.f };
+	pointLight2.ambient = pointLight2.diffuse * 2.f;
+	pointLight2.specular = 1.f;
+	SkyBox<float> skybox;
+	skybox.transform.scale = { 50.f,50.f,50.f };
 
 	//Cube<float> cube;
 	//cube.transform.position = { 0.f, 0.f, -5.f };
@@ -65,20 +78,16 @@ void Application::Run()
 		
 	Viewport viewport(aspectRatio, fov, nearPlane, farPlane); //projection matrix
 
-	camera.transform.position = { 0.f, 0.f, 0.f };
-	camera.transform.rotation = { 0.f, 0.f, 0.f };
+	camera.transform.position = { 0.f, -1.6f, 2.f };
+	camera.transform.rotation = { 0.3f, 0.f, 0.f };
 	Math::Mat4<float> model = Math::Mat4<float>::identity();   //model matrix
 
-	//ContextRenderer contextRenderer{ viewport.getMatrixProjection(), camera.getMatrixView() };
-
-	// TODO : Ici mettre le reste pour gen le terrain;
-
-	FaultFormation Terrain;
-	m_ExempleEditor->CurrentTerrain = &Terrain;
-	Terrain.transform.position = {-25.f, 0.f, -25.f};
-	Terrain.transform.scale = { 1.f, 1.f, 1.f };
-
-	Terrain.GenerateTerrain(50, 100, 0, 50, 0.01f);
+	ContextRenderer contextRenderer{
+		viewport.getMatrixProjection(),
+		camera,
+		directionalLight,
+		std::vector<PointLight>{pointLight, pointLight2}
+	};
 
 	while (!m_window->isWindowShouldClose())
 	{
@@ -86,7 +95,6 @@ void Application::Run()
 
 		ContextRenderer contextRenderer{ viewport.getMatrixProjection(), camera, directionalLight };
 
-		Terrain.Render(contextRenderer);
 
 		// TODO: write code here...
 

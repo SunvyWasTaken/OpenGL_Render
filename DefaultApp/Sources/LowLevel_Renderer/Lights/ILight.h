@@ -11,6 +11,7 @@ struct ILight
 	using Color3 = Math::Color<float>;
 
 	virtual void getUniform(Shader* shader) = 0;
+	virtual void getUniform(Shader* shader, size_t index) = 0;
 
 	Vec3 position;
 	Vec3 direction;

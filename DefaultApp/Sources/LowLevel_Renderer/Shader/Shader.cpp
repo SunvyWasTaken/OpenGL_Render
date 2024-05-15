@@ -102,9 +102,9 @@ void Shader::setFloat(const GLchar* variable, float value)
 	glUniform1f(glGetUniformLocation(program, variable), value);
 }
 
-void Shader::setInt(const GLchar* variable, float value)
+void Shader::setInt(const GLchar* variable, int value)
 {
-	glUniform1f(glGetUniformLocation(program, variable), value);
+	glUniform1i(glGetUniformLocation(program, variable), value);
 }
 
 void Shader::setVec3(const GLchar* variable, Math::Point3D<float>& values)
@@ -127,7 +127,7 @@ void Shader::setFloat(const GLchar* variable, float value) const
 	setFloat(variable, value);
 }
 
-void Shader::setInt(const GLchar* variable, float value) const
+void Shader::setInt(const GLchar* variable, int value) const
 {
 	setInt(variable, value);
 }

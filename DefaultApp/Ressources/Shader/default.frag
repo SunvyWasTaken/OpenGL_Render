@@ -7,6 +7,8 @@ in vec3 fragPosition;
 in vec3 objectNormal;
 in vec2 texCoords;
 
+#define MAX_POINT_LIGHTS 10
+uniform int pointLightsCount;
 uniform vec3 viewPosition;
 
 struct Material 
@@ -42,7 +44,7 @@ struct PointLight
     float linear;
     float quadratic;
 };
-uniform PointLight pointLights;
+uniform PointLight pointLights[MAX_POINT_LIGHTS];
 
 vec3 CalcDirLight(DirectionalLight light, vec3 normal,vec3 viewDir);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
@@ -56,8 +58,8 @@ void main()
     vec3 result = CalcDirLight(directionalLight, normal, viewDir);
 
     // for on pointLights
-    //for(int i = 0; i < numLigths; i++)
-        // result += CalcPointLight(pointLights[i], normal, fragPosition, viewDir); 
+    for(int i = 0; i < pointLightsCount; i++)
+        result += CalcPointLight(pointLights[i], normal, fragPosition, viewDir); 
 
     FragColor = vec4(result, 1.0);
 } 
