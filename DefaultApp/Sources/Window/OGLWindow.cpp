@@ -49,7 +49,7 @@ void OGLWindow::PollEvent(Camera& cam)
 {
 	glfwPollEvents();
 
-	const float cameraSpeed = 0.0005f; // adjust accordingly
+	const float cameraSpeed = 0.05f; // adjust accordingly
 	if (glfwGetKey(m_windowOpenGL, GLFW_KEY_W) == GLFW_PRESS)
 		cam.transform.position.z += cameraSpeed * 1.f;
 	if (glfwGetKey(m_windowOpenGL, GLFW_KEY_S) == GLFW_PRESS)

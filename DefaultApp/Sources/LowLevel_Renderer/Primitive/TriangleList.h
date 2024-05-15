@@ -1,45 +1,45 @@
 #pragma once
 
+#include "Math/Vector3D.h"
+#include "LowLevel_Renderer/Primitive/Vertex.h"
+
 #include <glad/glad.h>
 #include <vector>
 
-#include "Math/Vector3D.h"
-
 class BaseTerrain;
+struct ContextRenderer;
 
-class TriangleList {
+using vertex_type = Vertex<float>;
+
+class TriangleList
+{
  public:
     TriangleList();
 
     ~TriangleList();
 
-    void CreateTriangleList(int Width, int Depth, const BaseTerrain* pTerrain);
+    void CreateTriangleList(int Width, int Depth, BaseTerrain* terrain);
 
     void Destroy();
 
-    void Render();
+    void Render(ContextRenderer& contextRenderer);
+    
+    void Load();
 
  private:
 
-    struct Vertex
-    {
-        Vertex();
-
-        Vector3Df Pos;
-
-        void InitVertex(const BaseTerrain* pTerrain, int x, int z);
-    };
-
-    void CreateGLState();
-
-	void PopulateBuffers(const BaseTerrain* pTerrain);
-    void InitVertices(const BaseTerrain* pTerrain, std::vector<Vertex>& Vertices);
+    void ChangeVertice(const BaseTerrain* pTerrain, vertex_type& vertex, int x, int z);
+    void InitVertices(const BaseTerrain* pTerrain, std::vector<vertex_type>& Vertices);
     void InitIndices(std::vector<uint>& Indices);
 
-    int m_width = 0;
-    int m_depth = 0;
-    GLuint m_vao = 0;
-    GLuint m_vb = 0;
-    GLuint m_ib = 0;
+    int m_width;
+    int m_depth;
+
+    BaseTerrain* m_terrain;
+
+	GLuint m_vao;
+	GLuint m_vbo;
+	GLuint m_ebo;
+	struct Shader* m_shaders;
 };
 

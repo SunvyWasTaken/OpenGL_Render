@@ -20,60 +20,55 @@ void CheckVariant(Variant&& variant, Matchers&&... matchers)
 	std::visit(Overload(std::forward<Matchers>(matchers)...), std::forward<Variant>(variant));
 }
 
+// I know typeid depends on compiler and not garanted but i wanted to retrive the name
+// And not depend on a var from a parent class or define on each class.
+// I also wanted to tried something with template
+template <typename Type>
+constexpr const char* type_to_string() { return typeid(Type).name(); }
+
 namespace My
 {
 	template <typename ...Types>
 	struct Variant
 	{
 		using variant_t = typename std::variant<Types...>;
+		static inline std::initializer_list<const char*> Names = { type_to_string<Types>()... };
 	};
 
-	template <typename T, typename ...Types>
-	struct Variant<T, Types...>
+	template <typename Type>
+	struct getFirst
+	{};
+
+	template <typename T, typename... Types>
+	struct getFirst<Variant<T, Types...>>
 	{
-	public:
-		using variant_t = typename std::variant<T, Types...>;
+		using value = T;
+	};
 
-		static std::vector<std::string> GetTypeNames() {
-			std::vector<std::string> names;
-			std::vector<std::string> TypeRest = Variant<Types...>::GetTypeNames();
-			names.push_back(GetName());
-			names.insert(names.end(), TypeRest.begin(), TypeRest.end());
-			return names;
-		}
+	template <typename Type>
+	struct PopFront
+	{};
 
-	private:
-		static std::string GetName()
-		{
-			const std::string fullTypeName = typeid(T).name();
-			size_t pos = fullTypeName.find("class ");
-			if (pos != std::string::npos)
-				return fullTypeName.substr(pos + sizeof("class ") - 1);
-
-			else
-				return fullTypeName;
-		}
+	template <typename T, typename ...Types>
+	struct PopFront<Variant<T, Types...>>
+	{
+		using value = Variant<Types...>;
 	};
 
 	template <typename T>
-	struct Variant<T>
-	{
-		static std::vector<std::string> GetTypeNames()
-		{
-			std::vector<std::string> names;
-			names.push_back(GetName());
-			return names;
-		}
-	private:
-		static std::string GetName()
-		{
-			const std::string fullTypeName = typeid(T).name();
-			size_t pos = fullTypeName.find("class ");
-			if (pos != std::string::npos)
-				return fullTypeName.substr(pos + sizeof("class ") - 1);
+	using PopFront_v = typename PopFront<T>::value;
 
-			else
-				return fullTypeName;
-		}
-	};
+	template <unsigned int index, typename Type>
+	struct getAt : getAt<index - 1, PopFront_v<Type>>
+	{};
+
+	template <typename Type>
+	struct getAt<0, Type> : getFirst<Type>
+	{};
 }
+
+template <unsigned int index, typename Types>
+using getAt_v = typename My::getAt<index, Types>::value;
+
+//template <typename...Types>
+//using Variant_t = My::Variant<Types...>::variant_t;

@@ -8,13 +8,20 @@
 #include <string>
 #include <cstring>
 
+namespace
+{
+	static int TerrainSize = 50;
+	static int NbrIteration = 50;
+	static float MinHeight = 10.f;
+	static float MaxHeight = 50.f;
+	static float filter = 0.5f;
+}
 
 ExempleToolImpl::ExempleToolImpl(const std::string& title, bool open)
 	: ToolWindow(title, open), CurrentTerrain(nullptr)
 {
 
 }
-
 
 ExempleToolImpl::~ExempleToolImpl()
 {
@@ -32,37 +39,35 @@ void ExempleToolImpl::Draw()
 	ImGui::Text("Sheesh");
 	ImGui::Text("New Text");
 
-	//std::vector<const char*> charArray;
-	//for (const std::string& name : ProceduralGen::GetTypeNames())
-	//{
-	//	charArray.push_back(name.c_str());
-	//}
-	//// Allocate memory for the actual array (needs manual management)
-	//const char* result[charArray.size()];
-	//std::strcpy(result, *charArray.begin());
+	ImGui::Combo("List", &m_selectedMethode, ProceduralGen::Names.begin(), (int)ProceduralGen::Names.size());
 
+	//// Lui temporaire à déplacer à l'endroit qui lui correspond.
+	//ProceduralGen_t var;
+	//if (m_selectedMethode == 0) { var = std::variant_alternative_t<0, ProceduralGen_t>(); }
+	//if (m_selectedMethode == 1) { var = std::variant_alternative_t<1, ProceduralGen_t>(); }
 
-	//ImGui::Combo("List", &m_selectedMethode, result, IM_ARRAYSIZE(result));
-	//if (m_selectedMethode == 0)
-	//{
-	//	CurrentTerrain->CurrentGenerationMethode = FaultFormation();
-	//}
-	//else if (m_selectedMethode == 1)
-	//{
-	//	CurrentTerrain->CurrentGenerationMethode = NoErrosion();
-	//}
-
-	//CheckVariant(CurrentTerrain->CurrentGenerationMethode,
-	//	[](FaultFormation obj) {
-	//		ImGui::Text("Fault Formation");
-	//	},
-	//	[](NoErrosion obj)
+	//CheckVariant(var,
+	//	[&](FaultFormation obj)
 	//	{
-	//		ImGui::Text("No Errosion");
+	//		ImGui::Text("Fault Formation");
+	//		ImGui::DragInt("Terrain Size", &TerrainSize, 1);
+	//		if (TerrainSize <= 0) { TerrainSize = 0; }
+	//		ImGui::DragInt("Iteration", &NbrIteration, 1);
+	//		if (NbrIteration <= 0) { NbrIteration = 0; }
+	//		ImGui::DragFloat("Min height", &MinHeight, 1);
+	//		if (MinHeight <= 0) { MinHeight = 0; }
+	//		ImGui::DragFloat("Max height", &MaxHeight, 1);
+	//		if (MaxHeight <= 0) { MaxHeight = 0; }
+	//		ImGui::DragFloat("Filter", &filter, 0.005f, 0.f, 1.f);
+	//		if (ImGui::Button("GenerateTerrain"))
+	//		{
+	//			obj.GenerateTerrain(TerrainSize, NbrIteration, MinHeight, MaxHeight, filter);
+	//		}
+
+	//	},
+	//	[&](NoGeneration obj)
+	//	{
+	//		ImGui::Text("No Generation");
+	//		ImGui::TextWrapped("Sorry other methode where not implemented yet sry");
 	//	});
-	ImGui::InputInt("Iteration", &NbrIteration);
-	if (ImGui::Button("RegenaretedTerrain"))
-	{
-		OnRegeneratedTerrain.Broadcast(NbrIteration);
-	}
 }

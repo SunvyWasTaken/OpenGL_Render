@@ -1,15 +1,14 @@
 #include "FaultFormation.h"
 
 #include <assert.h>
+#include <iostream>
 
 void FaultFormation::GenerateTerrain(int TerrainSize, int Iterations, float MinHeight, float MaxHeight, float Filter)
 {
+	std::cout << "Terrain generated!!!" << std::endl;
 	m_terrainSize = TerrainSize;
 	m_minHeight = MinHeight;
 	m_maxHeight = MaxHeight;
-
-	m_terrainTech.Enable();
-	m_terrainTech.SetMinMaxHeight(MinHeight, MaxHeight);
 
 	m_heightMap.InitArray2D(TerrainSize, TerrainSize, 0.0f);
 

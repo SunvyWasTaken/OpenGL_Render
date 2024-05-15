@@ -2,9 +2,12 @@
 
 #include "LowLevel_Renderer/Cameras/Camera.h"
 #include "Math/Array2D.h"
+#include "Math/Transform.h"
 #include "LowLevel_Renderer/Primitive/TriangleList.h"
-#include "Procedural/TerrainTech/TerrainTechnique.h"
 
+struct ContextRenderer;
+
+using FTransform = Math::Transform<float>;
 
 class BaseTerrain
 {
@@ -17,11 +20,13 @@ public:
 
 	void InitTerrain(float WorldScale);
 
-	void Render(const Camera& Camera);
+	void Render(ContextRenderer& contextRenderer);
 
 	float GetHeight(int x, int z) const { return m_heightMap.Get(x, z); }
 
 	float GetWorldScale() const { return m_worldScale; }
+
+	FTransform transform;
 
 protected:
 
@@ -29,7 +34,6 @@ protected:
 	float m_worldScale = 1.0f;
 	Array2D<float> m_heightMap;
 	TriangleList m_triangleList;
-	TerrainTechnique m_terrainTech;
 	float m_minHeight = 0.0f;
 	float m_maxHeight = 0.0f;
 };

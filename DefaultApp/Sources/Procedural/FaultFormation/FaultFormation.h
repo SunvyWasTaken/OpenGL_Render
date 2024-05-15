@@ -33,7 +33,7 @@ private:
 	float FIRFilterSinglePoint(int x, int z, float PrevVal, float Filter);
 };
 
-class NoErrosion : public BaseTerrain
+class NoGeneration : public BaseTerrain
 {
 public:
 	void GenerateTerrain(float MawHeight)

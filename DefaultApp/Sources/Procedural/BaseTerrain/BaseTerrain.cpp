@@ -1,4 +1,5 @@
 #include "BaseTerrain.h"
+#include "Core\ContextRenderer.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,20 +22,10 @@ void BaseTerrain::Destroy()
 
 void BaseTerrain::InitTerrain(float WorldScale)
 {
-	if (!m_terrainTech.Init()) {
-		printf("Error initializing tech\n");
-		exit(0);
-	}
-
 	m_worldScale = WorldScale;
 }
 
-void BaseTerrain::Render(const Camera& Camera)
+void BaseTerrain::Render(ContextRenderer& contextRenderer)
 {
-	Mat4f VP = Camera.getMatrixView();
-
-	m_terrainTech.Enable();
-	m_terrainTech.SetVP(VP);
-
-	m_triangleList.Render();
+	m_triangleList.Render(contextRenderer);
 }

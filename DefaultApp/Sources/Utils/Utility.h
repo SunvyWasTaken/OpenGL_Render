@@ -1,24 +1,21 @@
 #pragma once
+#include <filesystem>
 #include <fstream>
 #include <string>
+#include <sstream>
 
 bool ReadFile(const char* pFileName, std::string& outFile)
 {
-	std::ifstream f(pFileName);
+	std::filesystem::path path = std::filesystem::current_path() / "Ressources\\Shader" / pFileName;
 
-	bool ret = false;
+	std::ifstream inputFile(path.c_str());
+	if (!inputFile.is_open())
+		return false;
 
-	if (f.is_open()) {
-		std::string line;
-		while (getline(f, line)) {
-			outFile.append(line);
-			outFile.append("\n");
-		}
+	std::stringstream buffer;
+	buffer << inputFile.rdbuf();
 
-		f.close();
-
-		ret = true;
-	}
-
-	return ret;
+	inputFile.close();
+	outFile = buffer.str();
+	return true;
 }
