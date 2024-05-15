@@ -20,6 +20,7 @@ public:
 	int isWindowShouldClose();
 	void Draw();
 	void PollEvent(Camera& cam);
+	
 
 private:
 	GLFWwindow* m_windowOpenGL;
@@ -28,4 +29,11 @@ private:
 	std::string m_title;
 
 	void _Destroy();
+
+	void SwitchCameraMode();
+	bool FreeCamMode();
+	
+	bool cursorIsHidden = false;
+	float cameraSpeed = 0.05f;
+	float cameraRotationSpeed = 0.0005f;
 };
