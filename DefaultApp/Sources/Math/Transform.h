@@ -45,7 +45,13 @@ namespace Math
 	template <typename Type>
 	Mat4<Type> Transform<Type>::getMatrix() const
 	{
-		return getMatrix();
+		Mat4 mTransform = Mat4::identity();
+		Mat4 mTrans = Mat4::translate(position);
+		Mat4 mRot = Mat4::rotation(rotation);
+		Mat4 mScale = Mat4::scale(scale);
+
+		mTransform = mTrans * mRot * mScale;
+		return mTransform;
 	}
 
 	template <typename Type>

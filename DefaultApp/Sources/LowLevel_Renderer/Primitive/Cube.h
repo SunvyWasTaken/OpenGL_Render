@@ -2,14 +2,14 @@
 
 #include "PrimitiveUtils.h"
 #include "Vertex.h"
-#include "LowLevel_Renderer/Texture/Texture.h"
 #include "Math/Transform.h"
+#include "LowLevel_Renderer/Materials/Material.h"
 #include "LowLevel_Renderer/Shader/Shader.h"
+#include "LowLevel_Renderer/Texture/Texture.h"
 
 #include <glad/glad.h>
 #include <array>
 
-#include "LowLevel_Renderer/Materials/Material.h"
 
 template <typename Type>
 class Cube

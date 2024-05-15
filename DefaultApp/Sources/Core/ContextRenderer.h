@@ -1,5 +1,6 @@
 #pragma once
 #include "LowLevel_Renderer/Lights/DirectionalLight.h"
+#include "LowLevel_Renderer/Cameras/Camera.h"
 #include "Math/Matrix.h"
 
 using mat4 = Math::Mat4<float>;

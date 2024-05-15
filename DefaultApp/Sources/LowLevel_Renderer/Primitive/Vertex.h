@@ -24,7 +24,7 @@ struct Vertex
 		: m_point(point), m_color(color), m_textureCoords(textureCoords), m_normal(normal)
 	{
 	}
-private:
+
 	P3D m_point;
 	Color m_color;
 	P2D m_textureCoords;

@@ -10,14 +10,14 @@
 #include "LowLevel_Renderer/Primitive/SkyBox.h"
 #include "LowLevel_Renderer/Primitive/Vertex.h"
 #include "LowLevel_Renderer/Viewports/Viewport.h"
-
+#include "ProceduralGeneration.h"
 #include <stdexcept>
 
 Application::Application()
-	: m_window(new OGLWindow(800, 800, "Procedural map generation")), m_toolsManager(new ToolsManager())
+	: m_window(new OGLWindow(1240, 720, "Procedural map generation")), m_toolsManager(new ToolsManager())
 {
-	ToolWindow* ExempleEditor = new ExempleToolImpl("Exemple Window Editor Implementation", true);
-	ExempleEditor->AddToEditorManager(m_toolsManager.get());
+	m_ExempleEditor = new ExempleToolImpl("Exemple Window Editor Implementation", true);
+	m_ExempleEditor->AddToEditorManager(m_toolsManager.get());
 }
 
 Application::~Application()
@@ -47,21 +47,21 @@ void Application::Run()
 	directionalLight.ambient = directionalLight.diffuse * 0.2f;
 	directionalLight.specular = 1.f;
 
-	SkyBox<float> skybox;
-	skybox.transform.scale = { 50.f,50.f,50.f };
+	//SkyBox<float> skybox;
+	//skybox.transform.scale = { 50.f,50.f,50.f };
 
-	Cube<float> cube;
-	cube.transform.position = { 0.f, 0.f, -5.f };
-	cube.transform.scale = { 0.5f, 0.5f, 0.5f };
+	//Cube<float> cube;
+	//cube.transform.position = { 0.f, 0.f, -5.f };
+	//cube.transform.scale = { 0.5f, 0.5f, 0.5f };
 
-	Cube<float> cube2;
-	cube2.transform.position = { 1.5f, -0.0f, -12.f };
-	cube2.transform.scale = { 0.5f, 0.5f, 0.5f };
+	//Cube<float> cube2;
+	//cube2.transform.position = { 1.5f, -0.0f, -12.f };
+	//cube2.transform.scale = { 0.5f, 0.5f, 0.5f };
 
-	float aspectRatio = 800 / 800;
+	float aspectRatio = 1240.f / 720.f;
 	float fov = 45.f / 180.f * 3.141592f;
 	float nearPlane = 0.01f;
-	float farPlane = 150.f;
+	float farPlane = 15000.f;
 		
 	Viewport viewport(aspectRatio, fov, nearPlane, farPlane); //projection matrix
 
@@ -71,27 +71,37 @@ void Application::Run()
 
 	//ContextRenderer contextRenderer{ viewport.getMatrixProjection(), camera.getMatrixView() };
 
+	// TODO : Ici mettre le reste pour gen le terrain;
+
+	FaultFormation Terrain;
+	m_ExempleEditor->CurrentTerrain = &Terrain;
+	Terrain.transform.position = {-25.f, 0.f, -25.f};
+	Terrain.transform.scale = { 1.f, 1.f, 1.f };
+
+	Terrain.GenerateTerrain(50, 100, 0, 50, 0.01f);
+
 	while (!m_window->isWindowShouldClose())
 	{
 		m_window->ClearBackBuffer();
 
 		ContextRenderer contextRenderer{ viewport.getMatrixProjection(), camera, directionalLight };
 
+		Terrain.Render(contextRenderer);
 
 		// TODO: write code here...
 
 		//triangle.transform.rotation.y += 0.0025f;
 		//plane.transform.rotation.y += 0.001f;
 
-		cube.transform.rotation.y = 0.5f;
+		//cube.transform.rotation.y = 0.5f;
 
-		cube.render(contextRenderer);
-		cube2.render(contextRenderer);
+		//cube.render(contextRenderer);
+		//cube2.render(contextRenderer);
 
-		cube.transform.rotation.y += 0.0005f;
-		cube.transform.rotation.x += 0.0005f;
-		
-		skybox.render(contextRenderer);
+		//cube.transform.rotation.y += 0.0005f;
+		//cube.transform.rotation.x += 0.0005f;
+		//
+		//skybox.render(contextRenderer);
 
 		_Draw(*m_window);
 

@@ -16,6 +16,19 @@ namespace Math
 			: x(point.x), y(point.y), z(point.z)
 		{
 		}
+
+		template <typename type>
+		Point3D<T> operator*(const type& entrant)
+		{
+			//assert(std::is_arithmetic_v<type>);
+			return { x * entrant, y * entrant, z * entrant};
+		}
+
+		template <typename Type>
+		Point3D<T> operator+(const Point3D<Type> other)
+		{
+			return { x + other.x, y + other.y, z + other.z };
+		}
 		
 	};
 

@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-Math::Mat4<float> Camera::getMatrixView()
+Math::Mat4<float> Camera::getMatrixView() const
 {
 	// Obtenez la matrice de transformation de la camera
 	Math::Mat4<float> cameraMatrix = transform.getMatrix();
