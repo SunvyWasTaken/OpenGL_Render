@@ -64,13 +64,13 @@ void Application::Run()
 	SkyBox<float> skybox;
 	skybox.transform.scale = { 50.f,50.f,50.f };
 
-	//Cube<float> cube;
-	//cube.transform.position = { 0.f, 0.f, -5.f };
-	//cube.transform.scale = { 0.5f, 0.5f, 0.5f };
+	Cube<float> cube;
+	cube.transform.position = { 0.f, 0.f, -5.f };
+	cube.transform.scale = { 0.5f, 0.5f, 0.5f };
 
-	//Cube<float> cube2;
-	//cube2.transform.position = { 1.5f, -0.0f, -12.f };
-	//cube2.transform.scale = { 0.5f, 0.5f, 0.5f };
+	Cube<float> cube2;
+	cube2.transform.position = { 1.5f, -0.0f, -12.f };
+	cube2.transform.scale = { 0.5f, 0.5f, 0.5f };
 
 	float aspectRatio = 1240.f / 720.f;
 	float fov = 45.f / 180.f * 3.141592f;
@@ -79,9 +79,8 @@ void Application::Run()
 		
 	Viewport viewport(aspectRatio, fov, nearPlane, farPlane); //projection matrix
 
-	camera.transform.position = { 0.f, -1.6f, 2.f };
-	camera.transform.rotation = { 0.3f, 0.f, 0.f };
-	Math::Mat4<float> model = Math::Mat4<float>::identity();   //model matrix
+	camera.transform.position = { 0.f, 0.f, 0.f };
+	camera.transform.rotation = { 0.f, 0.f, 0.f };
 
 	ContextRenderer contextRenderer{
 		viewport.getMatrixProjection(),
@@ -90,27 +89,35 @@ void Application::Run()
 		std::vector<PointLight>{pointLight, pointLight2}
 	};
 
+	FaultFormation Terrain;
+	m_ExempleEditor->CurrentTerrain = &Terrain;
+	Terrain.transform.position = { -25.f, -25.f, -25.f };
+	Terrain.transform.scale = { 1.f, 1.f, 1.f };
+
+	Terrain.GenerateTerrain(50, 100, 0, 50, 0.01f);
+
 	while (!m_window->isWindowShouldClose())
 	{
 		m_window->ClearBackBuffer();
 
-		ContextRenderer contextRenderer{ viewport.getMatrixProjection(), camera, directionalLight };
-
+		contextRenderer.projection = viewport.getMatrixProjection();
+		contextRenderer.camera = camera;
 
 		// TODO: write code here...
 
 		//triangle.transform.rotation.y += 0.0025f;
 		//plane.transform.rotation.y += 0.001f;
 
-		//cube.transform.rotation.y = 0.5f;
+		cube.transform.rotation.y = 0.5f;
 
-		//cube.render(contextRenderer);
-		//cube2.render(contextRenderer);
+		cube.render(contextRenderer);
+		cube2.render(contextRenderer);
 
-		//cube.transform.rotation.y += 0.0005f;
-		//cube.transform.rotation.x += 0.0005f;
-		//
-		//skybox.render(contextRenderer);
+		cube.transform.rotation.y += 0.0005f;
+		cube.transform.rotation.x += 0.0005f;
+		
+		skybox.render(contextRenderer);
+		Terrain.Render(contextRenderer);
 
 		_Draw(*m_window);
 
