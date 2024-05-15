@@ -59,35 +59,40 @@ template <typename Type>
 void SkyBox<Type>::load()
 {
 	std::array<vertex_type, 24> vertices = {
-		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }),
+		//Front
+		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, 0.f, 1.f}),
+		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, 0.f, 1.f}),
+		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, 0.f, 1.f}),
+		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, 0.f, 1.f}),
 
-		vertex_type({ 1.f,		-1.f,	-1.f }, { 0.0f,	1.0f,	0.0f }, {  0.0f,		0.0f }),
-		vertex_type({ 1.f,		1.f,	-1.f }, { 0.0f,	1.0f,	0.0f }, {  0.0f,		1.0f }),
-		vertex_type({ 1.f,		1.f,	 1.f }, { 0.0f,	1.0f,	0.0f }, {  1.0f,		1.0f }),
-		vertex_type({ 1.f,		-1.f,	 1.f }, { 0.0f,	1.0f,	0.0f }, {  1.0f,		0.0f }),
+		//Right
+		vertex_type({ 1.f,		1.f,	1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 1.f, 0.f, 0.f}),
+		vertex_type({ 1.f,		-1.f,	1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 1.f, 0.f, 0.f}),
+		vertex_type({ 1.f,		-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 1.f, 0.f, 0.f}),
+		vertex_type({ 1.f,		1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 1.f, 0.f, 0.f}),
 
-		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.5f,	0.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.5f,	0.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	0.5f,	0.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	0.5f,	0.0f }, {  1.0f,		0.0f }),
+		//Back
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, 0.f, -1.f}),
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, 0.f, -1.f}),
+		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, 0.f, -1.f}),
+		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, 0.f, -1.f}),
 
-		vertex_type({ -1.f,	-1.f,	-1.f }, { 0.0f,	0.0f,	1.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	-1.f }, { 0.0f,	0.0f,	1.0f }, {  0.0f,		1.0f }),
-		vertex_type({ -1.f,	1.f,	 1.f }, { 0.0f,	0.0f,	1.0f }, {  1.0f,		1.0f }),
-		vertex_type({ -1.f,	-1.f,	 1.f }, { 0.0f,	0.0f,	1.0f }, {  1.0f,		0.0f }),
+		//Left
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { -1.f, 0.f, 0.f}),
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { -1.f, 0.f, 0.f}),
+		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { -1.f, 0.f, 0.f}),
+		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { -1.f, 0.f, 0.f}),
 
-		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }),
+		//Top
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, 1.f, 0.f}),
+		vertex_type({ -1.f,	1.f,	1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, 1.f, 0.f}),
+		vertex_type({  1.f,	1.f,	1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, 1.f, 0.f}),
+		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, 1.f, 0.f}),
 
-		vertex_type({ -1.f,	-1.f,	1.f },	{ 1.0f,	1.0f,	0.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	0.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	0.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	0.0f }, {  1.0f,		0.0f })
+		vertex_type({ -1.f,	-1.f,	1.f },	{ 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, -1.f, 0.f}),
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, -1.f, 0.f}),
+		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, -1.f, 0.f}),
+		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, -1.f, 0.f})
 	};
 
 	std::array<GLuint, 36> indices = {
@@ -182,6 +187,7 @@ void SkyBox<Type>::render(ContextRenderer& contextRenderer)
 	glEnable(GL_TEXTURE_CUBE_MAP);
 	glDisable(GL_LIGHTING);
 	glDepthMask(GL_FALSE);
+	glCullFace(GL_FRONT);
 
 	glUseProgram(m_shader->program);
 	glBindVertexArray(m_vao);
@@ -193,6 +199,7 @@ void SkyBox<Type>::render(ContextRenderer& contextRenderer)
 	glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture);
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
+	glCullFace(GL_BACK);
 	glDepthMask(GL_TRUE);
 	glDisable(GL_TEXTURE_CUBE_MAP);
 	glEnable(GL_LIGHTING);
