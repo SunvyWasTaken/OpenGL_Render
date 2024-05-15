@@ -127,8 +127,8 @@ void Application::Run()
 
 		cube2.render(contextRenderer);
 
-		cube.transform.rotation.y += 0.0005f;
-		cube.transform.rotation.x += 0.0005f;
+		//cube.transform.rotation.y += 0.0005f;
+		//cube.transform.rotation.x += 0.0005f;
 		
 		skybox.render(contextRenderer);
 		Terrain.Render(contextRenderer);
