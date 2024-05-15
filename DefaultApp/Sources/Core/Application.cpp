@@ -65,8 +65,8 @@ void Application::Run()
 		
 	Viewport viewport(aspectRatio, fov, nearPlane, farPlane); //projection matrix
 
-	camera.transform.position = { 0.f, -1.6f, 2.f };
-	camera.transform.rotation = { 0.3f, 0.f, 0.f };
+	camera.transform.position = { 0.f, 0.f, 0.f };
+	camera.transform.rotation = { 0.f, 0.f, 0.f };
 	Math::Mat4<float> model = Math::Mat4<float>::identity();   //model matrix
 
 	//ContextRenderer contextRenderer{ viewport.getMatrixProjection(), camera.getMatrixView() };
