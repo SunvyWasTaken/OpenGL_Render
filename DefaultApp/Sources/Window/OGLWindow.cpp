@@ -11,6 +11,7 @@
 OGLWindow::OGLWindow(int width, int height, const std::string& title)
 	: m_width(width), m_height(height), m_title(title), m_windowOpenGL(nullptr)
 {
+	//glfwSetInputMode(m_windowOpenGL, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 }
 
 OGLWindow::~OGLWindow()
@@ -49,27 +50,60 @@ void OGLWindow::PollEvent(Camera& cam)
 {
 	glfwPollEvents();
 
-	const float cameraSpeed = 0.05f; // adjust accordingly
+	Math::Vector3D<float> movement = { 0.f, 0.f, 0.f };
+	
 	if (glfwGetKey(m_windowOpenGL, GLFW_KEY_W) == GLFW_PRESS)
-		cam.transform.position.z += cameraSpeed * 1.f;
+		movement.z -= cameraSpeed * 1.f;
 	if (glfwGetKey(m_windowOpenGL, GLFW_KEY_S) == GLFW_PRESS)
-		cam.transform.position.z -= cameraSpeed * 1.f;
+		movement.z += cameraSpeed * 1.f;
 	if (glfwGetKey(m_windowOpenGL, GLFW_KEY_A) == GLFW_PRESS)
-		cam.transform.position.x += cameraSpeed * 1.f;
+		movement.x -= cameraSpeed * 1.f;
 	if (glfwGetKey(m_windowOpenGL, GLFW_KEY_D) == GLFW_PRESS)
-		cam.transform.position.x -= cameraSpeed * 1.f;
-	if (glfwGetKey(m_windowOpenGL, GLFW_KEY_SPACE) == GLFW_PRESS)
-		cam.transform.position.y += cameraSpeed * 1.f;
-	if (glfwGetKey(m_windowOpenGL, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-		cam.transform.position.y -= cameraSpeed * 1.f;
+		movement.x += cameraSpeed * 1.f;
+	if (glfwGetKey(m_windowOpenGL, GLFW_KEY_Q) == GLFW_PRESS)
+		movement.y -= cameraSpeed * 1.f;
+	if (glfwGetKey(m_windowOpenGL, GLFW_KEY_E) == GLFW_PRESS)
+		movement.y += cameraSpeed * 1.f;
+	
+	if (FreeCamMode())
+	{
+		double xpos, ypos;
+		glfwGetCursorPos(m_windowOpenGL, &xpos, &ypos);
+		
+		float dx = xpos - m_width / 2;
+		float dy = ypos - m_height / 2;
+		glfwSetCursorPos(m_windowOpenGL, m_width / 2, m_height / 2);
+		
+		cam.transform.rotation.y -= dx * cameraRotationSpeed;
+		cam.transform.rotation.x += dy * cameraRotationSpeed;
+	}
 
-	double xpos, ypos;
-	glfwGetCursorPos(m_windowOpenGL, &xpos, &ypos);
-	/*if(xpos > 1)
-		cam.transform.rotation.y -= 0.025f * cameraSpeed;
-	else if(xpos < -1)
-		cam.transform.rotation.y += 0.025f * cameraSpeed;*/
+	Math::Mat4<float> rotationMat = Math::Mat4<float>::rotation(cam.transform.rotation);
+	Math::Vector3D<float> worldMovement = rotationMat * movement;
+	cam.transform.position = cam.transform.position + worldMovement;
 
+	static int oldState = GLFW_PRESS;
+	int newState = glfwGetMouseButton(m_windowOpenGL, GLFW_MOUSE_BUTTON_LEFT);
+	if (newState == GLFW_PRESS && oldState == GLFW_RELEASE)
+	{
+		std::cout << "Mouse click" << std::endl;
+		SwitchCameraMode();
+	}
+	oldState = newState;
+}
+
+void OGLWindow::SwitchCameraMode()
+{
+	glfwSetInputMode(m_windowOpenGL, GLFW_CURSOR, glfwGetInputMode(m_windowOpenGL, GLFW_CURSOR) == GLFW_CURSOR_NORMAL ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+	glfwSetInputMode(m_windowOpenGL, GLFW_RAW_MOUSE_MOTION, glfwGetInputMode(m_windowOpenGL, GLFW_RAW_MOUSE_MOTION) == GLFW_TRUE ? GLFW_FALSE : GLFW_TRUE);
+	glfwSetCursorPos(m_windowOpenGL, m_width / 2, m_height / 2);
+	cursorIsHidden = !cursorIsHidden;
+}
+
+
+bool OGLWindow::FreeCamMode()
+{
+	return cursorIsHidden;
 }
 
 void OGLWindow::Init()

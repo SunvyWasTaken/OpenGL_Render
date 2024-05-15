@@ -1,6 +1,7 @@
 #pragma once
 #include "Matrix.h"
 #include "Point.h"
+#include "Vector3D.h"
 
 namespace Math
 {
@@ -15,6 +16,8 @@ namespace Math
 
 		Mat4 getMatrix();
 		Mat4 getMatrix() const;
+
+		Mat4 getInvertMatrixView();
 
 		P3D position;
 		P3D rotation;
@@ -48,6 +51,17 @@ namespace Math
 		Mat4 mScale = Mat4::scale(scale);
 
 		mTransform = mTrans * mRot * mScale;
+		return mTransform;
+	}
+
+	template <typename Type>
+	Mat4<Type> Transform<Type>::getInvertMatrixView()
+	{
+		Mat4 mTransform = Mat4::identity();
+		Mat4 mTrans = Mat4::translate({-position.x, -position.y, -position.z});
+		Mat4 mRot = Mat4::rotation(rotation);
+
+		mTransform = mTrans * mRot;
 		return mTransform;
 	}
 }

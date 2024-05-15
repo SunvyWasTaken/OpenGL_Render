@@ -1,4 +1,5 @@
 #pragma once
+#include "Point.h"
 
 namespace Math
 {
@@ -7,7 +8,6 @@ namespace Math
 	{
 		Vector3D(const VectorType& x_, const VectorType& y_, const VectorType& z_);
 		Vector3D(const Vector3D& vector);
-
 		VectorType x, y, z;
 	};
 
@@ -22,7 +22,11 @@ namespace Math
 		: x(vector.x), y(vector.y), z(vector.z)
 	{
 	}
+	
+	template <typename VectorType>
+	Point3D<VectorType> operator+(const Point3D<VectorType>& point, const Vector3D<VectorType>& vector)
+	{
+		return Point3D<VectorType>(point.x + vector.x, point.y + vector.y, point.z + vector.z);
+	}
+	
 }
-
-using Vector3Df = Math::Vector3D<double>;
-using uint = unsigned int;
