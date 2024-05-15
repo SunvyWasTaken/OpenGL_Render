@@ -11,9 +11,10 @@
 #include "LowLevel_Renderer/Primitive/Vertex.h"
 #include "LowLevel_Renderer/Viewports/Viewport.h"
 #include "ProceduralGeneration.h"
+#include "LowLevel_Renderer/Lights/PointLight.h"
+
 #include <stdexcept>
 
-#include "LowLevel_Renderer/Lights/PointLight.h"
 
 Application::Application()
 	: m_window(new OGLWindow(1240, 720, "Procedural map generation")), m_toolsManager(new ToolsManager())
