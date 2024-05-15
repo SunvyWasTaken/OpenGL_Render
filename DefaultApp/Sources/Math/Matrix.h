@@ -1,8 +1,7 @@
 #pragma once
 #include <array>
 #include <cmath>
-
-#include "Point.h"
+#include "Vector3D.h"
 
 namespace Math
 {
@@ -47,6 +46,8 @@ namespace Math
 		static Mat4 rotation(const Point3D<MatType>& rotations);
 
 		static Mat4 scale(const Point3D<MatType>& scale);
+
+		static Mat4 inverse(const Mat4& mat);
 
 	private:
 		std::array<MatType, 16> m_coefs;
@@ -139,6 +140,7 @@ namespace Math
 
 		return matScale;
 	}
+	
 
 	template <typename MatType>
 	Mat4<MatType> operator*(const Mat4<MatType>& op1, const Mat4<MatType>& op2)
@@ -156,6 +158,16 @@ namespace Math
 			}
 		}
 
+		return result;
+	}
+	
+	template <typename MatType>
+	Vector3D<MatType> operator*(const Mat4<MatType>& matrix, const Vector3D<MatType>& vec)
+	{
+		Vector3D<MatType> result = {0.f,0.f,0.f};
+		result.x = vec.x * matrix(0, 0) + vec.y * matrix(1, 0) + vec.z * matrix(2, 0) + matrix(3, 0);
+		result.y = vec.x * matrix(0, 1) + vec.y * matrix(1, 1) + vec.z * matrix(2, 1) + matrix(3, 1);
+		result.z = vec.x * matrix(0, 2) + vec.y * matrix(1, 2) + vec.z * matrix(2, 2) + matrix(3, 2);
 		return result;
 	}
 }
