@@ -1,10 +1,12 @@
 #pragma once
 #include "ILight.h"
 
-template <typename LightType>
-struct PointLight : public ILight<LightType>
+struct PointLight : ILight
 {
-	float constant;
-	float linear;
-	float quadratic;
+	void getUniform(Shader* shader) override;
+	void getUniform(Shader* shader, size_t index) override;
+
+	float constant = 1.f;
+	float linear = 0.09f;
+	float quadratic = 0.032f;
 };

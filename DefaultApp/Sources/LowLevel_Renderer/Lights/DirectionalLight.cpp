@@ -7,3 +7,7 @@ void DirectionalLight::getUniform(Shader* shader)
 	shader->setVec3("directionalLight.diffuse", diffuse);
 	shader->setVec3("directionalLight.specular", specular);
 }
+
+void DirectionalLight::getUniform(Shader* shader, size_t index)
+{
+}
