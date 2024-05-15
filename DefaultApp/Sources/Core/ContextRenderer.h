@@ -1,9 +1,10 @@
 #pragma once
-#include <vector>
 
 #include "LowLevel_Renderer/Lights/DirectionalLight.h"
 #include "LowLevel_Renderer/Lights/PointLight.h"
 #include "Math/Matrix.h"
+
+#include <vector>
 
 using mat4 = Math::Mat4<float>;
 
