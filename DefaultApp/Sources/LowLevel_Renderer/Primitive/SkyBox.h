@@ -179,8 +179,8 @@ void SkyBox<Type>::update()
 template <typename Type>
 void SkyBox<Type>::render(ContextRenderer& contextRenderer)
 {
-	glEnable(GL_TEXTURE_CUBE_MAP);
-	glDisable(GL_LIGHTING);
+	//glEnable(GL_TEXTURE_CUBE_MAP);
+	//glDisable(GL_LIGHTING);
 	glDepthMask(GL_FALSE);
 
 	glUseProgram(m_shader->program);
@@ -194,6 +194,6 @@ void SkyBox<Type>::render(ContextRenderer& contextRenderer)
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
 	glDepthMask(GL_TRUE);
-	glDisable(GL_TEXTURE_CUBE_MAP);
-	glEnable(GL_LIGHTING);
+	//glDisable(GL_TEXTURE_CUBE_MAP);
+	//glEnable(GL_LIGHTING);
 }

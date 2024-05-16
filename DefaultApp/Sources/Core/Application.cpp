@@ -67,7 +67,7 @@ void Application::Run()
 	skybox.transform.scale = { 500.f,500.f,500.f };
 
 	Cube<float> cube;
-	cube.transform.position = { 0.f, 0.f, -5.f };
+	cube.transform.position = { 0.f, 0.f, -50.f };
 	cube.transform.scale = { 0.5f, 0.5f, 0.5f };
 
 	Cube<float> cube2;
@@ -123,20 +123,27 @@ void Application::Run()
 
 		//cube.transform.rotation.y = 0.5f;
 		//plane.render(contextRenderer);
-		water.BindReflectionFrameBuffer();
-		cube.render(contextRenderer);
-		water.UnbindCurrentFrameBuffer();
-
-		cube.render(contextRenderer);
-		water.render(contextRenderer);
-		//cube2.render(contextRenderer);
-
 		cube.transform.rotation.y += 0.0005f;
 		cube.transform.rotation.x += 0.0005f;
-		
+
+		//First render to water buffer
+		//water.BindReflectionFrameBuffer();
+		//
+		//cube.render(contextRenderer);
+		//cube2.render(contextRenderer);
+		//skybox.render(contextRenderer);
+		//Terrain.Render(contextRenderer);
+		//
+		//water.UnbindCurrentFrameBuffer();
+
+		//Second render with water
+
+		cube.render(contextRenderer);
+		cube2.render(contextRenderer);
 		skybox.render(contextRenderer);
 		Terrain.Render(contextRenderer);
-		
+		//water.render(contextRenderer);
+
 		_Draw(*m_window);
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);	//Set view mode in wireframe
