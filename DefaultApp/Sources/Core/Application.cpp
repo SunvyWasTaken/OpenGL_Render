@@ -16,7 +16,7 @@
 
 #include <stdexcept>
 
-#include "LowLevel_Renderer/Primitive/LightMesh.h"
+#include "LowLevel_Renderer/Primitive/CubeLight.h"
 #include "LowLevel_Renderer/Primitive/Plane.h"
 
 using Point2Di = Math::Point2D<int>;
