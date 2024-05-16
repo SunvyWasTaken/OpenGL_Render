@@ -74,7 +74,7 @@ void Application::Run()
 	cube2.transform.position = { 1.5f, -0.0f, -12.f };
 	cube2.transform.scale = { 0.5f, 0.5f, 0.5f };
 
-	Water<float> water(800, 800, { 800,800 }, { 800,800 });
+	Water<float> water(1240, 720, { 1240,720 }, { 1240,720 });
 	water.transform.position = { 0.f, 0.5f, -5.f };
 
 	float aspectRatio = 1240.f / 720.f;
@@ -127,22 +127,23 @@ void Application::Run()
 		cube.transform.rotation.x += 0.0005f;
 
 		//First render to water buffer
-		//water.BindReflectionFrameBuffer();
-		//
-		//cube.render(contextRenderer);
-		//cube2.render(contextRenderer);
-		//skybox.render(contextRenderer);
-		//Terrain.Render(contextRenderer);
-		//
-		//water.UnbindCurrentFrameBuffer();
+		glEnable(GL_CLIP_DISTANCE0);
+		water.BindReflectionFrameBuffer();
+		
+		cube.render(contextRenderer);
+		cube2.render(contextRenderer);
+		skybox.render(contextRenderer);
+		Terrain.Render(contextRenderer);
+		
+		water.UnbindCurrentFrameBuffer();
 
-		//Second render with water
+		//Second "normal" render
 
 		cube.render(contextRenderer);
 		cube2.render(contextRenderer);
 		skybox.render(contextRenderer);
 		Terrain.Render(contextRenderer);
-		//water.render(contextRenderer);
+		water.render(contextRenderer);
 
 		_Draw(*m_window);
 

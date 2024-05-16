@@ -24,14 +24,12 @@ public:
 		
 
 		m_reflectionFrameBuffer = CreateFrameBuffer();
-		m_reflectionTexture = CreateTexture(m_reflectionResolution.x, m_reflectionResolution.y);
-		AttachTexture(m_reflectionTexture);
+		m_reflectionTexture = CreateTextureAttachment(m_reflectionResolution.x, m_reflectionResolution.y);
 		//m_reflectionDepthBuffer = CreateDepthBufferAttachment(m_reflectionResolution.x, m_reflectionResolution.y);
 		UnbindCurrentFrameBuffer();
 
 		m_refractionFrameBuffer = CreateFrameBuffer();
-		m_refractionTexture = CreateTexture(m_refractionResolution.x, m_refractionResolution.y);
-		AttachTexture(m_refractionTexture);
+		m_refractionTexture = CreateTextureAttachment(m_refractionResolution.x, m_refractionResolution.y);;
 		m_refractionDepthTexture = CreateDepthTextureAttachment(m_refractionResolution.x, m_refractionResolution.y);
 		UnbindCurrentFrameBuffer();
 
@@ -58,18 +56,6 @@ public:
 		glDeleteTextures(1,&m_refractionDepthTexture);
 	}
 
-	void CreateReflectionTexture(int Width, int Height) {
-		glBindTexture(GL_TEXTURE_2D, m_reflectionTexture);
-		glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, Width, Height);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
-	void CreateDepthTexture(int Width, int Height) {
-		glBindTexture(GL_TEXTURE_2D, m_refractionDepthTexture);
-		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 0, 0, Width, Height, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
 	GLuint CreateFrameBuffer() {
 		GLuint frameBuffer;
 		glGenFramebuffers(1, &frameBuffer);
@@ -85,23 +71,18 @@ public:
 		glViewport(0, 0, Width, Height);
 	}
 
-	GLuint CreateTexture(int Width, int Height) {
+	GLuint CreateTextureAttachment(int Width, int Height) {
+		
 		GLuint texture;
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, Width, Height, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D, texture,0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		return texture;
-	}
-
-	void AttachTexture(GLuint texture) {
-		
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D, texture,0);
-		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	GLuint CreateDepthBufferAttachment(int Width, int Height) {
