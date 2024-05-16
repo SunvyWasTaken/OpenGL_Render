@@ -99,7 +99,7 @@ void Application::Run()
 	plane.transform.position = P3D{ 0.f, -1.f, -5.f };
 	plane.transform.rotation = { 0.f, 0.0f, 0.0f };
 	plane.addShaders(basicShaders);
-	plane.applyMaterial(boxMaterial);
+	plane.applyMaterial(&boxMaterial);
 	plane.load();
 
 	Cube<float> cube;
