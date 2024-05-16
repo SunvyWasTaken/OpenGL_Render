@@ -27,7 +27,7 @@ public:
 	{
 	}
 
-	void load()
+	void load() override
 	{
 		std::array<vertex_type, 4> vertices = {
 			vertex_type( { -1.f,	0.0f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }, { 0.f, 1.f, 0.f}),
@@ -47,7 +47,7 @@ public:
 		parent::load();
 	}
 
-	void render(ContextRenderer& contextRenderer)
+	void render(ContextRenderer& contextRenderer) override
 	{
 		parent::render(contextRenderer);
 
