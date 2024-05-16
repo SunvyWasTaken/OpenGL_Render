@@ -8,9 +8,10 @@ ToolsManager::ToolsManager()
 
 ToolsManager::~ToolsManager()
 {
-	for (const auto& tool : m_tools)
+	for (auto& tool : m_tools)
 	{
 		delete tool;
+		tool = nullptr;
 	}
 }
 

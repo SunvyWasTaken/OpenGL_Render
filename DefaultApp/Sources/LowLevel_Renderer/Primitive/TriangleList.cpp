@@ -132,7 +132,7 @@ void TriangleList::Render(ContextRenderer& contextRenderer)
  //   Mat4f mScale = Mat4f::scale(m_terrain->transform.scale * m_width);
 	m_shaders->setMat4("model", m_terrain->transform.getMatrix());
 
-	m_shaders->setVec3("viewPostion", contextRenderer.camera.transform.position);
+	m_shaders->setVec3("viewPosition", contextRenderer.camera.transform.position);
     m_shaders->setFloat("material.shininess", m_material.shininess);
 
 	contextRenderer.directionalLight.getUniform(m_shaders);
