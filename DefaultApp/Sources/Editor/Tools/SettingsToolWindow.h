@@ -4,11 +4,11 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnRegenaretedTerrain, int /*= iteration*//*, float / * = x* /, float/ * = y* /*/)
 
-class ExempleToolImpl : public ToolWindow
+class SettingsToolWindow : public ToolWindow
 {
 public:
-	explicit ExempleToolImpl(const std::string& title, bool open = false);
-	~ExempleToolImpl();
+	explicit SettingsToolWindow(const std::string& title, bool open = false, Point2Di position = Point2Di(0, 0), Point2Di size = Point2Di(0, 0));
+	~SettingsToolWindow();
 
 	void Draw() override;
 

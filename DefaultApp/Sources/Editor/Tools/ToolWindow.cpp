@@ -5,8 +5,8 @@
 #include <imgui.h>
 #include <iostream>
 
-ToolWindow::ToolWindow(const std::string& title, bool open)
-	: m_title(title), m_open(open)
+ToolWindow::ToolWindow(const std::string& title, bool open, Point2Di position, Point2Di size)
+	: m_title(title), m_open(open), m_position(position), m_size(size)
 {
 }
 
@@ -17,7 +17,11 @@ ToolWindow::~ToolWindow()
 
 void ToolWindow::Begin()
 {
-	ImGui::Begin(m_title.c_str(), &m_open);
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse;
+	ImGui::Begin(m_title.c_str(), &m_open, flags);
+	//set position and size
+	ImGui::SetWindowPos(ImVec2(m_position.x, m_position.y));
+	ImGui::SetWindowSize(ImVec2(m_size.x, m_size.y));
 }
 
 void ToolWindow::End()

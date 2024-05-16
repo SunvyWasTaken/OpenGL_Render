@@ -1,7 +1,8 @@
 #include "Application.h"
 
 #include "ContextRenderer.h"
-#include "Editor/Tools/ExempleToolImpl.h"
+#include "Editor/Tools/SettingsToolWindow.h"
+#include "Editor/Tools/InfosToolWindow.h"
 #include "Editor/ToolsManager.h"
 #include "Editor/Tools/ToolWindow.h"
 #include "LowLevel_Renderer/Cameras/Camera.h"
@@ -15,12 +16,16 @@
 
 #include <stdexcept>
 
+using Point2Di = Math::Point2D<int>;
 
 Application::Application()
 	: m_window(new OGLWindow(1240, 720, "Procedural map generation")), m_toolsManager(new ToolsManager())
 {
-	m_ExempleEditor = new ExempleToolImpl("Exemple Window Editor Implementation", true);
-	m_ExempleEditor->AddToEditorManager(m_toolsManager.get());
+	m_settingsUI = new SettingsToolWindow("Settings", true, Point2Di(10, 10), Point2Di(300, 200));
+	m_settingsUI->AddToEditorManager(m_toolsManager.get());
+	m_infosUI = new InfosToolWindow("Infos", true, Point2Di(1100, 10), Point2Di(120, 90));
+	m_infosUI->AddToEditorManager(m_toolsManager.get());
+	OnUpdateFPS.Bind(m_infosUI, &InfosToolWindow::UpdateFPS);
 }
 
 Application::~Application()
@@ -66,7 +71,7 @@ void Application::Run()
 	pointLight2.ambient = pointLight2.diffuse * 2.f;
 	pointLight2.specular = 1.f;
 	SkyBox<float> skybox;
-	skybox.transform.scale = { 50.f,50.f,50.f };
+	skybox.transform.scale = { 500.f,500.f,500.f };
 
 	Cube<float> cube2;
 	cube2.transform.position = { 1.5f, -0.0f, -12.f };
@@ -90,11 +95,13 @@ void Application::Run()
 	};
 
 	FaultFormation Terrain;
-	m_ExempleEditor->CurrentTerrain = &Terrain;
+	m_settingsUI->CurrentTerrain = &Terrain;
 	Terrain.transform.position = { -25.f, -25.f, -25.f };
 	Terrain.transform.scale = { 1.f, 1.f, 1.f };
 
 	Terrain.GenerateTerrain(500, 100, 0, 50, 0.01f);
+
+	float lastTime = 0.0f;
 
 	while (!m_window->isWindowShouldClose())
 	{
@@ -104,6 +111,12 @@ void Application::Run()
 		contextRenderer.camera = camera;
 
 		// TODO: write code here...
+
+		float currentTime = glfwGetTime();
+		float deltaTime = currentTime - lastTime;
+		lastTime = currentTime;
+		int fps = 1 / deltaTime;
+		OnUpdateFPS.Broadcast(fps);
 
 		//triangle.transform.rotation.y += 0.0025f;
 		//plane.transform.rotation.y += 0.001f;
@@ -119,7 +132,7 @@ void Application::Run()
 		
 		skybox.render(contextRenderer);
 		Terrain.Render(contextRenderer);
-
+		
 		_Draw(*m_window);
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);	//Set view mode in wireframe
