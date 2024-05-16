@@ -65,7 +65,7 @@ public:
 	void LoadTile(const std::string& Filename);
 
 	// Oui pour le moment je fais une copie parce que c'est pas clean
-	Texture GenerateTexture(int TextureSize, class BaseTerrain* pTerrain, float MinHeight, float MaxHeight);
+	Texture* GenerateTexture(int TextureSize, class BaseTerrain* pTerrain, float MinHeight, float MaxHeight);
 
 private:
 

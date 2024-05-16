@@ -158,8 +158,7 @@ void TriangleList::Render(ContextRenderer& contextRenderer)
 
 	contextRenderer.directionalLight.getUniform(m_shaders);
 
-	m_material.diffuseMap.bind(GL_TEXTURE0);
-	m_material.specularMap.bind(GL_TEXTURE1);
+	m_material.Bind();
 
     glDrawElements(GL_TRIANGLES, (m_depth - 1) * (m_width - 1) * 6, GL_UNSIGNED_INT, NULL);
 }
@@ -170,14 +169,12 @@ void TriangleList::Load()
 	textureGen.LoadTile("Ressources\\Landscape\\Stone_BaseColor.jpg");
 	textureGen.LoadTile("Ressources\\Landscape\\Grass_BaseColor.jpg");
 	textureGen.LoadTile("Ressources\\Landscape\\Snow_BaseColor.jpg");
-   
-	m_material = Material
-    {
-        //textureGen.GenerateTexture(2048, m_terrain, m_terrain->GetMinHeight(), m_terrain->GetMaxHeight()),
-		Texture("Ressources\\Landscape\\Grass_BaseColor.jpg", GL_TEXTURE0),
-		Texture("Ressources\\Landscape\\Grass_Specular.jpg", GL_TEXTURE1),
-		32.f
-	};
+
+	m_material.ApplyTexture<diffuse>(textureGen.GenerateTexture(2048, m_terrain, m_terrain->GetMinHeight(), m_terrain->GetMaxHeight()));
+
+	m_material.LoadTexture<specular>("Ressources\\Landscape\\Grass_Specular.jpg");
+
+	m_material.shininess = 32.f;
 
 	std::vector<vertex_type> Vertices;
 	Vertices.resize(m_width * m_depth, vertex_type(vertex_type::P3D(0), vertex_type::Color()));
@@ -212,8 +209,8 @@ void TriangleList::Load()
 
 	LOAD_BASIC_VERTEX_ATTRIB_POINTER();
 
-	m_material.diffuseMap.textUnit(m_shaders->program, "tex0");
-	m_material.specularMap.textUnit(m_shaders->program, "tex1");
+	m_material.GetTexture<diffuse>()->textUnit(m_shaders->program, "tex0");
+	m_material.GetTexture<specular>()->textUnit(m_shaders->program, "tex1");
 
 	glBindVertexArray(0);
 
