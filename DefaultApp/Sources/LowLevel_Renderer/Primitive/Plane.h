@@ -18,17 +18,14 @@ class Plane
 
 public:
 	Plane()
-		: transform(Math::Transform<T>()), m_vao(0), m_vbo(0), m_shaderProgram(0), m_texture(Texture{}), m_material(Material{})
+		: transform(Math::Transform<T>()), m_vao(0), m_vbo(0), m_shaders(nullptr), m_texture(Texture{}), m_material(Material{})
 	{
 		load();
 	}
 
 	~Plane()
 	{
-		glDeleteVertexArrays(1, &m_vao);
-		glDeleteBuffers(1, &m_vbo);
-		glDeleteBuffers(1, &m_ebo);
-		glDeleteProgram(m_shaders->program);
+		DELETE_BUFFER_WITH_ELEMENTS(m_shaders->program)
 
 		if(m_shaders)
 		{
@@ -86,41 +83,26 @@ public:
 		glUseProgram(m_shaders->program);
 		glBindVertexArray(m_vao);
 
-		/*const GLuint projectionLocation = glGetUniformLocation(m_shaderProgram, "projection");
-		glUniformMatrix4fv(projectionLocation, 1, 0, contextRenderer.projection.data());
-		const GLuint viewLocation = glGetUniformLocation(m_shaderProgram, "view");
-		glUniformMatrix4fv(viewLocation, 1, 0, contextRenderer.view.data());
-
-		const GLuint modelLocation = glGetUniformLocation(m_shaderProgram, "model");
-		glUniformMatrix4fv(modelLocation, 1, 0, transform.getMatrix().data());
-
-		const GLuint lightColorLocation = glGetUniformLocation(m_shaderProgram, "lightColor");
-		glUniform4fv(lightColorLocation, 1, reinterpret_cast<float*>(&light.color));
-
-		const GLuint lightPositionLocation = glGetUniformLocation(m_shaderProgram, "lightPosition");
-		glUniform4fv(lightPositionLocation, 1, reinterpret_cast<float*>(&light.transform.position));
-
-		const GLuint CameraPositionLocation = glGetUniformLocation(m_shaderProgram, "viewPosition");
-		glUniform4fv(CameraPositionLocation, 1, reinterpret_cast<float*>(&camera.transform.position));*/
-
 		m_shaders->setMat4("projection", contextRenderer.projection);
 		m_shaders->setMat4("view", contextRenderer.camera.getMatrixView());
 		m_shaders->setMat4("model", transform.getMatrix());
 
-		m_shaders->setVec3("viewPostion", contextRenderer.camera.transform.position);
+		m_shaders->setVec3("viewPosition", contextRenderer.camera.transform.position);
 
 		m_shaders->setFloat("material.shininess", m_material.shininess);
 
 		contextRenderer.directionalLight.getUniform(m_shaders);
+		//GLuint lightConstantLocation = glGetUniformLocation(m_shaders->program, "light.constant");
+		//glUniform1f(lightConstantLocation, 1.f);
+		//GLuint lightLinearLocation = glGetUniformLocation(m_shaders->program, "light.linear");
+		//glUniform1f(lightLinearLocation, 0.09f);
+		//GLuint lightQuadraticLocation = glGetUniformLocation (m_shaders->program, "light.quadratic");
+		//glUniform1f(lightQuadraticLocation, 0.032f);
 
 		m_material.diffuseMap.bind(GL_TEXTURE0);
 		m_material.specularMap.bind(GL_TEXTURE1);
+
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
-	}
-
-	void update()
-	{
 	}
 
 	Math::Transform<T> transform;

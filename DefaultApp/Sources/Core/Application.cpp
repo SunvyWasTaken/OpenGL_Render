@@ -44,11 +44,6 @@ void Application::Run()
 	//TriangleF triangle{};
 	//triangle.transform.position = P3D{ 2.5f, 2.5f, -8.f };
 
-	using PlaneF = Plane<float>;
-	PlaneF plane{};
-	plane.transform.position = P3D{ 0.f, -5.f, -5.f };
-	plane.transform.rotation = { 0.f, 0.0f, 0.0f };
-
 	DirectionalLight directionalLight;
 	directionalLight.direction = { -0.2f, -1.f, -0.3f };
 	directionalLight.diffuse = { 0.5f, 0.5f, 0.5f };
@@ -66,6 +61,7 @@ void Application::Run()
 	pointLight2.diffuse = { 1.f, 0.f, 0.f };
 	pointLight2.ambient = pointLight2.diffuse * 2.f;
 	pointLight2.specular = 1.f;
+
 	SkyBox<float> skybox;
 	skybox.transform.scale = { 500.f,500.f,500.f };
 
@@ -121,13 +117,10 @@ void Application::Run()
 		//triangle.transform.rotation.y += 0.0025f;
 		//plane.transform.rotation.y += 0.001f;
 
-		cube.transform.rotation.y = 0.5f;
-		plane.transform.rotation.x += 0.005f;
-			plane.transform.rotation.y = 0.005f;
+		//cube.transform.rotation.y = 0.5f;
 
 		//cube.render(contextRenderer);
 		//cube2.render(contextRenderer);
-		plane.render(contextRenderer);
 
 		cube.transform.rotation.y += 0.0005f;
 		cube.transform.rotation.x += 0.0005f;
