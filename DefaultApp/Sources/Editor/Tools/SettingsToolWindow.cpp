@@ -65,4 +65,6 @@ void SettingsToolWindow::Draw()
 	//		ImGui::Text("No Generation");
 	//		ImGui::TextWrapped("Sorry other methode where not implemented yet sry");
 	//	});
+
+	OnRegeneratedTerrain.Broadcast(10);
 }

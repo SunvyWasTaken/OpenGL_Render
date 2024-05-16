@@ -139,6 +139,7 @@ void OGLWindow::Init()
 	//Load glad so it configures OpenGL
 	gladLoadGL();
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
 	glViewport(0, 0, m_width, m_height);
 
 	IMGUI_CHECKVERSION();
