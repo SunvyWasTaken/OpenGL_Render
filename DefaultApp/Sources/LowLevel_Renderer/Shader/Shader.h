@@ -1,10 +1,11 @@
 #pragma once
-#include <string>
-#include <glad/glad.h>
 
 #include "Math/Color.h"
 #include "Math/Matrix.h"
 #include "Math/Point.h"
+
+#include <vector>
+#include <glad/glad.h>
 
 struct ShaderInfo
 {
@@ -15,7 +16,7 @@ struct ShaderInfo
 
 struct Shader
 {
-	static Shader* loadShader(ShaderInfo* shaderInfo);
+	static Shader* loadShader(std::vector<ShaderInfo> shaderInfo);
 
 	explicit Shader(unsigned int programId);
 
