@@ -7,6 +7,8 @@
 #include <string>
 #include <cstring>
 
+
+
 namespace
 {
 	static int TerrainSize = 50;
@@ -16,29 +18,24 @@ namespace
 	static float filter = 0.5f;
 }
 
-SettingsToolWindow::SettingsToolWindow(const std::string& title, bool open)
-	: ToolWindow(title, open), CurrentTerrain(nullptr)
+SettingsToolWindow::SettingsToolWindow(const std::string& title, bool open, Point2Di position, Point2Di size)
+	: ToolWindow(title, open, position, size), CurrentTerrain(nullptr)
 {
-
 }
 
 SettingsToolWindow::~SettingsToolWindow()
 {
 }
 
+#define Spacing(x, y) \
+ImGui::Dummy(ImVec2(x,y))
+
 void SettingsToolWindow::Draw()
 {
 	//ToolWindow::Draw();
-
-	ImGui::Text("Hello World");
-	float samples[100];
-	for (int n = 0; n < 100; n++)
-		samples[n] = sinf(n * 0.2f + ImGui::GetTime() * 1.5f);
-	ImGui::PlotLines("Samples", samples, 100);
-	ImGui::Text("Sheesh");
-	ImGui::Text("New Text");
-
-	ImGui::Combo("List", &m_selectedMethode, ProceduralGen::Names.begin(), (int)ProceduralGen::Names.size());
+	Spacing(0, 10);
+	ImGui::Text("Generation Method");
+	ImGui::Combo(" ", &m_selectedMethode, ProceduralGen::Names.begin(), (int)ProceduralGen::Names.size());
 
 	//// Lui temporaire a deplacer a l'endroit qui lui correspond.
 	//ProceduralGen_t var;
@@ -48,6 +45,9 @@ void SettingsToolWindow::Draw()
 	//CheckVariant(var,
 	//	[&](FaultFormation obj)
 	//	{
+	ImGui::Separator();
+	Spacing(0, 10);
+	
 	ImGui::Text("Fault Formation");
 
 	ImGui::DragInt("Iteration", &NbrIteration, 1);

@@ -16,14 +16,16 @@
 
 #include <stdexcept>
 
+using Point2Di = Math::Point2D<int>;
 
 Application::Application()
 	: m_window(new OGLWindow(1240, 720, "Procedural map generation")), m_toolsManager(new ToolsManager())
 {
-	m_settingsUI = new SettingsToolWindow("Settings", true);
+	m_settingsUI = new SettingsToolWindow("Settings", true, Point2Di(10, 10), Point2Di(300, 200));
 	m_settingsUI->AddToEditorManager(m_toolsManager.get());
-	m_infosUI = new InfosToolWindow("Infos", true);
+	m_infosUI = new InfosToolWindow("Infos", true, Point2Di(1100, 10), Point2Di(120, 90));
 	m_infosUI->AddToEditorManager(m_toolsManager.get());
+	OnUpdateFPS.Bind(m_infosUI, &InfosToolWindow::UpdateFPS);
 }
 
 Application::~Application()
@@ -65,7 +67,7 @@ void Application::Run()
 	pointLight2.ambient = pointLight2.diffuse * 2.f;
 	pointLight2.specular = 1.f;
 	SkyBox<float> skybox;
-	skybox.transform.scale = { 50.f,50.f,50.f };
+	skybox.transform.scale = { 500.f,500.f,500.f };
 
 	Cube<float> cube;
 	cube.transform.position = { 0.f, 0.f, -5.f };
@@ -113,7 +115,8 @@ void Application::Run()
 		float currentTime = glfwGetTime();
 		float deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
-		std::cout << "FPS: " << (1 / deltaTime) << "/" << deltaTime << std::endl;
+		int fps = 1 / deltaTime;
+		OnUpdateFPS.Broadcast(fps);
 
 		//triangle.transform.rotation.y += 0.0025f;
 		//plane.transform.rotation.y += 0.001f;
