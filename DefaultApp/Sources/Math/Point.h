@@ -48,3 +48,7 @@ namespace Math
 		T x, y;
 	};
 }
+
+using Point2i = Math::Point2D<int>;
+
+using Point3f = Math::Point3D<float>;

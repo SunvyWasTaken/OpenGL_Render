@@ -31,7 +31,7 @@ class TriangleList
  private:
 
     void ChangeVertice(vertex_type& vertex, int x, int z);
-    void InitVertices(const BaseTerrain* pTerrain, std::vector<vertex_type>& Vertices);
+    void InitVertices(std::vector<vertex_type>& Vertices);
     void InitIndices(std::vector<uint>& Indices);
 
     int m_width;

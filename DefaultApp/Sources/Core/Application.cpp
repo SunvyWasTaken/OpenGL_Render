@@ -50,9 +50,9 @@ void Application::Run()
 	//SkyBox<float> skybox;
 	//skybox.transform.scale = { 50.f,50.f,50.f };
 
-	//Cube<float> cube;
-	//cube.transform.position = { 0.f, 0.f, -5.f };
-	//cube.transform.scale = { 0.5f, 0.5f, 0.5f };
+	Cube<float> cube;
+	cube.transform.position = { 0.f, 0.f, -5.f };
+	cube.transform.scale = { 0.5f, 0.5f, 0.5f };
 
 	//Cube<float> cube2;
 	//cube2.transform.position = { 1.5f, -0.0f, -12.f };
@@ -95,7 +95,7 @@ void Application::Run()
 
 		//cube.transform.rotation.y = 0.5f;
 
-		//cube.render(contextRenderer);
+		cube.render(contextRenderer);
 		//cube2.render(contextRenderer);
 
 		//cube.transform.rotation.y += 0.0005f;

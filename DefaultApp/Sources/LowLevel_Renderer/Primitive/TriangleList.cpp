@@ -60,10 +60,11 @@ void TriangleList::ChangeVertice(vertex_type& vertex, int x, int z)
 	vertex.m_point = vertex_type::P3D(x * m_terrain->transform.scale.x, y * m_terrain->transform.scale.y, z * m_terrain->transform.scale.z) + m_terrain->transform.position;
     vertex.m_color = vertex_type::Color(1, 1, 1);
     vertex.m_textureCoords = vertex_type::P2D((float)x / (float)m_width, (float)z / (float)m_depth);
+    vertex.m_normal = vertex_type::P3D(0.f, -1.f, 0.f);
 }
 
 
-void TriangleList::InitVertices(const BaseTerrain* pTerrain, std::vector<vertex_type>& Vertices)
+void TriangleList::InitVertices(std::vector<vertex_type>& Vertices)
 {
     int Index = 0;
 
@@ -140,17 +141,22 @@ void TriangleList::Render(ContextRenderer& contextRenderer)
 
 void TriangleList::Load()
 {
+    TextureGenerator textureGen;
+    textureGen.LoadTile("Ressources\\Landscape\\Stone_BaseColor.jpg");
+    textureGen.LoadTile("Ressources\\Landscape\\Grass_BaseColor.jpg");
+    textureGen.LoadTile("Ressources\\Landscape\\Snow_BaseColor.jpg");
+   
 	m_material = Material
     {
-		Texture("Ressources\\mat_test_diffuse.png", GL_TEXTURE0),
-		Texture("Ressources\\mat_test_specular.png", GL_TEXTURE1),
+        textureGen.GenerateTexture(m_width, m_terrain, 0.f, 150.f),
+		Texture("Ressources\\Landscape\\Grass_Specular.jpg", GL_TEXTURE1),
 		32.f
 	};
 
 	std::vector<vertex_type> Vertices;
 	Vertices.resize(m_width * m_depth, vertex_type(vertex_type::P3D(0), vertex_type::Color()));
 
-	InitVertices(m_terrain, Vertices);
+	InitVertices(Vertices);
 
 	std::vector<GLuint> Indices;
 	int NumQuads = (m_width - 1) * (m_depth - 1);

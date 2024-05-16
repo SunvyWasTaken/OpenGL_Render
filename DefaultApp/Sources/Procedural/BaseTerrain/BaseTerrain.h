@@ -22,6 +22,8 @@ public:
 
 	float GetHeight(int x, int z) const { return m_heightMap.Get(x, z); }
 
+	float GetHeightInterpolated(float x, float z) const;
+
 	FTransform transform;
 
 protected:
