@@ -1,13 +1,10 @@
 #include "SettingsToolWindow.h"
-
 #include "Core/ProceduralGeneration.h"
 
 #include <imgui.h>
 #include <vector>
 #include <string>
 #include <cstring>
-
-
 
 namespace
 {
@@ -53,10 +50,11 @@ void SettingsToolWindow::Draw()
 	ImGui::DragInt("Iteration", &NbrIteration, 1);
 	if (NbrIteration <= 0) { NbrIteration = 0; }
 	ImGui::DragFloat("Min height", &MinHeight, 1);
+	
 	if (MinHeight <= 0) { MinHeight = 0; }
 	ImGui::DragFloat("Max height", &MaxHeight, 1);
 	if (MaxHeight <= 0) { MaxHeight = 0; }
-	ImGui::DragFloat("Filter", &filter, 0.005f, 0.f, 1.f);
+	ImGui::SliderFloat("Filter", &filter, 0.01f, 0.99f,  "%.2f");
 	if (ImGui::Button("GenerateTerrain"))
 	{
 		CurrentTerrain->CreateFaultFormationInternal(NbrIteration, MinHeight, MaxHeight, filter);

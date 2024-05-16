@@ -1,5 +1,6 @@
 #include "OGLWindow.h"
 
+#include <algorithm>
 #include <iostream>
 
 #include <imgui.h>
@@ -79,7 +80,7 @@ void OGLWindow::PollEvent(Camera& cam)
 	}
 
 	Math::Mat4<float> rotationMat = Math::Mat4<float>::rotation(cam.transform.rotation);
-	Math::Vector3D<float> worldMovement = rotationMat * movement;
+	Math::Vector3D<float> worldMovement = rotationMat * (movement * sensitivity);
 	cam.transform.position = cam.transform.position + worldMovement;
 
 	//----TOGGLE CAM MODE----//
@@ -92,6 +93,8 @@ void OGLWindow::PollEvent(Camera& cam)
 	}
 	oldState = newState;
 
+	sensitivityChanged.Broadcast(sensitivity);
+	
 	glfwSetScrollCallback(m_windowOpenGL, ScrollCallback);
 }
 
@@ -105,9 +108,9 @@ void OGLWindow::SwitchCameraMode()
 
 void OGLWindow::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	std::cout << "Scroll callback" << std::endl;
+	sensitivity -= yoffset * 0.01f;
+	sensitivity = std::clamp(sensitivity, 0.1f, 2.f);
 }
-
 
 bool OGLWindow::FreeCamMode()
 {

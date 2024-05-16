@@ -1,5 +1,6 @@
 #pragma once
 #include "Point.h"
+#include "Window/OGLWindow.h"
 
 namespace Math
 {
@@ -8,6 +9,11 @@ namespace Math
 	{
 		Vector3D(const VectorType& x_, const VectorType& y_, const VectorType& z_);
 		Vector3D(const Vector3D& vector);
+		template <typename type>
+		Vector3D<VectorType> operator*(const type& sensitivity) const
+		{
+			return Vector3D<VectorType>(x * sensitivity, y * sensitivity, z * sensitivity);
+		}
 		VectorType x, y, z;
 	};
 
@@ -28,5 +34,6 @@ namespace Math
 	{
 		return Point3D<VectorType>(point.x + vector.x, point.y + vector.y, point.z + vector.z);
 	}
+	
 	
 }

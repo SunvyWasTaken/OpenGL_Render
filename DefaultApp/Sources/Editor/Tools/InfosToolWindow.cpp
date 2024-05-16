@@ -20,8 +20,8 @@ void InfosToolWindow::Draw()
     ImGui::Text("Primitives: %d", primitivesCount);
     ImGui::Dummy(ImVec2(0,30));
     ImGui::SeparatorText("CAMERA SETTINGS");
-    ImGui::Text("Sensitivity: %.2f", sensitivity);
     ImGui::SliderFloat("FOV Y", &FOV, 0.1f, 180.f);
+    ImGui::Text("Move Speed: %.2f", sensitivity);
 }
 
 void InfosToolWindow::UpdateFPS(int f)

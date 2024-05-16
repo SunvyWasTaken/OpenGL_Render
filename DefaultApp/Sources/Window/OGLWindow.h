@@ -41,7 +41,7 @@ private:
 	static void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 	
 	bool cursorIsHidden = false;
-	float cameraSpeed = 0.05f;
+	float cameraSpeed = 0.01f;
 	float cameraRotationSpeed = 0.0005f;
-	float sensitivity = 0.1f;
+	static inline float sensitivity = 0.5f;
 };
