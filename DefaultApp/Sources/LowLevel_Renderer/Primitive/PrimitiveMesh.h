@@ -88,8 +88,7 @@ void PrimitiveMesh<Type>::render(ContextRenderer& contextRenderer)
 		contextRenderer.pointLights[i].getUniform(m_shaders, i);
 	}
 
-	m_material.diffuseMap.bind(GL_TEXTURE0);
-	m_material.specularMap.bind(GL_TEXTURE1);
+	m_material.Bind();
 }
 
 template <typename Type>
