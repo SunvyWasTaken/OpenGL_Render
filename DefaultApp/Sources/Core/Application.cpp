@@ -21,11 +21,12 @@ using Point2Di = Math::Point2D<int>;
 Application::Application()
 	: m_window(new OGLWindow(1240, 720, "Procedural map generation")), m_toolsManager(new ToolsManager())
 {
-	m_settingsUI = new SettingsToolWindow("Settings", true, Point2Di(10, 10), Point2Di(300, 200));
+	m_settingsUI = new SettingsToolWindow("Settings", true, Point2Di(10, 10), Point2Di(300, 400));
 	m_settingsUI->AddToEditorManager(m_toolsManager.get());
-	m_infosUI = new InfosToolWindow("Infos", true, Point2Di(1100, 10), Point2Di(120, 90));
+	m_infosUI = new InfosToolWindow("INFOS", true, Point2Di(1040, 10), Point2Di(190, 400));
 	m_infosUI->AddToEditorManager(m_toolsManager.get());
 	OnUpdateFPS.Bind(m_infosUI, &InfosToolWindow::UpdateFPS);
+	m_window->sensitivityChanged.Bind(m_infosUI, &InfosToolWindow::UpdateSensitivity);
 }
 
 Application::~Application()

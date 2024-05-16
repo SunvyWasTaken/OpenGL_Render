@@ -11,9 +11,13 @@ public:
     void Draw() override;
 
     void UpdateFPS(int fps);
+    void UpdateSensitivity(float sensitivity);
     
 private:
     int fps;
     int verticesCount;
     int primitivesCount;
+
+    float sensitivity;
+    float FOV;
 };

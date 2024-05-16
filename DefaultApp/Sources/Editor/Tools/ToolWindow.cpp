@@ -22,6 +22,16 @@ void ToolWindow::Begin()
 	//set position and size
 	ImGui::SetWindowPos(ImVec2(m_position.x, m_position.y));
 	ImGui::SetWindowSize(ImVec2(m_size.x, m_size.y));
+
+	ImGuiStyle& m_style = ImGui::GetStyle();
+	m_style = ImGui::GetStyle();
+	m_style.WindowRounding = 5.0f;
+	m_style.ChildRounding = 5.0f;
+	m_style.FrameRounding = 5.0f;
+	m_style.GrabRounding = 5.0f;
+	m_style.PopupRounding = 5.0f;
+	m_style.ScrollbarRounding = 5.0f;
+	m_style.TabRounding = 5.0f;
 }
 
 void ToolWindow::End()

@@ -82,6 +82,7 @@ void OGLWindow::PollEvent(Camera& cam)
 	Math::Vector3D<float> worldMovement = rotationMat * movement;
 	cam.transform.position = cam.transform.position + worldMovement;
 
+	//----TOGGLE CAM MODE----//
 	static int oldState = GLFW_PRESS;
 	int newState = glfwGetMouseButton(m_windowOpenGL, GLFW_MOUSE_BUTTON_RIGHT);
 	if (newState == GLFW_PRESS && oldState == GLFW_RELEASE)
@@ -90,6 +91,8 @@ void OGLWindow::PollEvent(Camera& cam)
 		SwitchCameraMode();
 	}
 	oldState = newState;
+
+	glfwSetScrollCallback(m_windowOpenGL, ScrollCallback);
 }
 
 void OGLWindow::SwitchCameraMode()
@@ -98,6 +101,11 @@ void OGLWindow::SwitchCameraMode()
 	glfwSetInputMode(m_windowOpenGL, GLFW_RAW_MOUSE_MOTION, glfwGetInputMode(m_windowOpenGL, GLFW_RAW_MOUSE_MOTION) == GLFW_TRUE ? GLFW_FALSE : GLFW_TRUE);
 	glfwSetCursorPos(m_windowOpenGL, m_width / 2, m_height / 2);
 	cursorIsHidden = !cursorIsHidden;
+}
+
+void OGLWindow::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	std::cout << "Scroll callback" << std::endl;
 }
 
 
@@ -115,7 +123,7 @@ void OGLWindow::Init()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	m_windowOpenGL = glfwCreateWindow(1240, 720, m_title.c_str(), nullptr, nullptr);
+	m_windowOpenGL = glfwCreateWindow(m_width, m_height, m_title.c_str(), nullptr, nullptr);
 	if (!m_windowOpenGL)
 	{
 		std::cout << "Failed to create GLFW window 1" << std::endl;

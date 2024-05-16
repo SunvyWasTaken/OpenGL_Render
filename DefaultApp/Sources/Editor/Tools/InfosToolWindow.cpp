@@ -3,8 +3,9 @@
 #include <imgui.h>
 
 InfosToolWindow::InfosToolWindow(const std::string& title, bool open, Point2Di position, Point2Di size)
-    : ToolWindow(title, open, position, size), fps(0), verticesCount(0), primitivesCount(0)
+    : ToolWindow(title, open, position, size), fps(0), verticesCount(0), primitivesCount(0), sensitivity(0), FOV(0)
 {
+    
 }
 
 InfosToolWindow::~InfosToolWindow()
@@ -13,14 +14,22 @@ InfosToolWindow::~InfosToolWindow()
 
 void InfosToolWindow::Draw()
 {
-    Begin();
+    ImGui::SeparatorText("SCENE INFOS");
     ImGui::Text("FPS: %d", fps);
     ImGui::Text("Vertices: %d", verticesCount);
     ImGui::Text("Primitives: %d", primitivesCount);
-    End();
+    ImGui::Dummy(ImVec2(0,30));
+    ImGui::SeparatorText("CAMERA SETTINGS");
+    ImGui::Text("Sensitivity: %.2f", sensitivity);
+    ImGui::SliderFloat("FOV Y", &FOV, 0.1f, 180.f);
 }
 
 void InfosToolWindow::UpdateFPS(int f)
 {
     fps = f;
+}
+
+void InfosToolWindow::UpdateSensitivity(float s)
+{
+    sensitivity = s;
 }

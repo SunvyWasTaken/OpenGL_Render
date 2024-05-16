@@ -5,7 +5,11 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+
+#include "Editor/Observer/SignalSlot.h"
 class Camera;
+
+DECLARE_MULTICAST_DELEGATE(OnChangeSensitivity, float)
 
 class OGLWindow
 {
@@ -20,6 +24,8 @@ public:
 	int isWindowShouldClose();
 	void Draw();
 	void PollEvent(Camera& cam);
+
+	OnChangeSensitivity sensitivityChanged;
 	
 
 private:
@@ -32,8 +38,10 @@ private:
 
 	void SwitchCameraMode();
 	bool FreeCamMode();
+	static void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 	
 	bool cursorIsHidden = false;
 	float cameraSpeed = 0.05f;
 	float cameraRotationSpeed = 0.0005f;
+	float sensitivity = 0.1f;
 };
