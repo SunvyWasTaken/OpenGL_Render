@@ -16,6 +16,7 @@
 
 #include <stdexcept>
 
+#include "LowLevel_Renderer/Primitive/LightMesh.h"
 #include "LowLevel_Renderer/Primitive/Plane.h"
 
 using Point2Di = Math::Point2D<int>;
@@ -70,15 +71,15 @@ void Application::Run()
 
 	DirectionalLight directionalLight;
 	directionalLight.direction = { -0.2f, -1.f, -0.3f };
-	directionalLight.diffuse = { 1.f, 1.f, 1.f };
-	directionalLight.ambient = directionalLight.diffuse * 0.2f;
-	directionalLight.specular = 1.f;
+	directionalLight.diffuse = { 0.4f, 0.4f, 0.4f };
+	directionalLight.ambient = { 0.05f, 0.05f, 0.05f };
+	directionalLight.specular = { 0.5f, 0.5f, 0.5f };
 
 	PointLight pointLight;
 	pointLight.position = { 1.f, 0.5f, -3.f };
 	pointLight.diffuse = { 1.f, 1.f, 1.f };
 	pointLight.ambient = pointLight.diffuse * 0.2f;
-	pointLight.specular = 5.f;
+	pointLight.specular = 0.f;
 
 	PointLight pointLight2;
 	pointLight2.position = { -1.f, 0.5f, -3.f };
@@ -113,6 +114,15 @@ void Application::Run()
 	cube2.addShaders(basicShaders);
 	cube2.load();
 
+	CubeLight<float> cubeLight;
+	cubeLight.transform.scale = { 1.f, 1.f, 1.f };
+	cubeLight.setColor({ 0.f, 0.f, 1.f });
+	cubeLight.addShaders({
+		{GL_VERTEX_SHADER,  "light.vert"},
+		{GL_FRAGMENT_SHADER, "light.frag"}
+		});
+	cubeLight.load();
+
 	float aspectRatio = 1240.f / 720.f;
 	float fov = 45.f / 180.f * 3.141592f;
 	float nearPlane = 0.01f;
@@ -127,7 +137,7 @@ void Application::Run()
 		viewport.getMatrixProjection(),
 		camera,
 		directionalLight,
-		std::vector<PointLight>{}
+		std::vector<PointLight>{cubeLight}
 	};
 
 	FaultFormation Terrain;
@@ -157,18 +167,18 @@ void Application::Run()
 		//triangle.transform.rotation.y += 0.0025f;
 		//plane.transform.rotation.y += 0.001f;
 
-		cube.transform.rotation.y = 0.5f;
+		plane.transform.rotation.x = 0.9f;
 
 		cube.render(contextRenderer);
-
-		cube2.render(contextRenderer);
+		cubeLight.render(contextRenderer);
+		//cube2.render(contextRenderer);
 
 		plane.render(contextRenderer);
 
 		//cube.transform.rotation.y += 0.0005f;
 		cube.transform.rotation.x += 0.0005f;
 		
-		skybox.render(contextRenderer);
+		//skybox.render(contextRenderer);
 		Terrain.Render(contextRenderer);
 		
 		_Draw(*m_window);
