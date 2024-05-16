@@ -66,6 +66,11 @@ void Application::Run()
 		{GL_FRAGMENT_SHADER, "default.frag"}
 	};
 
+	std::vector<ShaderInfo> skyboxShader = {
+		{GL_VERTEX_SHADER,  "skybox.vert"},
+		{GL_FRAGMENT_SHADER, "skybox.frag"}
+	};
+
 	DirectionalLight directionalLight;
 	directionalLight.direction = { -0.2f, -1.f, -0.3f };
 	directionalLight.diffuse = { 1.f, 1.f, 1.f };
@@ -83,8 +88,11 @@ void Application::Run()
 	pointLight2.diffuse = { 0.f, 0.f, 0.f };
 	pointLight2.ambient = pointLight2.diffuse * 2.f;
 	pointLight2.specular = 1.f;
+
 	SkyBox<float> skybox;
 	skybox.transform.scale = { 500.f,500.f,500.f };
+	skybox.addShaders(skyboxShader);
+	skybox.load();
 
 
 	Cube<float> cube;

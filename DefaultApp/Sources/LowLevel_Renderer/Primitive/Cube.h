@@ -3,7 +3,6 @@
 #include "PrimitiveUtils.h"
 #include "Vertex.h"
 #include "Math/Transform.h"
-#include "LowLevel_Renderer/Shader/Shader.h"
 
 #include <glad/glad.h>
 #include <array>
