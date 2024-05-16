@@ -28,7 +28,7 @@ namespace My
 	struct Variant
 	{
 		using variant_t = typename std::variant<Types...>;
-		static inline std::initializer_list<const char*> Names = container<Types...>::Names;
+		static std::initializer_list<const char*>& Names() { return container<Types...>::Names; }
 	};
 
 }
