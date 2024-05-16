@@ -22,6 +22,11 @@ public:
 
 	float GetHeight(int x, int z) const { return m_heightMap.Get(x, z); }
 
+	int GetTerrainSize() const { return m_terrainSize; }
+
+	float GetMinHeight() const { return m_minHeight; }
+	float GetMaxHeight() const { return m_maxHeight; }
+
 	float GetHeightInterpolated(float x, float z) const;
 
 	FTransform transform;

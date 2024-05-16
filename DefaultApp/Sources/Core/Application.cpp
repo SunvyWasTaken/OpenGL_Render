@@ -78,7 +78,7 @@ void Application::Run()
 	Terrain.transform.position = {-25.f, 0.f, -25.f};
 	Terrain.transform.scale = { 1.f, 1.f, 1.f };
 
-	Terrain.GenerateTerrain(50, 100, 0, 50, 0.01f);
+	Terrain.GenerateTerrain(500, 100, 0, 50, 0.01f);
 
 	while (!m_window->isWindowShouldClose())
 	{

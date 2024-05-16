@@ -12,11 +12,14 @@ public:
 
 	Texture(const std::string& path, GLenum slot = GL_TEXTURE0);
 
-	Texture(unsigned char* bytes, Point2i& textureSize);
+	Texture(unsigned char* bytes, Point2i& textureSize, int NumColch);
 
 	~Texture();
 
 	void Load(const std::string& path);
+
+	//Delete the image data as it is already in the OpenGL Texture object
+	void Unload();
 
 	Point3f GetColor(const Point2i& coord) const;
 
@@ -45,16 +48,18 @@ struct TextureHeightDesc
 	void Print() const { printf("Low %f Optimal %f High %f", Low, Optimal, High); }
 };
 
-struct TextureTile
+struct TextureTile final
 {
 	TextureHeightDesc HeightDesc;
 	Texture Image;
 };
 
-class TextureGenerator
+class TextureGenerator final
 {
 public:
 	TextureGenerator() = default;
+
+	~TextureGenerator();
 
 	void LoadTile(const std::string& Filename);
 
@@ -70,6 +75,6 @@ private:
 //#define MAX_TEXTURE_TILES 3
 //#endif // !MAX_TEXTURE_TILES
 //
-	TextureTile m_textureTiles[3] = {};
+	TextureTile* m_textureTiles[3];
 	int m_numTextureTiles = 0;
 };

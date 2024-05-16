@@ -3,12 +3,11 @@
 #include "Procedural/BaseTerrain/BaseTerrain.h"
 
 #include <filesystem>
-#include <iostream>
 #include <stb_image.h>
-
-#define STBI_MSC_SECURE_CRT
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <stb_image_write.h>
+//
+//#define STBI_MSC_SECURE_CRT
+//#define STB_IMAGE_WRITE_IMPLEMENTATION
+//#include <stb_image_write.h>
 
 Texture::Texture()
 	: m_imageData(nullptr)
@@ -27,31 +26,37 @@ Texture::Texture(const std::string& path, GLenum slot)
 	Load(path);
 
 	ConfigOpenGL(m_textureSize);
+
+	Unload();
 }
 
-Texture::Texture(unsigned char* bytes, Point2i& textureSize)
+Texture::Texture(unsigned char* bytes, Point2i& textureSize, int NumColch)
 	: m_imageData(bytes)
 	, m_textureSize(textureSize)
-	, numColCh(0)
+	, numColCh(NumColch)
 	, m_texture(0)
 {
+	//stbi_write_png("texture.png", m_textureSize.x, m_textureSize.y, numColCh, m_imageData, m_textureSize.x * numColCh);
+
 	ConfigOpenGL(m_textureSize);
 }
 
 Texture::~Texture()
 {
-	//Delete the image data as it is already in the OpenGL Texture object
-	if (m_imageData != NULL)
-	{
-		stbi_image_free(m_imageData);
-	}
-	m_imageData = NULL;
+	Unload();
 }
 
 void Texture::Load(const std::string& path)
 {
 	stbi_set_flip_vertically_on_load(true);
-	m_imageData = stbi_load(path.c_str(), &m_textureSize.x, &m_textureSize.y, &numColCh, STBI_rgb_alpha);
+	if (path.find(".jpg") != std::string::npos)
+	{
+		m_imageData = stbi_load(path.c_str(), &m_textureSize.x, &m_textureSize.y, &numColCh, STBI_rgb);
+	}
+	else
+	{
+		m_imageData = stbi_load(path.c_str(), &m_textureSize.x, &m_textureSize.y, &numColCh, STBI_rgb_alpha);
+	}
 	// Check if the image was load
 
 	if (!m_imageData)
@@ -59,6 +64,15 @@ void Texture::Load(const std::string& path)
 		printf("Can't load texture from '%s' - %s\n", path.c_str(), stbi_failure_reason());
 		exit(0);
 	}
+}
+
+void Texture::Unload()
+{
+	if (m_imageData)
+	{
+		stbi_image_free(m_imageData);
+	}
+	m_imageData = NULL;
 }
 
 Point3f Texture::GetColor(const Point2i& coord) const
@@ -73,7 +87,7 @@ Point3f Texture::GetColor(const Point2i& coord) const
 
 	Point3f Color;
 
-	unsigned char* p = m_imageData + (WrappedY * m_textureSize.x + WrappedX) * numColCh;
+	unsigned char* p = m_imageData + (WrappedY * m_textureSize.x + WrappedX) * 3;
 	Color.x = (float)p[0];
 	Color.y = (float)p[1];
 	Color.z = (float)p[2];
@@ -119,10 +133,25 @@ void Texture::ConfigOpenGL(const Point2i& textureSize)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	//Assign the image to OpengGL Texture object
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureSize.x, textureSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_imageData);
+	if (numColCh == 4)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureSize.x, textureSize.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_imageData);
+	}
+	if (numColCh == 3)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, textureSize.x, textureSize.y, 0, GL_RGB, GL_UNSIGNED_BYTE, m_imageData);
+	}
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+TextureGenerator::~TextureGenerator()
+{
+	for (int i = 2; i > -1; --i)
+	{
+		delete m_textureTiles[i];
+	}
 }
 
 void TextureGenerator::LoadTile(const std::string& Filename)
@@ -131,7 +160,8 @@ void TextureGenerator::LoadTile(const std::string& Filename)
 	{
 		return;
 	}
-	m_textureTiles[m_numTextureTiles].Image.Load(Filename);
+	m_textureTiles[m_numTextureTiles] = new TextureTile();
+	m_textureTiles[m_numTextureTiles]->Image.Load(Filename);
 	m_numTextureTiles++;
 }
 
@@ -146,16 +176,16 @@ Texture TextureGenerator::GenerateTexture(int TextureSize, BaseTerrain* pTerrain
 
 	int BPP = 3;
 	int TextureBytes = TextureSize * TextureSize * BPP;
-	unsigned char* pTextureData = (unsigned char*)malloc(TextureBytes);
+	unsigned char* pTextureData = new unsigned char[TextureBytes];
 	unsigned char* pixel = pTextureData;
 
-	float HeightMapToTextureRatio = pTerrain->transform.scale.x / (float)TextureSize;
+	float HeightMapToTextureRatio = (float)pTerrain->GetTerrainSize() / (float)TextureSize;
 
 	printf("Height map to texture ratio: %f\n", HeightMapToTextureRatio);
 
-	for (int y = 0; y < TextureSize; y++)
+	for (int y = 0; y < TextureSize; ++y)
 	{
-		for (int x = 0; x < TextureSize; x++)
+		for (int x = 0; x < TextureSize; ++x)
 		{
 
 			float InterpolatedHeight = pTerrain->GetHeightInterpolated((float)x * HeightMapToTextureRatio,
@@ -168,7 +198,7 @@ Texture TextureGenerator::GenerateTexture(int TextureSize, BaseTerrain* pTerrain
 			for (int Tile = 0; Tile < m_numTextureTiles; Tile++)
 			{
 				Point2i currentCoord{x, y};
-				Point3f Color = m_textureTiles[Tile].Image.GetColor(currentCoord);
+				Point3f Color = m_textureTiles[Tile]->Image.GetColor(currentCoord);
 
 				float BlendFactor = RegionPercent(Tile, InterpolatedHeight);
 
@@ -186,17 +216,19 @@ Texture TextureGenerator::GenerateTexture(int TextureSize, BaseTerrain* pTerrain
 			pixel[1] = (unsigned char)Green;
 			pixel[2] = (unsigned char)Blue;
 
-			pixel += 3;
+			pixel += BPP;
 		}
 	}
 
 	// TODO : ici à changer pour que la texture reste en mémoire et après penser à la delete lorsque c'est détruit.
 
-	stbi_write_png("texture.png", TextureSize, TextureSize, BPP, pTextureData, TextureSize * BPP);
+	Point2i CurrentTextureSize{TextureSize, TextureSize};
+	Texture CurrentTexture = Texture(pTextureData, CurrentTextureSize, BPP);
+
+	//free(pTextureData);
 
 	//pTexture->LoadRaw(TextureSize, TextureSize, BPP, pTextureData);
-	Point2i CurrentTextureSize{TextureSize, TextureSize};
-	return Texture(pTextureData, CurrentTextureSize);
+	return CurrentTexture;
 }
 
 void TextureGenerator::CalculateTextureRegions(float MinHeight, float MaxHeight)
@@ -216,12 +248,12 @@ void TextureGenerator::CalculateTextureRegions(float MinHeight, float MaxHeight)
 
 	for (int i = 0; i < m_numTextureTiles; i++)
 	{
-		m_textureTiles[i].HeightDesc.Low = LastHeight + 1;
+		m_textureTiles[i]->HeightDesc.Low = LastHeight + 1;
 		LastHeight += RangePerTile;
-		m_textureTiles[i].HeightDesc.Optimal = LastHeight;
-		m_textureTiles[i].HeightDesc.High = m_textureTiles[i].HeightDesc.Optimal + RangePerTile;
+		m_textureTiles[i]->HeightDesc.Optimal = LastHeight;
+		m_textureTiles[i]->HeightDesc.High = m_textureTiles[i]->HeightDesc.Optimal + RangePerTile;
 
-		m_textureTiles[i].HeightDesc.Print(); printf("\n");
+		m_textureTiles[i]->HeightDesc.Print(); printf("\n");
 	}
 }
 
@@ -229,20 +261,20 @@ float TextureGenerator::RegionPercent(int Tile, float Height)
 {
 	float Percent = 0.0f;
 
-	if (Height < m_textureTiles[Tile].HeightDesc.Low) {
+	if (Height < m_textureTiles[Tile]->HeightDesc.Low) {
 		Percent = 0.0f;
 	}
-	else if (Height > m_textureTiles[Tile].HeightDesc.High) {
+	else if (Height > m_textureTiles[Tile]->HeightDesc.High) {
 		Percent = 0.0f;
 	}
-	else if (Height < m_textureTiles[Tile].HeightDesc.Optimal) {
-		float Nom = (float)Height - (float)m_textureTiles[Tile].HeightDesc.Low;
-		float Denom = (float)m_textureTiles[Tile].HeightDesc.Optimal - (float)m_textureTiles[Tile].HeightDesc.Low;
+	else if (Height < m_textureTiles[Tile]->HeightDesc.Optimal) {
+		float Nom = (float)Height - (float)m_textureTiles[Tile]->HeightDesc.Low;
+		float Denom = (float)m_textureTiles[Tile]->HeightDesc.Optimal - (float)m_textureTiles[Tile]->HeightDesc.Low;
 		Percent = Nom / Denom;
 	}
-	else if (Height >= m_textureTiles[Tile].HeightDesc.Optimal) {
-		float Nom = (float)m_textureTiles[Tile].HeightDesc.High - (float)Height;
-		float Denom = (float)m_textureTiles[Tile].HeightDesc.High - (float)m_textureTiles[Tile].HeightDesc.Optimal;
+	else if (Height >= m_textureTiles[Tile]->HeightDesc.Optimal) {
+		float Nom = (float)m_textureTiles[Tile]->HeightDesc.High - (float)Height;
+		float Denom = (float)m_textureTiles[Tile]->HeightDesc.High - (float)m_textureTiles[Tile]->HeightDesc.Optimal;
 		Percent = Nom / Denom;
 	}
 	else {

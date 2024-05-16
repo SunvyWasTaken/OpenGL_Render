@@ -56,11 +56,11 @@ void TriangleList::Destroy()
 void TriangleList::ChangeVertice(vertex_type& vertex, int x, int z)
 {
     float y = m_terrain->GetHeight(x, z);
-
-	vertex.m_point = vertex_type::P3D(x * m_terrain->transform.scale.x, y * m_terrain->transform.scale.y, z * m_terrain->transform.scale.z) + m_terrain->transform.position;
+    
+	vertex.m_point = vertex_type::P3D(x * m_terrain->transform.scale.x, y * m_terrain->transform.scale.y, z * m_terrain->transform.scale.z);
     vertex.m_color = vertex_type::Color(1, 1, 1);
     vertex.m_textureCoords = vertex_type::P2D((float)x / (float)m_width, (float)z / (float)m_depth);
-    vertex.m_normal = vertex_type::P3D(0.f, -1.f, 0.f);
+    vertex.m_normal = vertex_type::P3D(0.f, 1.f, 0.f);
 }
 
 
@@ -114,6 +114,10 @@ void TriangleList::InitIndices(std::vector<GLuint>& Indices)
     assert(Index == Indices.size());
 }
 
+void TriangleList::CalcNormals(std::vector<vertex_type>& Vertices, std::vector<uint>& Indices)
+{
+}
+
 
 void TriangleList::Render(ContextRenderer& contextRenderer)
 {
@@ -141,14 +145,15 @@ void TriangleList::Render(ContextRenderer& contextRenderer)
 
 void TriangleList::Load()
 {
-    TextureGenerator textureGen;
-    textureGen.LoadTile("Ressources\\Landscape\\Stone_BaseColor.jpg");
-    textureGen.LoadTile("Ressources\\Landscape\\Grass_BaseColor.jpg");
-    textureGen.LoadTile("Ressources\\Landscape\\Snow_BaseColor.jpg");
+	TextureGenerator textureGen;
+	textureGen.LoadTile("Ressources\\Landscape\\Stone_BaseColor.jpg");
+	textureGen.LoadTile("Ressources\\Landscape\\Grass_BaseColor.jpg");
+	textureGen.LoadTile("Ressources\\Landscape\\Snow_BaseColor.jpg");
    
 	m_material = Material
     {
-        textureGen.GenerateTexture(m_width, m_terrain, 0.f, 150.f),
+        textureGen.GenerateTexture(2048, m_terrain, m_terrain->GetMinHeight(), m_terrain->GetMaxHeight()),
+		//Texture("Ressources\\Landscape\\Grass_BaseColor.jpg", GL_TEXTURE0),
 		Texture("Ressources\\Landscape\\Grass_Specular.jpg", GL_TEXTURE1),
 		32.f
 	};
