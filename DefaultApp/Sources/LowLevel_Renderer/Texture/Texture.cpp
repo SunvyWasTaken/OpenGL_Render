@@ -39,6 +39,8 @@ Texture::Texture(unsigned char* bytes, Point2i& textureSize, int NumColch)
 	//stbi_write_png("texture.png", m_textureSize.x, m_textureSize.y, numColCh, m_imageData, m_textureSize.x * numColCh);
 
 	ConfigOpenGL(m_textureSize);
+
+	Unload();
 }
 
 Texture::~Texture()
@@ -72,7 +74,7 @@ void Texture::Unload()
 	{
 		stbi_image_free(m_imageData);
 	}
-	m_imageData = NULL;
+	m_imageData = nullptr;
 }
 
 Point3f Texture::GetColor(const Point2i& coord) const
@@ -106,22 +108,6 @@ void Texture::bind(GLuint slot)
 {
 	glActiveTexture(slot);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
-}
-
-void Texture::operator=(const Texture& other)
-{
-	m_imageData = nullptr;
-	m_textureSize = other.m_textureSize;
-	numColCh = other.numColCh;
-	m_texture = other.m_texture;
-}
-
-void Texture::operator=(Texture& other)
-{
-	m_imageData = nullptr;
-	m_textureSize = other.m_textureSize;
-	numColCh = other.numColCh;
-	m_texture = other.m_texture;
 }
 
 void Texture::ConfigOpenGL(const Point2i& textureSize)

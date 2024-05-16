@@ -14,6 +14,8 @@ Material::~Material()
 	{
 		if (value)
 			delete value;
+
+		value = nullptr;
 	}
 }
 
