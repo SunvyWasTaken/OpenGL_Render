@@ -27,7 +27,7 @@ Texture::Texture(const std::string& path, GLenum slot)
 
 	ConfigOpenGL(m_textureSize);
 
-	Unload();
+	//Unload();
 }
 
 Texture::Texture(unsigned char* bytes, Point2i& textureSize, int NumColch)
@@ -110,6 +110,15 @@ void Texture::bind(GLuint slot)
 
 void Texture::operator=(const Texture& other)
 {
+	m_imageData = nullptr;
+	m_textureSize = other.m_textureSize;
+	numColCh = other.numColCh;
+	m_texture = other.m_texture;
+}
+
+void Texture::operator=(Texture& other)
+{
+	m_imageData = nullptr;
 	m_textureSize = other.m_textureSize;
 	numColCh = other.numColCh;
 	m_texture = other.m_texture;

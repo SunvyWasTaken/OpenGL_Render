@@ -105,7 +105,7 @@ void Application::Run()
 	Cube<float> cube2;
 	cube2.transform.position = { 1.5f, -0.0f, -12.f };
 	cube2.transform.scale = { 0.5f, 0.5f, 0.5f };
-	cube2.applyMaterial(catMaterial);
+	cube2.applyMaterial(boxMaterial);
 	cube2.addShaders(basicShaders);
 	cube2.load();
 

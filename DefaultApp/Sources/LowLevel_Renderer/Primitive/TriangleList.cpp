@@ -142,7 +142,6 @@ void TriangleList::CalcNormals(std::vector<vertex_type>& Vertices, std::vector<u
 
 void TriangleList::Render(ContextRenderer& contextRenderer)
 {
-    return;
 	glUseProgram(m_shaders->program);
 	glBindVertexArray(m_vao);
 
@@ -174,36 +173,30 @@ void TriangleList::Load()
    
 	m_material = Material
     {
-        textureGen.GenerateTexture(2048, m_terrain, m_terrain->GetMinHeight(), m_terrain->GetMaxHeight()),
-		//Texture("Ressources\\Landscape\\Grass_BaseColor.jpg", GL_TEXTURE0),
+        //textureGen.GenerateTexture(2048, m_terrain, m_terrain->GetMinHeight(), m_terrain->GetMaxHeight()),
+		Texture("Ressources\\Landscape\\Grass_BaseColor.jpg", GL_TEXTURE0),
 		Texture("Ressources\\Landscape\\Grass_Specular.jpg", GL_TEXTURE1),
 		32.f
 	};
-	//m_material = Material
- //   {
-	//	Texture("Ressources\\mat_test_diffuse.png", GL_TEXTURE0),
-	//	Texture("Ressources\\mat_test_specular.png", GL_TEXTURE1),
-	//	32.f
-	//};
 
 	std::vector<vertex_type> Vertices;
-	//Vertices.resize(m_width * m_depth, vertex_type(vertex_type::P3D(0), vertex_type::Color()));
+	Vertices.resize(m_width * m_depth, vertex_type(vertex_type::P3D(0), vertex_type::Color()));
 
 	InitVertices(Vertices);
 	//InitVertices(m_terrain, Vertices);
 
 	std::vector<GLuint> Indices;
-	//int NumQuads = (m_width - 1) * (m_depth - 1);
-	//Indices.resize(NumQuads * 6);
-	//InitIndices(Indices);
+	int NumQuads = (m_width - 1) * (m_depth - 1);
+	Indices.resize(NumQuads * 6);
+	InitIndices(Indices);
 
 	CalcNormals(Vertices, Indices);
 
-	//LOAD_VERTEX_ARRAYS(m_vao);
-	//glGenBuffers(1, &m_vbo);
-	//glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	//glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(vertex_type), Vertices.data(), GL_STATIC_DRAW);
-	//LOAD_ELEMENT_ARRAY_BUFFER(m_ebo, Indices);
+	LOAD_VERTEX_ARRAYS(m_vao);
+	glGenBuffers(1, &m_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+	glBufferData(GL_ARRAY_BUFFER, Vertices.size() * sizeof(vertex_type), Vertices.data(), GL_STATIC_DRAW);
+	LOAD_ELEMENT_ARRAY_BUFFER(m_ebo, Indices);
 
 	//ShaderInfo shaders[] = {
 	//	{GL_VERTEX_SHADER,  "default.vert"},
@@ -211,22 +204,25 @@ void TriangleList::Load()
 	//	{GL_NONE, nullptr}
 	//};
 
-	//m_shaders = Shader::loadShader(shaders);
-	//glUseProgram(m_shaders->program);
+	m_shaders = Shader::loadShader(std::vector<ShaderInfo>{
+		{GL_VERTEX_SHADER, "default.vert"},
+		{ GL_FRAGMENT_SHADER, "default.frag" }
+	});
+	glUseProgram(m_shaders->program);
 
-	//LOAD_BASIC_VERTEX_ATTRIB_POINTER();
+	LOAD_BASIC_VERTEX_ATTRIB_POINTER();
 
-	//m_material.diffuseMap.textUnit(m_shaders->program, "tex0");
-	//m_material.specularMap.textUnit(m_shaders->program, "tex1");
+	m_material.diffuseMap.textUnit(m_shaders->program, "tex0");
+	m_material.specularMap.textUnit(m_shaders->program, "tex1");
 
-	//glBindVertexArray(0);
+	glBindVertexArray(0);
 
- //   // Kristo
-	////glBindBuffer(GL_ARRAY_BUFFER, 0);
-	////glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    // Kristo
+	//glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
- //   // ogldev
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices[0]) * Vertices.size(), &Vertices[0], GL_STATIC_DRAW);
-	//glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices[0]) * Indices.size(), &Indices[0], GL_STATIC_DRAW);
+    // ogldev
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertices[0]) * Vertices.size(), &Vertices[0], GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices[0]) * Indices.size(), &Indices[0], GL_STATIC_DRAW);
 
 }
