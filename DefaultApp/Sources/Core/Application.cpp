@@ -16,6 +16,8 @@
 
 #include <stdexcept>
 
+#include "LowLevel_Renderer/Primitive/Plane.h"
+
 using Point2Di = Math::Point2D<int>;
 
 Application::Application()
@@ -43,11 +45,6 @@ void Application::Run()
 	//using TriangleF = Triangle<float>;
 	//TriangleF triangle{};
 	//triangle.transform.position = P3D{ 2.5f, 2.5f, -8.f };
-
-	//using PlaneF = Plane<float>;
-	//PlaneF plane{};
-	//plane.transform.position = P3D{ 0.f, -1.f, -5.f };
-	//plane.transform.rotation = { 0.f, 0.0f, 0.0f };
 
 	Material boxMaterial{
 		Texture("Ressources\\mat_test_diffuse.png", GL_TEXTURE0),
@@ -94,6 +91,13 @@ void Application::Run()
 	skybox.addShaders(skyboxShader);
 	skybox.load();
 
+	using PlaneF = Plane<float>;
+	PlaneF plane;
+	plane.transform.position = P3D{ 0.f, -1.f, -5.f };
+	plane.transform.rotation = { 0.f, 0.0f, 0.0f };
+	plane.addShaders(basicShaders);
+	plane.applyMaterial(boxMaterial);
+	plane.load();
 
 	Cube<float> cube;
 	cube.transform.position = { 0.f, 0.f, -5.f };
@@ -158,6 +162,8 @@ void Application::Run()
 		cube.render(contextRenderer);
 
 		cube2.render(contextRenderer);
+
+		plane.render(contextRenderer);
 
 		//cube.transform.rotation.y += 0.0005f;
 		cube.transform.rotation.x += 0.0005f;

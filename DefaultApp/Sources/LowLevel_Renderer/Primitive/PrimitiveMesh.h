@@ -1,5 +1,4 @@
 #pragma once
-#include "PrimitiveMeshParameter.h"
 #include "PrimitiveUtils.h"
 #include "Vertex.h"
 #include "Core/ContextRenderer.h"
