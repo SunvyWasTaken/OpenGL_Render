@@ -154,7 +154,9 @@ void TriangleList::Render(ContextRenderer& contextRenderer)
 	m_shaders->setMat4("model", m_terrain->transform.getMatrix());
 
 	m_shaders->setVec3("viewPosition", contextRenderer.camera.transform.position);
-    m_shaders->setFloat("material.shininess", m_material.shininess);
+    m_shaders->setFloat("material.shininess", m_material.shininess); 
+	m_shaders->setVec3("waterPlane.Normal", contextRenderer.waterPlane.Normal);
+	m_shaders->setFloat("waterPlane.YCoord", contextRenderer.waterPlane.YCoord);
 
 	contextRenderer.directionalLight.getUniform(m_shaders);
 

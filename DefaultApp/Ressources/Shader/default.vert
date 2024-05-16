@@ -14,8 +14,16 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+struct Plane{
+    vec3 Normal;
+    float YCoord;
+};
+
+uniform Plane waterPlane;
+
 void main()
 {
+    gl_ClipDistance[0] = dot(model * vec4(aPos, 1.0), vec4(waterPlane.Normal,waterPlane.YCoord));
     gl_Position = projection * view * model * vec4(aPos, 1.0); // see how we directly give a vec3 to vec4's constructor
     objectColor = vec4(aColor, 1.0); // set the output variable to a dark-red color
     texCoords   = aTexCoords; 

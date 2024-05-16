@@ -34,6 +34,6 @@ private:
 	bool FreeCamMode();
 	
 	bool cursorIsHidden = false;
-	float cameraSpeed = 0.0025f;
+	float cameraSpeed = 0.5f;
 	float cameraRotationSpeed = 0.0005f;
 };

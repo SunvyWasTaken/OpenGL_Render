@@ -29,6 +29,8 @@ public:
 	void operator=(const Texture& other);
 	void operator=(Texture& other);
 
+	const GLuint GetTexture() const;
+
 private:
 
 	void ConfigOpenGL(const Point2i& textureSize);

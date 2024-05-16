@@ -10,6 +10,7 @@
 
 #include <array>
 #include <glad/glad.h>
+#include <algorithm>
 
 template <typename T>
 class Water
@@ -133,18 +134,19 @@ public:
 		};
 
 		std::array<GLuint, 6> indices = {
-			0, 1, 2,
-			2, 3, 0
+			//0, 1, 2,
+			//2, 3, 0
+			2,1,0,
+			0,3,2
 		};
 
 		LOAD_VERTEX_ARRAYS(m_vao)
 		LOAD_ARRAY_BUFFER(m_vbo, vertices)
 		LOAD_ELEMENT_ARRAY_BUFFER(m_ebo, indices)
 
-		ShaderInfo shaders[] = {
+		std::vector<ShaderInfo> shaders = {
 			{GL_VERTEX_SHADER,  "water.vert"},
-			{GL_FRAGMENT_SHADER, "water.frag"},
-			{GL_NONE, nullptr}
+			{GL_FRAGMENT_SHADER, "water.frag"}
 		};
 
 		m_shaders = Shader::loadShader(shaders);
@@ -162,6 +164,7 @@ public:
 
 	void render(ContextRenderer& contextRenderer)
 	{
+		m_dudvMap = Texture("Ressources\\water_dudv.png", GL_TEXTURE2);
 
 		glUseProgram(m_shaders->program);
 		glBindVertexArray(m_vao);
@@ -177,10 +180,33 @@ public:
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_reflectionTexture);
 
-		GLuint textUni = glGetUniformLocation((m_shaders->program), "tex");
-		glUniform1f(textUni, m_refractionDepthTexture);
+		//GLuint reflTextUni = glGetUniformLocation((m_shaders->program), "reflectionText");
+		//glUniform1f(reflTextUni, m_reflectionTexture);
+
+		m_shaders->setFloat("reflectionText", m_reflectionTexture);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, m_refractionTexture);
+
+		//GLuint refrTextUni = glGetUniformLocation((m_shaders->program), "refractionText");
+		//glUniform1f(refrTextUni, m_refractionTexture);
+
+		m_shaders->setFloat("refractionText", m_refractionTexture);
+
+		m_dudvMap.bind(GL_TEXTURE2);
+		m_shaders->setFloat("dudvMap", m_dudvMap.GetTexture());
+
+		m_shaders->setFloat("moveFactor", m_moveFactor);
 
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
+
+	void UpdateWaveMovement(float deltaTime) {
+		m_moveFactor += m_waveSpeed * deltaTime;
+		
+		if (m_moveFactor > 1.f) {
+			m_moveFactor -= 1.f;
+		}
 	}
 
 	Math::Transform<T> transform;
@@ -203,4 +229,9 @@ private:
 	GLuint m_refractionFrameBuffer;
 	GLuint m_refractionTexture;
 	GLuint m_refractionDepthTexture;
+
+	Texture m_dudvMap;
+
+	T m_waveSpeed = 0.03f;
+	T m_moveFactor = 0.f;
 };

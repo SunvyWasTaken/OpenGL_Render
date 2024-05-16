@@ -91,7 +91,7 @@ void Application::Run()
 	pointLight2.specular = 1.f;
 
 	SkyBox<float> skybox;
-	skybox.transform.scale = { 500.f,500.f,500.f };
+	skybox.transform.scale = { 1000.f,1000.f,1000.f };
 	skybox.addShaders(skyboxShader);
 	skybox.load();
 
@@ -125,7 +125,8 @@ void Application::Run()
 		viewport.getMatrixProjection(),
 		camera,
 		directionalLight,
-		std::vector<PointLight>{}
+		std::vector<PointLight>{},
+		Plane{{0,-1,0},-15}
 	};
 
 	FaultFormation Terrain;
@@ -136,8 +137,9 @@ void Application::Run()
 	Terrain.GenerateTerrain(500, 100, 0, 50, 0.01f);
 
 	Water<float> water(1240, 720, { 1240,720 }, { 1240,720 });
-	water.transform.position = { 0.f, -10.f, 0.f };
-	water.transform.scale = { 5.f,0.f,5.f };
+	water.transform.position = { -25.f + 250.f, 0.f, -25.f + 250.f };
+	water.transform.rotation = { 0.f, 3.1415f, 0.f };
+	water.transform.scale = { 250.f,0.f,250.f };
 
 	float lastTime = 0.0f;
 
@@ -164,17 +166,31 @@ void Application::Run()
 		cube.transform.rotation.y += 0.0005f;
 		cube.transform.rotation.x += 0.0005f;
 
-		//First render to water buffer
+		//First render to reflection water buffer
 		glEnable(GL_CLIP_DISTANCE0);
 		water.BindReflectionFrameBuffer();
-		
-		cube.render(contextRenderer);
+		float distance = 2 * (camera.transform.position.y - water.transform.position.y);
+		contextRenderer.camera.transform.position.y -= distance;
+		contextRenderer.camera.transform.rotation.z = -contextRenderer.camera.transform.rotation.z;
 
+		cube.render(contextRenderer);
+		cube2.render(contextRenderer);
+		skybox.render(contextRenderer);
+		Terrain.Render(contextRenderer);
+
+		contextRenderer.camera.transform.position.y += distance;
+		contextRenderer.camera.transform.rotation.z = -contextRenderer.camera.transform.rotation.z;
+
+		//Second render to refraction water buffer
+		water.BindRefractionFrameBuffer();
+		cube.render(contextRenderer);
 		cube2.render(contextRenderer);
 		skybox.render(contextRenderer);
 		Terrain.Render(contextRenderer);
 		
+
 		water.UnbindCurrentFrameBuffer();
+		glDisable(GL_CLIP_DISTANCE0);
 
 		//Second "normal" render
 
@@ -182,6 +198,7 @@ void Application::Run()
 		cube2.render(contextRenderer);
 		skybox.render(contextRenderer);
 		Terrain.Render(contextRenderer);
+		water.UpdateWaveMovement(deltaTime);
 		water.render(contextRenderer);
 
 		_Draw(*m_window);

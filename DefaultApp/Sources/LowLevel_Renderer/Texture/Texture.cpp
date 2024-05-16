@@ -124,6 +124,11 @@ void Texture::operator=(Texture& other)
 	m_texture = other.m_texture;
 }
 
+const GLuint Texture::GetTexture() const
+{
+	return m_texture;
+}
+
 void Texture::ConfigOpenGL(const Point2i& textureSize)
 {
 	//Generates an OpenGL texture object
