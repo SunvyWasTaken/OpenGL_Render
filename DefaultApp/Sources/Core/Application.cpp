@@ -13,6 +13,7 @@
 #include "LowLevel_Renderer/Viewports/Viewport.h"
 #include "ProceduralGeneration.h"
 #include "LowLevel_Renderer/Lights/PointLight.h"
+#include "LowLevel_Renderer/Primitive/Water.h"
 
 #include <stdexcept>
 
@@ -73,6 +74,9 @@ void Application::Run()
 	cube2.transform.position = { 1.5f, -0.0f, -12.f };
 	cube2.transform.scale = { 0.5f, 0.5f, 0.5f };
 
+	Water<float> water(800, 800, { 800,800 }, { 800,800 });
+	water.transform.position = { 0.f, 0.5f, -5.f };
+
 	float aspectRatio = 1240.f / 720.f;
 	float fov = 45.f / 180.f * 3.141592f;
 	float nearPlane = 0.01f;
@@ -118,8 +122,13 @@ void Application::Run()
 		//plane.transform.rotation.y += 0.001f;
 
 		//cube.transform.rotation.y = 0.5f;
+		//plane.render(contextRenderer);
+		water.BindReflectionFrameBuffer();
+		cube.render(contextRenderer);
+		water.UnbindCurrentFrameBuffer();
 
-		//cube.render(contextRenderer);
+		cube.render(contextRenderer);
+		water.render(contextRenderer);
 		//cube2.render(contextRenderer);
 
 		cube.transform.rotation.y += 0.0005f;
