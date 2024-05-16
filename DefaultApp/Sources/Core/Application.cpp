@@ -23,10 +23,11 @@ Application::Application()
 {
 	m_settingsUI = new SettingsToolWindow("Settings", true, Point2Di(10, 10), Point2Di(300, 400));
 	m_settingsUI->AddToEditorManager(m_toolsManager.get());
-	m_infosUI = new InfosToolWindow("INFOS", true, Point2Di(1040, 10), Point2Di(190, 400));
+	m_infosUI = new InfosToolWindow("INFOS", true, Point2Di(1030, 10), Point2Di(200, 400));
 	m_infosUI->AddToEditorManager(m_toolsManager.get());
 	OnUpdateFPS.Bind(m_infosUI, &InfosToolWindow::UpdateFPS);
 	m_window->sensitivityChanged.Bind(m_infosUI, &InfosToolWindow::UpdateSensitivity);
+	m_infosUI->wireframeModeChanged.Bind(this, &Application::SwitchWireframeMode);
 }
 
 Application::~Application()
@@ -102,8 +103,6 @@ void Application::Run()
 
 	Terrain.GenerateTerrain(50, 100, 0, 50, 0.01f);
 
-	float lastTime = 0.0f;
-
 	while (!m_window->isWindowShouldClose())
 	{
 		m_window->ClearBackBuffer();
@@ -113,11 +112,9 @@ void Application::Run()
 
 		// TODO: write code here...
 
-		float currentTime = glfwGetTime();
-		float deltaTime = currentTime - lastTime;
-		lastTime = currentTime;
-		int fps = 1 / deltaTime;
-		OnUpdateFPS.Broadcast(fps);
+		//calculate FPS and broadcast it every second
+		
+		CalculateFPS();
 
 		//triangle.transform.rotation.y += 0.0025f;
 		//plane.transform.rotation.y += 0.001f;
@@ -134,14 +131,28 @@ void Application::Run()
 		Terrain.Render(contextRenderer);
 		
 		_Draw(*m_window);
-
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);	//Set view mode in wireframe
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);	//Set view mode with full triangle
+		
+		glPolygonMode(GL_FRONT_AND_BACK, WireframeMode ? GL_LINE : GL_FILL);	//Set view mode with full triangle
 
 		glFlush();
 
 		m_window->SwapBuffer();
 		_PollEvent();
+	}
+}
+
+void Application::CalculateFPS()
+{
+	static float lastTime;
+	float currentTime = glfwGetTime();
+	float deltaTime = currentTime - lastTime;
+	lastTime = currentTime;
+	static float time = 0.f;
+	time += deltaTime;
+	if (time >= 1.f)
+	{
+		OnUpdateFPS.Broadcast(1.f / deltaTime);
+		time = 0.f;
 	}
 }
 

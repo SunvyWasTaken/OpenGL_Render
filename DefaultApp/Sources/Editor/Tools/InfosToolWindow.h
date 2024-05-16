@@ -2,6 +2,8 @@
 #include "ToolWindow.h"
 #include "Editor/Observer/SignalSlot.h"
 
+DECLARE_MULTICAST_DELEGATE(OnChangedWireframeMode)
+
 class InfosToolWindow : public ToolWindow
 {
 public:
@@ -12,6 +14,8 @@ public:
 
     void UpdateFPS(int fps);
     void UpdateSensitivity(float sensitivity);
+
+    OnChangedWireframeMode wireframeModeChanged;
     
 private:
     int fps;
@@ -20,4 +24,8 @@ private:
 
     float sensitivity;
     float FOV;
+
+    bool toggleChecked;
+    bool wireFrameChecked = false;
+    bool lastWireframeMode = false;
 };

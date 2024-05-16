@@ -18,10 +18,20 @@ void InfosToolWindow::Draw()
     ImGui::Text("FPS: %d", fps);
     ImGui::Text("Vertices: %d", verticesCount);
     ImGui::Text("Primitives: %d", primitivesCount);
-    ImGui::Dummy(ImVec2(0,30));
+    ImgUISpacing(0, 30);
     ImGui::SeparatorText("CAMERA SETTINGS");
     ImGui::SliderFloat("FOV Y", &FOV, 0.1f, 180.f);
+    ImgUISpacing(0, 10);
     ImGui::Text("Move Speed: %.2f", sensitivity);
+    ImgUISpacing(0, 5);
+    ImGui::Checkbox("Toggle Camera Rotation", &toggleChecked);
+    ImGui::Checkbox("Wireframe View", &wireFrameChecked);
+
+    if (lastWireframeMode != wireFrameChecked)
+    {
+        lastWireframeMode = wireFrameChecked;
+        wireframeModeChanged.Broadcast();
+    }
 }
 
 void InfosToolWindow::UpdateFPS(int f)

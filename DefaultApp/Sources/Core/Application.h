@@ -17,6 +17,9 @@ public:
 	~Application();
 
 	void Run();
+	void CalculateFPS();
+
+	void SwitchWireframeMode(){WireframeMode = !WireframeMode;}
 
 	Camera camera;
 private:
@@ -31,4 +34,6 @@ private:
 
 	std::unique_ptr<OGLWindow> m_window;
 	std::unique_ptr<ToolsManager> m_toolsManager;
+
+	bool WireframeMode = false;
 };

@@ -9,6 +9,9 @@ class ToolsManager;
 
 using Point2Di = Math::Point2D<int>;
 
+#define ImgUISpacing(x, y) \
+ImGui::Dummy(ImVec2(x,y))
+
 class ToolWindow
 {
 public:

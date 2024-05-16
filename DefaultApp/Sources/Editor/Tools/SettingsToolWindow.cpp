@@ -24,13 +24,12 @@ SettingsToolWindow::~SettingsToolWindow()
 {
 }
 
-#define Spacing(x, y) \
-ImGui::Dummy(ImVec2(x,y))
+
 
 void SettingsToolWindow::Draw()
 {
 	//ToolWindow::Draw();
-	Spacing(0, 10);
+	ImgUISpacing(0, 10);
 	ImGui::Text("Generation Method");
 	ImGui::Combo(" ", &m_selectedMethode, ProceduralGen::Names.begin(), (int)ProceduralGen::Names.size());
 
@@ -43,7 +42,7 @@ void SettingsToolWindow::Draw()
 	//	[&](FaultFormation obj)
 	//	{
 	ImGui::Separator();
-	Spacing(0, 10);
+	ImgUISpacing(0, 10);
 	
 	ImGui::Text("Fault Formation");
 

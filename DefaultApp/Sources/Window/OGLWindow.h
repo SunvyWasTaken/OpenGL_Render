@@ -39,9 +39,10 @@ private:
 	void SwitchCameraMode();
 	bool FreeCamMode();
 	static void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
-	
+
+	bool toggleModeEnabled;
 	bool cursorIsHidden = false;
-	float cameraSpeed = 0.01f;
+	float cameraSpeed = 0.025f;
 	float cameraRotationSpeed = 0.0005f;
 	static inline float sensitivity = 0.5f;
 };
