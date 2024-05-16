@@ -96,14 +96,14 @@ void Application::Run()
 	Cube<float> cube;
 	cube.transform.position = { 0.f, 0.f, -5.f };
 	cube.transform.scale = { 0.5f, 0.5f, 0.5f };
-	cube.applyMaterial(boxMaterial);
+	cube.applyMaterial(&boxMaterial);
 	cube.addShaders(basicShaders);
 	cube.load();
 
 	Cube<float> cube2;
 	cube2.transform.position = { 1.5f, -0.0f, -12.f };
 	cube2.transform.scale = { 0.5f, 0.5f, 0.5f };
-	cube2.applyMaterial(boxMaterial);
+	cube2.applyMaterial(&boxMaterial);
 	cube2.addShaders(basicShaders);
 	cube2.load();
 
@@ -158,7 +158,7 @@ void Application::Run()
 		cube2.render(contextRenderer);
 
 		//cube.transform.rotation.y += 0.0005f;
-		cube.transform.rotation.x += 0.0005f;
+		cube.transform.rotation.x += 0.5f * deltaTime;
 		
 		skybox.render(contextRenderer);
 		Terrain.Render(contextRenderer);
