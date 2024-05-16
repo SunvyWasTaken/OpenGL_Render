@@ -1,21 +1,12 @@
 #pragma once
-#include <filesystem>
-#include <fstream>
-#include <string>
-#include <sstream>
 
-bool ReadFile(const char* pFileName, std::string& outFile)
+#include <typeinfo>
+
+template <typename Type>
+constexpr const char* type_to_string() { return typeid(Type).name(); }
+
+template <typename... types>
+struct container
 {
-	std::filesystem::path path = std::filesystem::current_path() / "Ressources\\Shader" / pFileName;
-
-	std::ifstream inputFile(path.c_str());
-	if (!inputFile.is_open())
-		return false;
-
-	std::stringstream buffer;
-	buffer << inputFile.rdbuf();
-
-	inputFile.close();
-	outFile = buffer.str();
-	return true;
-}
+	static inline std::initializer_list<const char*> Names = { type_to_string<types>()... };
+};

@@ -27,32 +27,20 @@ public:
 	void update();
 	void render(ContextRenderer& contextRenderer);
 
-	//Transform transform;
 private:
-	/*GLuint m_vao;
-	GLuint m_vbo;
-	GLuint m_ebo;
-	Shader* m_shader;*/
 	std::string m_skyBoxImagesPath;
 	GLuint m_texture;
 };
 
 template <typename Type>
 SkyBox<Type>::SkyBox()
-	: parent() //transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shader(nullptr), m_skyBoxImagesPath("")
+	: parent(), m_skyBoxImagesPath("")
 {
 }
 
 template <typename Type>
 SkyBox<Type>::~SkyBox()
 {
-	/*if(m_shader)
-	{
-		DELETE_BUFFER_WITH_ELEMENTS(m_shader->program)
-
-		delete m_shader;
-		m_shader = nullptr;
-	}*/
 }
 
 template <typename Type>
@@ -84,10 +72,10 @@ void SkyBox<Type>::load()
 		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }, { -1.f, 0.f, 0.f}),
 
 		//Top
-		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }, { 0.f, 1.f, 0.f}),
-		vertex_type({ -1.f,	1.f,	1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }, { 0.f, 1.f, 0.f}),
-		vertex_type({  1.f,	1.f,	1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }, { 0.f, 1.f, 0.f}),
-		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }, { 0.f, 1.f, 0.f}),
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, 1.f, 0.f}),
+		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, 1.f, 0.f}),
+		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, 1.f, 0.f}),
+		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, 1.f, 0.f}),
 
 		vertex_type({ -1.f,	-1.f,	1.f },	{ 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }, { 0.f, -1.f, 0.f}),
 		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }, { 0.f, -1.f, 0.f}),
@@ -154,24 +142,12 @@ void SkyBox<Type>::load()
 	LOAD_ARRAY_BUFFER(this->m_vbo, vertices)
 	LOAD_ELEMENT_ARRAY_BUFFER(this->m_ebo, indices)
 
-	//ShaderInfo shaders[] = {
-	//	{GL_VERTEX_SHADER,  "skybox.vert"},
-	//	{GL_FRAGMENT_SHADER, "skybox.frag"},
-	//	{GL_NONE, nullptr}
-	//};
-
-	/*this->m_shader = Shader::loadShader(shaders);
-	glUseProgram(this->m_shader->program);*/
-
 	// /!\ Attention, ca marche que si t = float, -> dommage
 	LOAD_BASIC_VERTEX_ATTRIB_POINTER()
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	//m_texture.bind();
-	//m_texture.textUnit(m_shaderProgram, "tex0");
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture);
 }
@@ -197,24 +173,4 @@ void SkyBox<Type>::render(ContextRenderer& contextRenderer)
 	glDepthMask(GL_TRUE);
 	glDisable(GL_TEXTURE_CUBE_MAP);
 	glEnable(GL_LIGHTING);
-
-	/*glEnable(GL_TEXTURE_CUBE_MAP);
-	glDisable(GL_LIGHTING);
-	glDepthMask(GL_FALSE);
-	glCullFace(GL_FRONT);
-
-	glUseProgram(m_shader->program);
-	glBindVertexArray(m_vao);
-
-	m_shader->setMat4("projection", contextRenderer.projection);
-	m_shader->setMat4("view", contextRenderer.camera.getMatrixView());
-	m_shader->setMat4("model", transform.getMatrix());
-
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture);
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-
-	glCullFace(GL_BACK);
-	glDepthMask(GL_TRUE);
-	glDisable(GL_TEXTURE_CUBE_MAP);
-	glEnable(GL_LIGHTING);*/
 }

@@ -12,6 +12,9 @@
 
 #include <stdexcept>
 
+#include "LowLevel_Renderer/Primitive/CubeLight.h"
+#include "LowLevel_Renderer/Primitive/Plane.h"
+
 using Point2Di = Math::Point2D<int>;
 
 Application::Application()
@@ -125,11 +128,10 @@ void Application::InitializePrimitives()
 		32.f
 	};
 
-	Material catMaterial{
-		Texture("Ressources\\sc.png", GL_TEXTURE0),
-		Texture("Ressources\\sc.png", GL_TEXTURE1),
-		32.f
-	};
+	Material catMaterial;
+	catMaterial.LoadTexture<diffuse>("Ressources\\sc.png");
+	catMaterial.LoadTexture<specular>("Ressources\\sc.png");
+	catMaterial.shininess = 32.f;
 
 	std::vector<ShaderInfo> basicShaders = {
 		{GL_VERTEX_SHADER,  "default.vert"},

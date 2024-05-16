@@ -26,9 +26,6 @@ public:
 	void textUnit(GLuint shaderProgram, const char* uniform, GLuint unit = 0);
 	void bind(GLuint slot = GL_TEXTURE0);
 
-	void operator=(const Texture& other);
-	void operator=(Texture& other);
-
 private:
 
 	void ConfigOpenGL(const Point2i& textureSize);
@@ -65,7 +62,7 @@ public:
 	void LoadTile(const std::string& Filename);
 
 	// Oui pour le moment je fais une copie parce que c'est pas clean
-	Texture GenerateTexture(int TextureSize, class BaseTerrain* pTerrain, float MinHeight, float MaxHeight);
+	Texture* GenerateTexture(int TextureSize, class BaseTerrain* pTerrain, float MinHeight, float MaxHeight);
 
 private:
 

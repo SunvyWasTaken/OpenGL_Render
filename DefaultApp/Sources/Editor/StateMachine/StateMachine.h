@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Utils/Utility.h"
+
 #include <string>
 #include <typeinfo>
 #include <variant>
@@ -20,19 +22,13 @@ void CheckVariant(Variant&& variant, Matchers&&... matchers)
 	std::visit(Overload(std::forward<Matchers>(matchers)...), std::forward<Variant>(variant));
 }
 
-// I know typeid depends on compiler and not garanted but i wanted to retrive the name
-// And not depend on a var from a parent class or define on each class.
-// I also wanted to tried something with template
-template <typename Type>
-constexpr const char* type_to_string() { return typeid(Type).name(); }
-
 namespace My
 {
 	template <typename ...Types>
 	struct Variant
 	{
 		using variant_t = typename std::variant<Types...>;
-		static inline std::initializer_list<const char*> Names = { type_to_string<Types>()... };
+		static std::initializer_list<const char*>& Names() { return container<Types...>::Names; }
 	};
 
 }

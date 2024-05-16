@@ -1,5 +1,4 @@
 #pragma once
-#include "PrimitiveMeshParameter.h"
 #include "PrimitiveUtils.h"
 #include "Vertex.h"
 #include "Core/ContextRenderer.h"
@@ -19,7 +18,7 @@ public:
 
 	virtual void load();
 	virtual void render(ContextRenderer& contextRenderer);
-	void applyMaterial(const Material& material);
+	void applyMaterial(Material* material);
 	void addShaders(std::vector<ShaderInfo> shaders);
 
 	Transform transform;
@@ -32,12 +31,12 @@ protected:
 	GLuint m_ebo;
 	Shader* m_shaders;
 
-	Material m_material;
+	Material* m_material;
 };
 
 template <typename Type>
 PrimitiveMesh<Type>::PrimitiveMesh()
-	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shaders(nullptr), m_material(Material{}), triCount(0)
+	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shaders(nullptr), m_material(nullptr)
 {
 	LOAD_VERTEX_ARRAYS(this->m_vao)
 }
@@ -82,7 +81,9 @@ void PrimitiveMesh<Type>::render(ContextRenderer& contextRenderer)
 
 	m_shaders->setInt("material.diffuse", 0);
 	m_shaders->setInt("material.specular", 1);
-	m_shaders->setFloat("material.shininess", m_material.shininess);
+
+	if(m_material)
+		m_shaders->setFloat("material.shininess", m_material->shininess);
 
 	contextRenderer.directionalLight.getUniform(m_shaders);
 	
@@ -91,12 +92,12 @@ void PrimitiveMesh<Type>::render(ContextRenderer& contextRenderer)
 		light->get()->getUniform(m_shaders, light - contextRenderer.pointLights->begin());
 	}
 
-	m_material.diffuseMap.bind(GL_TEXTURE0);
-	m_material.specularMap.bind(GL_TEXTURE1);
+	if (m_material)
+		m_material->Bind();
 }
 
 template <typename Type>
-void PrimitiveMesh<Type>::applyMaterial(const Material& material)
+void PrimitiveMesh<Type>::applyMaterial(Material* material)
 {
 	m_material = material;
 }
