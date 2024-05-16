@@ -35,40 +35,7 @@ namespace My
 		static inline std::initializer_list<const char*> Names = { type_to_string<Types>()... };
 	};
 
-	template <typename Type>
-	struct getFirst
-	{};
-
-	template <typename T, typename... Types>
-	struct getFirst<Variant<T, Types...>>
-	{
-		using value = T;
-	};
-
-	template <typename Type>
-	struct PopFront
-	{};
-
-	template <typename T, typename ...Types>
-	struct PopFront<Variant<T, Types...>>
-	{
-		using value = Variant<Types...>;
-	};
-
-	template <typename T>
-	using PopFront_v = typename PopFront<T>::value;
-
-	template <unsigned int index, typename Type>
-	struct getAt : getAt<index - 1, PopFront_v<Type>>
-	{};
-
-	template <typename Type>
-	struct getAt<0, Type> : getFirst<Type>
-	{};
 }
-
-template <unsigned int index, typename Types>
-using getAt_v = typename My::getAt<index, Types>::value;
 
 //template <typename...Types>
 //using Variant_t = My::Variant<Types...>::variant_t;

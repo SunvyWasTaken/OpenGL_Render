@@ -45,34 +45,70 @@ void Application::Run()
 	//TriangleF triangle{};
 	//triangle.transform.position = P3D{ 2.5f, 2.5f, -8.f };
 
+	//using PlaneF = Plane<float>;
+	//PlaneF plane{};
+	//plane.transform.position = P3D{ 0.f, -1.f, -5.f };
+	//plane.transform.rotation = { 0.f, 0.0f, 0.0f };
+
+	Material boxMaterial{
+		Texture("Ressources\\mat_test_diffuse.png", GL_TEXTURE0),
+		Texture("Ressources\\mat_test_specular.png", GL_TEXTURE1),
+		32.f
+	};
+
+	Material catMaterial{
+		Texture("Ressources\\sc.png", GL_TEXTURE0),
+		Texture("Ressources\\sc.png", GL_TEXTURE1),
+		32.f
+	};
+
+	std::vector<ShaderInfo> basicShaders = {
+		{GL_VERTEX_SHADER,  "default.vert"},
+		{GL_FRAGMENT_SHADER, "default.frag"}
+	};
+
+	std::vector<ShaderInfo> skyboxShader = {
+		{GL_VERTEX_SHADER,  "skybox.vert"},
+		{GL_FRAGMENT_SHADER, "skybox.frag"}
+	};
+
 	DirectionalLight directionalLight;
 	directionalLight.direction = { -0.2f, -1.f, -0.3f };
-	directionalLight.diffuse = { 0.5f, 0.5f, 0.5f };
+	directionalLight.diffuse = { 1.f, 1.f, 1.f };
 	directionalLight.ambient = directionalLight.diffuse * 0.2f;
 	directionalLight.specular = 1.f;
 
 	PointLight pointLight;
-	pointLight.position = { 1.f, 0.5f, -5.f };
-	pointLight.diffuse = { 0.f, 0.f, 1.f };
-	pointLight.ambient = pointLight.diffuse * 2.f;
-	pointLight.specular = 1.f;
+	pointLight.position = { 1.f, 0.5f, -3.f };
+	pointLight.diffuse = { 1.f, 1.f, 1.f };
+	pointLight.ambient = pointLight.diffuse * 0.2f;
+	pointLight.specular = 5.f;
 
 	PointLight pointLight2;
-	pointLight2.position = { -1.f, 0.5f, -5.f };
-	pointLight2.diffuse = { 1.f, 0.f, 0.f };
+	pointLight2.position = { -1.f, 0.5f, -3.f };
+	pointLight2.diffuse = { 0.f, 0.f, 0.f };
 	pointLight2.ambient = pointLight2.diffuse * 2.f;
 	pointLight2.specular = 1.f;
 
 	SkyBox<float> skybox;
 	skybox.transform.scale = { 500.f,500.f,500.f };
+	skybox.addShaders(skyboxShader);
+	skybox.load();
+
 
 	Cube<float> cube;
 	cube.transform.position = { 0.f, 0.f, -50.f };
 	cube.transform.scale = { 0.5f, 0.5f, 0.5f };
+	cube.applyMaterial(boxMaterial);
+	cube.addShaders(basicShaders);
+	cube.load();
 
 	Cube<float> cube2;
 	cube2.transform.position = { 1.5f, -0.0f, -12.f };
 	cube2.transform.scale = { 0.5f, 0.5f, 0.5f };
+	cube2.applyMaterial(boxMaterial);
+	cube2.addShaders(basicShaders);
+	cube2.load();
 
 
 	float aspectRatio = 1240.f / 720.f;
@@ -89,8 +125,7 @@ void Application::Run()
 		viewport.getMatrixProjection(),
 		camera,
 		directionalLight,
-		std::vector<PointLight>{pointLight, pointLight2},
-		Plane{{0,-1,0},-10}
+		std::vector<PointLight>{}
 	};
 
 	FaultFormation Terrain;
@@ -98,7 +133,7 @@ void Application::Run()
 	Terrain.transform.position = { -25.f, -25.f, -25.f };
 	Terrain.transform.scale = { 1.f, 1.f, 1.f };
 
-	Terrain.GenerateTerrain(50, 100, 0, 50, 0.01f);
+	Terrain.GenerateTerrain(500, 100, 0, 50, 0.01f);
 
 	Water<float> water(1240, 720, { 1240,720 }, { 1240,720 });
 	water.transform.position = { 0.f, -10.f, 0.f };
@@ -134,6 +169,7 @@ void Application::Run()
 		water.BindReflectionFrameBuffer();
 		
 		cube.render(contextRenderer);
+
 		cube2.render(contextRenderer);
 		skybox.render(contextRenderer);
 		Terrain.Render(contextRenderer);

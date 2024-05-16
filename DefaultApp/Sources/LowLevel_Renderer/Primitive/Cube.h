@@ -3,103 +3,77 @@
 #include "PrimitiveUtils.h"
 #include "Vertex.h"
 #include "Math/Transform.h"
-#include "LowLevel_Renderer/Materials/Material.h"
-#include "LowLevel_Renderer/Shader/Shader.h"
-#include "LowLevel_Renderer/Texture/Texture.h"
 
 #include <glad/glad.h>
 #include <array>
 
+#include "PrimitiveMesh.h"
+
 
 template <typename Type>
-class Cube
+class Cube : public PrimitiveMesh<Type>
 {
 	using vertex_type = Vertex<Type>;
 	using Transform = Math::Transform<Type>;
+	using parent = PrimitiveMesh<Type>;
 
 public:
 	Cube();
 	~Cube();
 
 	void load();
-	void update();
 	void render(ContextRenderer& contextRenderer);
-
-	Transform transform;
-
-private:
-	GLuint m_vao;
-	GLuint m_vbo;
-	GLuint m_ebo;
-	GLuint m_shaderProgram;
-	Shader* m_shaders;
-
-	Material m_material;
 };
 
 template <typename Type>
 Cube<Type>::Cube()
-	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shaderProgram(0), m_shaders(nullptr), m_material(Material{})
+	: parent()
 {
-	load();
 }
 
 template <typename Type>
 Cube<Type>::~Cube()
 {
-	DELETE_BUFFER_WITH_ELEMENTS(m_shaders->program)
-
-	if(m_shaders)
-	{
-		delete m_shaders;
-		m_shaders = nullptr;
-	}
 }
 
 template <typename Type>
 void Cube<Type>::load()
 {
-	m_material = Material{
-		Texture("Ressources\\mat_test_diffuse.png", GL_TEXTURE0),
-		Texture("Ressources\\mat_test_specular.png", GL_TEXTURE1),
-		32.f
-	};
-
 	std::array<vertex_type, 24> vertices = {
 		//Front
-		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, 0.f, 1.f} ),
-		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, 0.f, 1.f} ),
-		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, 0.f, 1.f} ),
-		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, 0.f, 1.f} ),
+		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }, { 0.f, 0.f, 1.f} ),
+		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }, { 0.f, 0.f, 1.f} ),
+		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }, { 0.f, 0.f, 1.f} ),
+		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }, { 0.f, 0.f, 1.f} ),
 
 		//Right
-		vertex_type({ 1.f,		-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 1.f, 0.f, 0.f} ),
-		vertex_type({ 1.f,		1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 1.f, 0.f, 0.f} ),
-		vertex_type({ 1.f,		1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 1.f, 0.f, 0.f} ),
-		vertex_type({ 1.f,		-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 1.f, 0.f, 0.f} ),
+		vertex_type({ 1.f,		1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }, { 1.f, 0.f, 0.f} ),
+		vertex_type({ 1.f,		-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }, { 1.f, 0.f, 0.f} ),
+		vertex_type({ 1.f,		-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }, { 1.f, 0.f, 0.f} ),
+		vertex_type({ 1.f,		1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }, { 1.f, 0.f, 0.f} ),
 
 		//Back
-		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, 0.f, -1.f} ),
-		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, 0.f, -1.f} ),
-		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, 0.f, -1.f} ),
-		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, 0.f, -1.f} ),
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }, { 0.f, 0.f, -1.f} ),
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }, { 0.f, 0.f, -1.f} ),
+		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }, { 0.f, 0.f, -1.f} ),
+		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }, { 0.f, 0.f, -1.f} ),
 
 		//Left
-		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { -1.f, 0.f, 0.f} ),
-		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { -1.f, 0.f, 0.f} ),
-		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { -1.f, 0.f, 0.f} ),
-		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { -1.f, 0.f, 0.f} ),
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }, { -1.f, 0.f, 0.f} ),
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }, { -1.f, 0.f, 0.f} ),
+		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }, { -1.f, 0.f, 0.f} ),
+		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }, { -1.f, 0.f, 0.f} ),
 
 		//Top
-		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, 1.f, 0.f} ),
-		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, 1.f, 0.f} ),
-		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, 1.f, 0.f} ),
-		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, 1.f, 0.f} ),
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }, { 0.f, 1.f, 0.f} ),
+		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }, { 0.f, 1.f, 0.f} ),
+		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }, { 0.f, 1.f, 0.f} ),
+		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }, { 0.f, 1.f, 0.f} ),
 																	
-		vertex_type({ -1.f,	-1.f,	1.f },	{ 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, -1.f, 0.f} ),
-		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, -1.f, 0.f} ),
-		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, -1.f, 0.f} ),
-		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, -1.f, 0.f} )
+		vertex_type({ -1.f,	-1.f,	1.f },	{ 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }, { 0.f, -1.f, 0.f} ),
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }, { 0.f, -1.f, 0.f} ),
+		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }, { 0.f, -1.f, 0.f} ),
+		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }, { 0.f, -1.f, 0.f} )
 	};
 
 	std::array<GLuint, 36> indices = {
@@ -122,60 +96,16 @@ void Cube<Type>::load()
 		22, 23, 20
 	};
 
-	LOAD_VERTEX_ARRAYS(m_vao)
-	LOAD_ARRAY_BUFFER(m_vbo, vertices)
-	LOAD_ELEMENT_ARRAY_BUFFER(m_ebo, indices)
+	LOAD_ARRAY_BUFFER(this->m_vbo, vertices)
+	LOAD_ELEMENT_ARRAY_BUFFER(this->m_ebo, indices)
 
-	ShaderInfo shaders[] = {
-		{GL_VERTEX_SHADER,  "default.vert"},
-		{GL_FRAGMENT_SHADER, "default.frag"},
-		{GL_NONE, nullptr}
-	};
-
-	m_shaders = Shader::loadShader(shaders);
-	glUseProgram(m_shaders->program);
-
-	// /!\ Attention, ca marche que si t = float, -> dommage
-	LOAD_BASIC_VERTEX_ATTRIB_POINTER()
-
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	m_material.diffuseMap.textUnit(m_shaders->program, "tex0");
-	m_material.specularMap.textUnit(m_shaders->program, "tex1");
-}
-
-template <typename Type>
-void Cube<Type>::update()
-{
+	parent::load();
 }
 
 template <typename Type>
 void Cube<Type>::render(ContextRenderer& contextRenderer)
 {
-	glUseProgram(m_shaders->program);
-	glBindVertexArray(m_vao);
-
-	m_shaders->setMat4("projection", contextRenderer.projection);
-	m_shaders->setMat4("view", contextRenderer.camera.getMatrixView());
-	m_shaders->setMat4("model", transform.getMatrix());
-
-	m_shaders->setInt("pointLightsCount", contextRenderer.pointLights.size());
-	m_shaders->setVec3("viewPosition", contextRenderer.camera.transform.position);
-
-	m_shaders->setFloat("material.shininess", m_material.shininess);
-
-	contextRenderer.directionalLight.getUniform(m_shaders);
-	
-
-	for(size_t i = 0; i < contextRenderer.pointLights.size(); ++i)
-	{
-		contextRenderer.pointLights[i].getUniform(m_shaders, i);
-	}
-
-	m_material.diffuseMap.bind(GL_TEXTURE0);
-	m_material.specularMap.bind(GL_TEXTURE1);
+	parent::render(contextRenderer);
 
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 }

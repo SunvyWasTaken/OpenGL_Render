@@ -1,5 +1,7 @@
 #include "PointLight.h"
 
+#include <string>
+
 void PointLight::getUniform(Shader* shader)
 {
 }

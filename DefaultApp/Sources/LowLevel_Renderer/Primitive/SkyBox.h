@@ -13,10 +13,11 @@
 #include <stb_image.h>
 
 template <typename Type>
-class SkyBox
+class SkyBox : public PrimitiveMesh<Type>
 {
 	using vertex_type = Vertex<Type>;
 	using Transform = Math::Transform<Type>;
+	using parent = PrimitiveMesh<Type>;
 
 public:
 	SkyBox();
@@ -26,68 +27,72 @@ public:
 	void update();
 	void render(ContextRenderer& contextRenderer);
 
-	Transform transform;
+	//Transform transform;
 private:
-	GLuint m_vao;
+	/*GLuint m_vao;
 	GLuint m_vbo;
 	GLuint m_ebo;
-	Shader* m_shader;
+	Shader* m_shader;*/
 	std::string m_skyBoxImagesPath;
 	GLuint m_texture;
 };
 
 template <typename Type>
 SkyBox<Type>::SkyBox()
-	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shader(nullptr), m_skyBoxImagesPath("")
+	: parent() //transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shader(nullptr), m_skyBoxImagesPath("")
 {
-	load();
 }
 
 template <typename Type>
 SkyBox<Type>::~SkyBox()
 {
-	DELETE_BUFFER_WITH_ELEMENTS(m_shader->program)
-
-	if(m_shader)
+	/*if(m_shader)
 	{
+		DELETE_BUFFER_WITH_ELEMENTS(m_shader->program)
+
 		delete m_shader;
 		m_shader = nullptr;
-	}
+	}*/
 }
 
 template <typename Type>
 void SkyBox<Type>::load()
 {
 	std::array<vertex_type, 24> vertices = {
-		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }),
+		//Front
+		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, 0.f, 1.f}),
+		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, 0.f, 1.f}),
+		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, 0.f, 1.f}),
+		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, 0.f, 1.f}),
 
-		vertex_type({ 1.f,		-1.f,	-1.f }, { 0.0f,	1.0f,	0.0f }, {  0.0f,		0.0f }),
-		vertex_type({ 1.f,		1.f,	-1.f }, { 0.0f,	1.0f,	0.0f }, {  0.0f,		1.0f }),
-		vertex_type({ 1.f,		1.f,	 1.f }, { 0.0f,	1.0f,	0.0f }, {  1.0f,		1.0f }),
-		vertex_type({ 1.f,		-1.f,	 1.f }, { 0.0f,	1.0f,	0.0f }, {  1.0f,		0.0f }),
+		//Right
+		vertex_type({ 1.f,		1.f,	1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 1.f, 0.f, 0.f}),
+		vertex_type({ 1.f,		-1.f,	1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 1.f, 0.f, 0.f}),
+		vertex_type({ 1.f,		-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 1.f, 0.f, 0.f}),
+		vertex_type({ 1.f,		1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 1.f, 0.f, 0.f}),
 
-		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.5f,	0.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.5f,	0.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	0.5f,	0.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	0.5f,	0.0f }, {  1.0f,		0.0f }),
+		//Back
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, 0.f, -1.f}),
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, 0.f, -1.f}),
+		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, 0.f, -1.f}),
+		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, 0.f, -1.f}),
 
-		vertex_type({ -1.f,	-1.f,	-1.f }, { 0.0f,	0.0f,	1.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	-1.f }, { 0.0f,	0.0f,	1.0f }, {  0.0f,		1.0f }),
-		vertex_type({ -1.f,	1.f,	 1.f }, { 0.0f,	0.0f,	1.0f }, {  1.0f,		1.0f }),
-		vertex_type({ -1.f,	-1.f,	 1.f }, { 0.0f,	0.0f,	1.0f }, {  1.0f,		0.0f }),
+		//Left
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { -1.f, 0.f, 0.f}),
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { -1.f, 0.f, 0.f}),
+		vertex_type({ -1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { -1.f, 0.f, 0.f}),
+		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { -1.f, 0.f, 0.f}),
 
-		vertex_type({ -1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }),
+		//Top
+		vertex_type({ -1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, 1.f, 0.f}),
+		vertex_type({ -1.f,	1.f,	1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, 1.f, 0.f}),
+		vertex_type({  1.f,	1.f,	1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, 1.f, 0.f}),
+		vertex_type({  1.f,	1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, 1.f, 0.f}),
 
-		vertex_type({ -1.f,	-1.f,	1.f },	{ 1.0f,	1.0f,	0.0f }, {  0.0f,		0.0f }),
-		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	0.0f }, {  0.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	1.0f,	0.0f }, {  1.0f,		1.0f }),
-		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	1.0f,	0.0f }, {  1.0f,		0.0f })
+		vertex_type({ -1.f,	-1.f,	1.f },	{ 1.0f,	0.0f,	0.0f }, {  0.0f,		0.0f }, { 0.f, -1.f, 0.f}),
+		vertex_type({ -1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  0.0f,		1.0f }, { 0.f, -1.f, 0.f}),
+		vertex_type({  1.f,	-1.f,	-1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		1.0f }, { 0.f, -1.f, 0.f}),
+		vertex_type({  1.f,	-1.f,	 1.f }, { 1.0f,	0.0f,	0.0f }, {  1.0f,		0.0f }, { 0.f, -1.f, 0.f})
 	};
 
 	std::array<GLuint, 36> indices = {
@@ -145,18 +150,18 @@ void SkyBox<Type>::load()
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-	LOAD_VERTEX_ARRAYS(m_vao)
-	LOAD_ARRAY_BUFFER(m_vbo, vertices)
-	LOAD_ELEMENT_ARRAY_BUFFER(m_ebo, indices)
+	LOAD_VERTEX_ARRAYS(this->m_vao)
+	LOAD_ARRAY_BUFFER(this->m_vbo, vertices)
+	LOAD_ELEMENT_ARRAY_BUFFER(this->m_ebo, indices)
 
-	ShaderInfo shaders[] = {
-		{GL_VERTEX_SHADER,  "skybox.vert"},
-		{GL_FRAGMENT_SHADER, "skybox.frag"},
-		{GL_NONE, nullptr}
-	};
+	//ShaderInfo shaders[] = {
+	//	{GL_VERTEX_SHADER,  "skybox.vert"},
+	//	{GL_FRAGMENT_SHADER, "skybox.frag"},
+	//	{GL_NONE, nullptr}
+	//};
 
-	m_shader = Shader::loadShader(shaders);
-	glUseProgram(m_shader->program);
+	/*this->m_shader = Shader::loadShader(shaders);
+	glUseProgram(this->m_shader->program);*/
 
 	// /!\ Attention, ca marche que si t = float, -> dommage
 	LOAD_BASIC_VERTEX_ATTRIB_POINTER()
@@ -182,6 +187,21 @@ void SkyBox<Type>::render(ContextRenderer& contextRenderer)
 	//glEnable(GL_TEXTURE_CUBE_MAP);
 	//glDisable(GL_LIGHTING);
 	glDepthMask(GL_FALSE);
+	glCullFace(GL_FRONT);
+
+	parent::render(contextRenderer);
+
+	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+	glCullFace(GL_BACK);
+	glDepthMask(GL_TRUE);
+	glDisable(GL_TEXTURE_CUBE_MAP);
+	glEnable(GL_LIGHTING);
+
+	/*glEnable(GL_TEXTURE_CUBE_MAP);
+	glDisable(GL_LIGHTING);
+	glDepthMask(GL_FALSE);
+	glCullFace(GL_FRONT);
 
 	glUseProgram(m_shader->program);
 	glBindVertexArray(m_vao);
@@ -193,7 +213,8 @@ void SkyBox<Type>::render(ContextRenderer& contextRenderer)
 	glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture);
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
+	glCullFace(GL_BACK);
 	glDepthMask(GL_TRUE);
-	//glDisable(GL_TEXTURE_CUBE_MAP);
-	//glEnable(GL_LIGHTING);
+	glDisable(GL_TEXTURE_CUBE_MAP);
+	glEnable(GL_LIGHTING);*/
 }

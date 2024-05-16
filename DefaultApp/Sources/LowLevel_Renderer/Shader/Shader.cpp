@@ -29,20 +29,21 @@ namespace
 	}
 }
 
-Shader* Shader::loadShader(ShaderInfo* shaderInfo)
+Shader* Shader::loadShader(std::vector<ShaderInfo> shaderInfo)
 {
-	if (shaderInfo == nullptr)
-		throw std::runtime_error("Shader info not valid");
+	if (shaderInfo.size() <= 0)
+		return nullptr;
+		//throw std::runtime_error("Shader info not valid");
 
 	auto program = glCreateProgram();
-	auto* entry = shaderInfo;
+	//auto* entry = shaderInfo;
 
-	while (entry->type != GL_NONE)
+	for(auto& entry : shaderInfo)
 	{
-		auto shaderId = glCreateShader(entry->type);
-		entry->shaderId = shaderId;
+		auto shaderId = glCreateShader(entry.type);
+		entry.shaderId = shaderId;
 
-		auto str = readShaderFile(entry->filename);
+		auto str = readShaderFile(entry.filename);
 		const char* shaderData = str.c_str();
 
 		glShaderSource(shaderId, 1, &shaderData, nullptr);
@@ -59,7 +60,7 @@ Shader* Shader::loadShader(ShaderInfo* shaderInfo)
 			GLchar* logBuffer = new GLchar[infoLogSize + 1];
 			glGetShaderInfoLog(shaderId, infoLogSize, &infoLogSize, logBuffer);
 
-			std::cout << "FileName : " << entry->filename << std::endl;
+			std::cout << "FileName : " << entry.filename << std::endl;
 			std::cerr << logBuffer << std::endl;
 
 			delete[] logBuffer;
@@ -67,7 +68,7 @@ Shader* Shader::loadShader(ShaderInfo* shaderInfo)
 		}
 
 		glAttachShader(program, shaderId);
-		++entry;
+		//++entry;
 	}
 
 	glLinkProgram(program);
