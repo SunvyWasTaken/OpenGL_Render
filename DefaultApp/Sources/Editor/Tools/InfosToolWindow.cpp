@@ -1,11 +1,11 @@
 ﻿#include "InfosToolWindow.h"
 
 #include <imgui.h>
+#include <iostream>
 
 InfosToolWindow::InfosToolWindow(const std::string& title, bool open, Point2Di position, Point2Di size)
-    : ToolWindow(title, open, position, size), fps(0), verticesCount(0), primitivesCount(0), sensitivity(0), FOV(0)
+    : ToolWindow(title, open, position, size), fps(0), verticesCount(0), primitivesCount(0), sensitivity(0), lastFOV(90), FOV(90)
 {
-    
 }
 
 InfosToolWindow::~InfosToolWindow()
@@ -20,11 +20,12 @@ void InfosToolWindow::Draw()
     ImGui::Text("Primitives: %d", primitivesCount);
     ImgUISpacing(0, 30);
     ImGui::SeparatorText("CAMERA SETTINGS");
-    ImGui::SliderFloat("FOV Y", &FOV, 0.1f, 180.f);
-    ImgUISpacing(0, 10);
+    ImgUISpacing(0, 5);    
+    ImGui::SliderFloat("FOV", &FOV, 20.f, 170.f, "%.0f");
+    ImgUISpacing(0, 5);    
     ImGui::Text("Move Speed: %.2f", sensitivity);
-    ImgUISpacing(0, 5);
-    ImGui::Checkbox("Toggle Camera Rotation", &toggleChecked);
+    ImgUISpacing(0, 5);    
+    ImGui::Checkbox("Toggle Rotation Mode", &toggleChecked);
     ImGui::Checkbox("Wireframe View", &wireFrameChecked);
 
     if (lastWireframeMode != wireFrameChecked)
@@ -32,14 +33,14 @@ void InfosToolWindow::Draw()
         lastWireframeMode = wireFrameChecked;
         wireframeModeChanged.Broadcast();
     }
-}
-
-void InfosToolWindow::UpdateFPS(int f)
-{
-    fps = f;
-}
-
-void InfosToolWindow::UpdateSensitivity(float s)
-{
-    sensitivity = s;
+    if (FOV != lastFOV)
+    {
+        lastFOV = FOV;
+        fovChanged.Broadcast(FOV);
+    }
+    if (toggleChecked != lastToggleMode)
+    {
+        lastToggleMode = toggleChecked;
+        toggleModeChanged.Broadcast();
+    }
 }

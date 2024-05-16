@@ -6,6 +6,7 @@
 
 struct ILight
 {
+	ILight() = default;
 	virtual ~ILight() = default;
 	using Vec3 = Math::Point3D<float>;
 	using Color3 = Math::Color<float>;

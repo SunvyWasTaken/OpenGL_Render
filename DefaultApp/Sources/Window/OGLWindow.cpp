@@ -83,15 +83,33 @@ void OGLWindow::PollEvent(Camera& cam)
 	Math::Vector3D<float> worldMovement = rotationMat * (movement * sensitivity);
 	cam.transform.position = cam.transform.position + worldMovement;
 
-	//----TOGGLE CAM MODE----//
-	static int oldState = GLFW_PRESS;
-	int newState = glfwGetMouseButton(m_windowOpenGL, GLFW_MOUSE_BUTTON_RIGHT);
-	if (newState == GLFW_PRESS && oldState == GLFW_RELEASE)
+	if (toggleModeEnabled)
 	{
-		std::cout << "Mouse click" << std::endl;
-		SwitchCameraMode();
+		static int oldState = GLFW_PRESS;
+		int newState = glfwGetMouseButton(m_windowOpenGL, GLFW_MOUSE_BUTTON_RIGHT);
+		if (newState == GLFW_PRESS && oldState == GLFW_RELEASE)
+		{
+			std::cout << "Mouse click" << std::endl;
+			SwitchCameraMode();
+		}
+		oldState = newState;
 	}
-	oldState = newState;
+	else
+	{
+		if (glfwGetMouseButton(m_windowOpenGL, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+		{
+			glfwSetInputMode(m_windowOpenGL, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+			glfwSetInputMode(m_windowOpenGL, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			glfwSetCursorPos(m_windowOpenGL, m_width / 2, m_height / 2);
+			cursorIsHidden = true;
+		}
+		else
+		{
+			glfwSetInputMode(m_windowOpenGL, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			glfwSetInputMode(m_windowOpenGL, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
+			cursorIsHidden = false;
+		}
+	}
 
 	sensitivityChanged.Broadcast(sensitivity);
 	
@@ -109,12 +127,17 @@ void OGLWindow::SwitchCameraMode()
 void OGLWindow::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	sensitivity += yoffset * 0.05f;
-	sensitivity = std::clamp(sensitivity, 0.1f, 5.f);
+	sensitivity = std::clamp(sensitivity, 0.1f, 10.f);
 }
 
 bool OGLWindow::FreeCamMode()
 {
 	return cursorIsHidden;
+}
+
+void OGLWindow::ToggleCameraRotationMode()
+{
+	toggleModeEnabled = !toggleModeEnabled;
 }
 
 void OGLWindow::Init()

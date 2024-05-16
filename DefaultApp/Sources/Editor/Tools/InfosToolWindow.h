@@ -3,6 +3,8 @@
 #include "Editor/Observer/SignalSlot.h"
 
 DECLARE_MULTICAST_DELEGATE(OnChangedWireframeMode)
+DECLARE_MULTICAST_DELEGATE(OnChangedToggleMode)
+DECLARE_MULTICAST_DELEGATE(OnChangedFOV, float)
 
 class InfosToolWindow : public ToolWindow
 {
@@ -12,20 +14,24 @@ public:
 
     void Draw() override;
 
-    void UpdateFPS(int fps);
-    void UpdateSensitivity(float sensitivity);
+    void UpdateFPS(int newFps){fps = newFps;}
+    void UpdateSensitivity(float newSensitivity){sensitivity = newSensitivity;}
 
     OnChangedWireframeMode wireframeModeChanged;
+    OnChangedToggleMode toggleModeChanged;
+    OnChangedFOV fovChanged;
     
 private:
     int fps;
     int verticesCount;
     int primitivesCount;
-
     float sensitivity;
+    
     float FOV;
-
-    bool toggleChecked;
     bool wireFrameChecked = false;
+    bool toggleChecked = false;
+
+    float lastFOV;
     bool lastWireframeMode = false;
+    bool lastToggleMode = false;
 };
