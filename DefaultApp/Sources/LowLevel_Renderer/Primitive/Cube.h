@@ -19,7 +19,7 @@ class Cube : public PrimitiveMesh<Type>
 
 public:
 	Cube();
-	~Cube();
+	virtual ~Cube();
 
 	void load() override;
 	void render(ContextRenderer& contextRenderer) override;

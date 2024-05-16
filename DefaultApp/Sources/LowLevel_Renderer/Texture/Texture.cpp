@@ -27,7 +27,7 @@ Texture::Texture(const std::string& path, GLenum slot)
 
 	ConfigOpenGL(m_textureSize);
 
-	//Unload();
+	Unload();
 }
 
 Texture::Texture(unsigned char* bytes, Point2i& textureSize, int NumColch)
@@ -39,6 +39,8 @@ Texture::Texture(unsigned char* bytes, Point2i& textureSize, int NumColch)
 	//stbi_write_png("texture.png", m_textureSize.x, m_textureSize.y, numColCh, m_imageData, m_textureSize.x * numColCh);
 
 	ConfigOpenGL(m_textureSize);
+
+	Unload();
 }
 
 Texture::~Texture()
@@ -72,7 +74,7 @@ void Texture::Unload()
 	{
 		stbi_image_free(m_imageData);
 	}
-	m_imageData = NULL;
+	m_imageData = nullptr;
 }
 
 Point3f Texture::GetColor(const Point2i& coord) const
@@ -106,22 +108,6 @@ void Texture::bind(GLuint slot)
 {
 	glActiveTexture(slot);
 	glBindTexture(GL_TEXTURE_2D, m_texture);
-}
-
-void Texture::operator=(const Texture& other)
-{
-	m_imageData = nullptr;
-	m_textureSize = other.m_textureSize;
-	numColCh = other.numColCh;
-	m_texture = other.m_texture;
-}
-
-void Texture::operator=(Texture& other)
-{
-	m_imageData = nullptr;
-	m_textureSize = other.m_textureSize;
-	numColCh = other.numColCh;
-	m_texture = other.m_texture;
 }
 
 void Texture::ConfigOpenGL(const Point2i& textureSize)
@@ -174,7 +160,7 @@ void TextureGenerator::LoadTile(const std::string& Filename)
 	m_numTextureTiles++;
 }
 
-Texture TextureGenerator::GenerateTexture(int TextureSize, BaseTerrain* pTerrain, float MinHeight, float MaxHeight)
+Texture* TextureGenerator::GenerateTexture(int TextureSize, BaseTerrain* pTerrain, float MinHeight, float MaxHeight)
 {
 	if (m_numTextureTiles == 0) {
 		printf("%s:%d: no texture tiles loaded\n", __FILE__, __LINE__);
@@ -232,12 +218,11 @@ Texture TextureGenerator::GenerateTexture(int TextureSize, BaseTerrain* pTerrain
 	// TODO : ici à changer pour que la texture reste en mémoire et après penser à la delete lorsque c'est détruit.
 
 	Point2i CurrentTextureSize{TextureSize, TextureSize};
-	Texture CurrentTexture = Texture(pTextureData, CurrentTextureSize, BPP);
 
 	//free(pTextureData);
 
 	//pTexture->LoadRaw(TextureSize, TextureSize, BPP, pTextureData);
-	return CurrentTexture;
+	return new Texture(pTextureData, CurrentTextureSize, BPP);
 }
 
 void TextureGenerator::CalculateTextureRegions(float MinHeight, float MaxHeight)
