@@ -27,6 +27,7 @@ public:
 	void bind(GLuint slot = GL_TEXTURE0);
 
 	void operator=(const Texture& other);
+	void operator=(Texture& other);
 
 private:
 
