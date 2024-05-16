@@ -194,5 +194,5 @@ void Application::InitializeTerrain()
 	m_settingsUI->CurrentTerrain = &m_Terrain;
 	m_Terrain.transform.position = { -25.f, -25.f, -25.f };
 	m_Terrain.transform.scale = { 1.f, 1.f, 1.f };
-	m_Terrain.GenerateTerrain(500, 100, 0, 50, 0.01f);
+	m_Terrain.GenerateTerrain(500, 100, 0, 50, 0.5f);
 }

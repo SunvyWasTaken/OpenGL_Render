@@ -24,6 +24,8 @@ public:
 
 	Transform transform;
 
+	int triCount;
+
 protected:
 	GLuint m_vao;
 	GLuint m_vbo;
@@ -35,7 +37,7 @@ protected:
 
 template <typename Type>
 PrimitiveMesh<Type>::PrimitiveMesh()
-	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shaders(nullptr), m_material(Material{})
+	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shaders(nullptr), m_material(Material{}), triCount(0)
 {
 	LOAD_VERTEX_ARRAYS(this->m_vao)
 }

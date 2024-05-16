@@ -59,4 +59,6 @@ private:
 	FaultFormation m_Terrain;
 
 	bool WireframeMode = false;
+
+	int primitiveCount = 0;
 };

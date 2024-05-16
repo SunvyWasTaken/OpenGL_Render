@@ -4,7 +4,7 @@
 #include <iostream>
 
 InfosToolWindow::InfosToolWindow(const std::string& title, bool open, Point2Di position, Point2Di size)
-    : ToolWindow(title, open, position, size), fps(0), verticesCount(0), primitivesCount(0), sensitivity(0), lastFOV(90), FOV(90)
+    : ToolWindow(title, open, position, size), fps(0), verticesCount(0), primitivesCount(0), sensitivity(0), lastFOV(0), FOV(120)
 {
 }
 
