@@ -74,8 +74,6 @@ void Application::Run()
 	cube2.transform.position = { 1.5f, -0.0f, -12.f };
 	cube2.transform.scale = { 0.5f, 0.5f, 0.5f };
 
-	Water<float> water(1240, 720, { 1240,720 }, { 1240,720 });
-	water.transform.position = { 0.f, 0.5f, -5.f };
 
 	float aspectRatio = 1240.f / 720.f;
 	float fov = 45.f / 180.f * 3.141592f;
@@ -91,7 +89,8 @@ void Application::Run()
 		viewport.getMatrixProjection(),
 		camera,
 		directionalLight,
-		std::vector<PointLight>{pointLight, pointLight2}
+		std::vector<PointLight>{pointLight, pointLight2},
+		Plane{{0,-1,0},-10}
 	};
 
 	FaultFormation Terrain;
@@ -100,6 +99,10 @@ void Application::Run()
 	Terrain.transform.scale = { 1.f, 1.f, 1.f };
 
 	Terrain.GenerateTerrain(50, 100, 0, 50, 0.01f);
+
+	Water<float> water(1240, 720, { 1240,720 }, { 1240,720 });
+	water.transform.position = { 0.f, -10.f, 0.f };
+	water.transform.scale = { 5.f,0.f,5.f };
 
 	float lastTime = 0.0f;
 
