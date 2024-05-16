@@ -61,6 +61,10 @@ void Application::Run()
 	pointLight.ambient = pointLight.diffuse * 2.f;
 	pointLight.specular = 1.f;
 
+	Cube<float> cube;
+	cube.transform.position = { 0.f, 0.f, -5.f };
+	cube.transform.scale = { 0.5f, 0.5f, 0.5f };
+
 	PointLight pointLight2;
 	pointLight2.position = { -1.f, 0.5f, -5.f };
 	pointLight2.diffuse = { 1.f, 0.f, 0.f };
@@ -68,10 +72,6 @@ void Application::Run()
 	pointLight2.specular = 1.f;
 	SkyBox<float> skybox;
 	skybox.transform.scale = { 500.f,500.f,500.f };
-
-	Cube<float> cube;
-	cube.transform.position = { 0.f, 0.f, -5.f };
-	cube.transform.scale = { 0.5f, 0.5f, 0.5f };
 
 	Cube<float> cube2;
 	cube2.transform.position = { 1.5f, -0.0f, -12.f };
@@ -99,7 +99,7 @@ void Application::Run()
 	Terrain.transform.position = { -25.f, -25.f, -25.f };
 	Terrain.transform.scale = { 1.f, 1.f, 1.f };
 
-	Terrain.GenerateTerrain(50, 100, 0, 50, 0.01f);
+	Terrain.GenerateTerrain(500, 100, 0, 50, 0.01f);
 
 	float lastTime = 0.0f;
 
@@ -124,6 +124,7 @@ void Application::Run()
 		cube.transform.rotation.y = 0.5f;
 
 		cube.render(contextRenderer);
+
 		cube2.render(contextRenderer);
 
 		cube.transform.rotation.y += 0.0005f;

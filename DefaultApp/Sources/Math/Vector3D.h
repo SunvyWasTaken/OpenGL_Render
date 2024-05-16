@@ -30,3 +30,5 @@ namespace Math
 	}
 	
 }
+
+using Vector3f = Math::Vector3D<float>;
