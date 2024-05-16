@@ -189,7 +189,7 @@ void TriangleList::Load()
 	Indices.resize(NumQuads * 6);
 	InitIndices(Indices);
 
-	//CalcNormals(Vertices, Indices);
+	CalcNormals(Vertices, Indices);
 
 	LOAD_VERTEX_ARRAYS(m_vao);
 	glGenBuffers(1, &m_vbo);
