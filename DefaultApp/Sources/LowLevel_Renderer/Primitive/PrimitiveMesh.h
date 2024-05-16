@@ -1,4 +1,5 @@
 #pragma once
+#include "PrimitiveMeshParameter.h"
 #include "PrimitiveUtils.h"
 #include "Vertex.h"
 #include "Core/ContextRenderer.h"
@@ -18,6 +19,8 @@ public:
 
 	virtual void load();
 	virtual void render(ContextRenderer& contextRenderer);
+	void applyMaterial(const Material& material);
+	void addShaders(std::vector<ShaderInfo> shaders);
 
 	Transform transform;
 
@@ -34,16 +37,16 @@ template <typename Type>
 PrimitiveMesh<Type>::PrimitiveMesh()
 	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shaders(nullptr), m_material(Material{})
 {
-	load();
+	LOAD_VERTEX_ARRAYS(this->m_vao)
 }
 
 template <typename Type>
 PrimitiveMesh<Type>::~PrimitiveMesh()
 {
-	DELETE_BUFFER_WITH_ELEMENTS(m_shaders->program)
-
 	if (m_shaders)
 	{
+		DELETE_BUFFER_WITH_ELEMENTS(m_shaders->program)
+
 		delete m_shaders;
 		m_shaders = nullptr;
 	}
@@ -52,12 +55,19 @@ PrimitiveMesh<Type>::~PrimitiveMesh()
 template <typename Type>
 void PrimitiveMesh<Type>::load()
 {
-	LOAD_VERTEX_ARRAYS(m_vao)
+	LOAD_BASIC_VERTEX_ATTRIB_POINTER()
+
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 template <typename Type>
 void PrimitiveMesh<Type>::render(ContextRenderer& contextRenderer)
 {
+	if(!m_shaders)
+		return;
+
 	glUseProgram(m_shaders->program);
 	glBindVertexArray(m_vao);
 
@@ -68,6 +78,8 @@ void PrimitiveMesh<Type>::render(ContextRenderer& contextRenderer)
 	m_shaders->setVec3("viewPostion", contextRenderer.camera.transform.position);
 	m_shaders->setInt("pointLightsCount", contextRenderer.pointLights.size());
 
+	m_shaders->setInt("material.diffuse", 0);
+	m_shaders->setInt("material.specular", 1);
 	m_shaders->setFloat("material.shininess", m_material.shininess);
 
 	contextRenderer.directionalLight.getUniform(m_shaders);
@@ -77,8 +89,22 @@ void PrimitiveMesh<Type>::render(ContextRenderer& contextRenderer)
 		contextRenderer.pointLights[i].getUniform(m_shaders, i);
 	}
 
-	m_material.diffuseMap.bind(GL_TEXTURE0);
-	m_material.specularMap.bind(GL_TEXTURE1);
+	m_material.diffuseMap.bind();
+	m_material.specularMap.bind();
+}
 
-	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+template <typename Type>
+void PrimitiveMesh<Type>::applyMaterial(const Material& material)
+{
+	m_material = material;
+}
+
+template <typename Type>
+void PrimitiveMesh<Type>::addShaders(std::vector<ShaderInfo> shaders)
+{
+	if (shaders.size() < 0)
+		return;
+
+	m_shaders = Shader::loadShader(shaders);
+	glUseProgram(m_shaders->program);
 }
