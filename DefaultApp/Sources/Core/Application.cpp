@@ -122,16 +122,15 @@ void Application::ChangeFOV(float newFov)
 
 void Application::InitializePrimitives()
 {
-	Material boxMaterial{
-		Texture("Ressources\\mat_test_diffuse.png", GL_TEXTURE0),
-		Texture("Ressources\\mat_test_specular.png", GL_TEXTURE1),
-		32.f
-	};
+	Material* boxMaterial = new Material();
+	boxMaterial->LoadTexture<diffuse>("Ressources\\mat_test_diffuse.png");
+	boxMaterial->LoadTexture<specular>("Ressources\\mat_test_specular.png");
+	boxMaterial->shininess = 32.f;
 
-	Material catMaterial;
-	catMaterial.LoadTexture<diffuse>("Ressources\\sc.png");
-	catMaterial.LoadTexture<specular>("Ressources\\sc.png");
-	catMaterial.shininess = 32.f;
+	Material* catMaterial = new Material();
+	catMaterial->LoadTexture<diffuse>("Ressources\\sc.png");
+	catMaterial->LoadTexture<specular>("Ressources\\sc.png");
+	catMaterial->shininess = 32.f;
 
 	std::vector<ShaderInfo> basicShaders = {
 		{GL_VERTEX_SHADER,  "default.vert"},

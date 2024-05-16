@@ -5,6 +5,7 @@
 #include "LowLevel_Renderer/Materials/Material.h"
 #include "LowLevel_Renderer/Shader/Shader.h"
 #include "Math/Transform.h"
+#include <memory>
 
 template <typename Type>
 class PrimitiveMesh
@@ -18,6 +19,7 @@ public:
 
 	virtual void load();
 	virtual void render(ContextRenderer& contextRenderer);
+	Material* getMaterial() { return m_material.get(); }
 	void applyMaterial(Material* material);
 	void addShaders(std::vector<ShaderInfo> shaders);
 
@@ -30,13 +32,13 @@ protected:
 	GLuint m_vbo;
 	GLuint m_ebo;
 	Shader* m_shaders;
-
-	Material* m_material;
+	
+	std::unique_ptr<Material> m_material;
 };
 
 template <typename Type>
 PrimitiveMesh<Type>::PrimitiveMesh()
-	: transform(Transform{}), m_vao(0), m_vbo(0), m_ebo(0), m_shaders(nullptr), m_material(nullptr)
+	: transform(Transform{}), triCount(0), m_vao(0), m_vbo(0), m_ebo(0), m_shaders(nullptr), m_material(std::unique_ptr<Material>(nullptr))
 {
 	LOAD_VERTEX_ARRAYS(this->m_vao)
 }
@@ -99,7 +101,7 @@ void PrimitiveMesh<Type>::render(ContextRenderer& contextRenderer)
 template <typename Type>
 void PrimitiveMesh<Type>::applyMaterial(Material* material)
 {
-	m_material = material;
+	m_material = std::unique_ptr<Material>(material);
 }
 
 template <typename Type>
