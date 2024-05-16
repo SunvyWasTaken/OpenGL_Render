@@ -1,6 +1,8 @@
 #pragma once
 #include "ILight.h"
 
+struct Shader;
+
 struct PointLight : ILight
 {
 	void getUniform(Shader* shader) override;

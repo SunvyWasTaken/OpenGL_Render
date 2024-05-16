@@ -60,7 +60,6 @@ void TriangleList::ChangeVertice(vertex_type& vertex, int x, int z)
 	vertex.m_point = vertex_type::P3D(x * m_terrain->transform.scale.x, y * m_terrain->transform.scale.y, z * m_terrain->transform.scale.z);
     vertex.m_color = vertex_type::Color(1, 1, 1);
     vertex.m_textureCoords = vertex_type::P2D((float)x / (float)m_width, (float)z / (float)m_depth);
-    vertex.m_normal = vertex_type::P3D(0.f, 1.f, 0.f);
 }
 
 
@@ -116,6 +115,28 @@ void TriangleList::InitIndices(std::vector<GLuint>& Indices)
 
 void TriangleList::CalcNormals(std::vector<vertex_type>& Vertices, std::vector<uint>& Indices)
 {
+	unsigned int Index = 0;
+
+	// Accumulate each triangle normal into each of the triangle vertices
+	for (unsigned int i = 0; i < Indices.size(); i += 3) {
+		unsigned int Index0 = Indices[i];
+		unsigned int Index1 = Indices[i + 1];
+		unsigned int Index2 = Indices[i + 2];
+		Point3f v1 = Vertices[Index1].m_point - Vertices[Index0].m_point;
+		Point3f v2 = Vertices[Index2].m_point - Vertices[Index0].m_point;
+		Point3f Normal = v1.Cross(v2);
+		Normal.Normalize();
+
+		Vertices[Index0].m_normal += Normal;
+		Vertices[Index1].m_normal += Normal;
+		Vertices[Index2].m_normal += Normal;
+	}
+
+	// Normalize all the vertex normals
+	for (unsigned int i = 0; i < Vertices.size(); i++) {
+		Vertices[i].m_normal.Normalize();
+	}
+
 }
 
 
@@ -168,6 +189,7 @@ void TriangleList::Load()
 	Indices.resize(NumQuads * 6);
 	InitIndices(Indices);
 
+	//CalcNormals(Vertices, Indices);
 
 	LOAD_VERTEX_ARRAYS(m_vao);
 	glGenBuffers(1, &m_vbo);

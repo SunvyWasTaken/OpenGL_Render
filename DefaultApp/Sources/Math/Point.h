@@ -25,9 +25,51 @@ namespace Math
 		}
 
 		template <typename Type>
-		Point3D<T> operator+(const Point3D<Type> other)
+		Point3D<T> operator+(const Point3D<Type>& other)
 		{
 			return { x + other.x, y + other.y, z + other.z };
+		}
+
+		template <typename Type>
+		Point3D<T> operator-(const Point3D<Type>& other)
+		{
+			return { x - other.x, y - other.y, z - other.z };
+		}
+
+		template <typename Type>
+		void operator+=(const Point3D<Type>& other)
+		{
+			x += other.x;
+			y += other.y;
+			z += other.z;
+		}
+
+		template <typename Type>
+		Point3D<T> Cross(const Point3D<Type>& other)
+		{
+			return {
+				y * other.z - z * other.y,
+				z * other.x - x * other.z,
+				x * other.y - y * other.x
+			};
+		}
+
+		T SquareLenght() const
+		{
+			return x * x + y * y + z *z;
+		}
+
+		T Lenght() const
+		{
+			return sqrt(SquareLenght());
+		}
+
+		void Normalize()
+		{
+			T lenght = Lenght();
+			x /= lenght;
+			y /= lenght;
+			z /= lenght;
 		}
 		
 	};
