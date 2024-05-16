@@ -49,17 +49,15 @@ void Application::Run()
 	//plane.transform.position = P3D{ 0.f, -1.f, -5.f };
 	//plane.transform.rotation = { 0.f, 0.0f, 0.0f };
 
-	Material boxMaterial{
-		Texture("Ressources\\mat_test_diffuse.png", GL_TEXTURE0),
-		Texture("Ressources\\mat_test_specular.png", GL_TEXTURE1),
-		32.f
-	};
+	Material boxMaterial;
+	boxMaterial.LoadTexture<diffuse>("Ressources\\mat_test_diffuse.png");
+	boxMaterial.LoadTexture<specular>("Ressources\\mat_test_specular.png");
+	boxMaterial.shininess =	32.f;
 
-	Material catMaterial{
-		Texture("Ressources\\sc.png", GL_TEXTURE0),
-		Texture("Ressources\\sc.png", GL_TEXTURE1),
-		32.f
-	};
+	Material catMaterial;
+	catMaterial.LoadTexture<diffuse>("Ressources\\sc.png");
+	catMaterial.LoadTexture<specular>("Ressources\\sc.png");
+	catMaterial.shininess = 32.f;
 
 	std::vector<ShaderInfo> basicShaders = {
 		{GL_VERTEX_SHADER,  "default.vert"},

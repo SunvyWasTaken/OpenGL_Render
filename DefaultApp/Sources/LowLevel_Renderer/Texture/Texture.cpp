@@ -27,7 +27,7 @@ Texture::Texture(const std::string& path, GLenum slot)
 
 	ConfigOpenGL(m_textureSize);
 
-	//Unload();
+	Unload();
 }
 
 Texture::Texture(unsigned char* bytes, Point2i& textureSize, int NumColch)
@@ -174,7 +174,7 @@ void TextureGenerator::LoadTile(const std::string& Filename)
 	m_numTextureTiles++;
 }
 
-Texture TextureGenerator::GenerateTexture(int TextureSize, BaseTerrain* pTerrain, float MinHeight, float MaxHeight)
+Texture* TextureGenerator::GenerateTexture(int TextureSize, BaseTerrain* pTerrain, float MinHeight, float MaxHeight)
 {
 	if (m_numTextureTiles == 0) {
 		printf("%s:%d: no texture tiles loaded\n", __FILE__, __LINE__);
@@ -232,12 +232,11 @@ Texture TextureGenerator::GenerateTexture(int TextureSize, BaseTerrain* pTerrain
 	// TODO : ici à changer pour que la texture reste en mémoire et après penser à la delete lorsque c'est détruit.
 
 	Point2i CurrentTextureSize{TextureSize, TextureSize};
-	Texture CurrentTexture = Texture(pTextureData, CurrentTextureSize, BPP);
 
 	//free(pTextureData);
 
 	//pTexture->LoadRaw(TextureSize, TextureSize, BPP, pTextureData);
-	return CurrentTexture;
+	return new Texture(pTextureData, CurrentTextureSize, BPP);
 }
 
 void TextureGenerator::CalculateTextureRegions(float MinHeight, float MaxHeight)
