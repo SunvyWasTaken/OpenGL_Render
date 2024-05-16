@@ -35,7 +35,7 @@ void SettingsToolWindow::Draw()
 	//ToolWindow::Draw();
 	Spacing(0, 10);
 	ImGui::Text("Generation Method");
-	ImGui::Combo(" ", &m_selectedMethode, ProceduralGen::Names.begin(), (int)ProceduralGen::Names.size());
+	ImGui::Combo(" ", &m_selectedMethode, ProceduralGen::Names().begin(), (int)ProceduralGen::Names().size());
 
 	//// Lui temporaire a deplacer a l'endroit qui lui correspond.
 	//ProceduralGen_t var;
