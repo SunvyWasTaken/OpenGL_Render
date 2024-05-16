@@ -19,19 +19,27 @@ struct Material final
 	void Bind();
 	
 	template <typename type>
-	void LoadTexture(const std::string& specular)
+	void LoadTexture(const std::string& path)
 	{
-		if (Texture* value = m_texturesMap.at(typeid(type).name()))
-		{
-			delete value;
-		}
-		m_texturesMap.at(typeid(type).name()) = new Texture(specular);
+		const char* key = typeid(type).name();
+		DeleteTexture(key);
+		m_texturesMap.at(key) = new Texture(path);
 	}
+
+	//template <typename ...types>
+	//void LoadTextures(types... args)
+	//{
+	//	std::invoke([this, args...](...) mutable {
+	//		this->LoadTexture<types::type>(args::path)...;
+	//		}, std::forward<Args>(args)...);
+	//}
 
 	template <typename type>
 	void ApplyTexture(Texture* texture)
 	{
-		m_texturesMap.at(typeid(type).name()) = texture;
+		const char* key = typeid(type).name();
+		DeleteTexture(key);
+		m_texturesMap.at(key) = texture;
 	}
 
 	template <typename type>
@@ -40,8 +48,21 @@ struct Material final
 		return m_texturesMap.at(typeid(type).name());
 	}
 
+private:
+
+	void DeleteTexture(const std::string& key)
+	{
+		if (Texture* value = m_texturesMap.at(key))
+		{
+			delete value;
+		}
+	}
+
+public:
+
 	float shininess;
 
 private:
+
 	std::map<std::string, Texture*> m_texturesMap;
 };

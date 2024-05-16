@@ -26,9 +26,6 @@ public:
 	void textUnit(GLuint shaderProgram, const char* uniform, GLuint unit = 0);
 	void bind(GLuint slot = GL_TEXTURE0);
 
-	void operator=(const Texture& other);
-	void operator=(Texture& other);
-
 private:
 
 	void ConfigOpenGL(const Point2i& textureSize);
