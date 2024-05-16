@@ -1,7 +1,8 @@
 #include "Application.h"
 
 #include "ContextRenderer.h"
-#include "Editor/Tools/ExempleToolImpl.h"
+#include "Editor/Tools/SettingsToolWindow.h"
+#include "Editor/Tools/InfosToolWindow.h"
 #include "Editor/ToolsManager.h"
 #include "Editor/Tools/ToolWindow.h"
 #include "LowLevel_Renderer/Cameras/Camera.h"
@@ -19,8 +20,10 @@
 Application::Application()
 	: m_window(new OGLWindow(1240, 720, "Procedural map generation")), m_toolsManager(new ToolsManager())
 {
-	m_ExempleEditor = new ExempleToolImpl("Exemple Window Editor Implementation", true);
-	m_ExempleEditor->AddToEditorManager(m_toolsManager.get());
+	m_settingsUI = new SettingsToolWindow("Settings", true);
+	m_settingsUI->AddToEditorManager(m_toolsManager.get());
+	m_infosUI = new InfosToolWindow("Infos", true);
+	m_infosUI->AddToEditorManager(m_toolsManager.get());
 }
 
 Application::~Application()
@@ -90,11 +93,13 @@ void Application::Run()
 	};
 
 	FaultFormation Terrain;
-	m_ExempleEditor->CurrentTerrain = &Terrain;
+	m_settingsUI->CurrentTerrain = &Terrain;
 	Terrain.transform.position = { -25.f, -25.f, -25.f };
 	Terrain.transform.scale = { 1.f, 1.f, 1.f };
 
 	Terrain.GenerateTerrain(50, 100, 0, 50, 0.01f);
+
+	float lastTime = 0.0f;
 
 	while (!m_window->isWindowShouldClose())
 	{
@@ -104,6 +109,11 @@ void Application::Run()
 		contextRenderer.camera = camera;
 
 		// TODO: write code here...
+
+		float currentTime = glfwGetTime();
+		float deltaTime = currentTime - lastTime;
+		lastTime = currentTime;
+		std::cout << "FPS: " << (1 / deltaTime) << "/" << deltaTime << std::endl;
 
 		//triangle.transform.rotation.y += 0.0025f;
 		//plane.transform.rotation.y += 0.001f;
@@ -118,7 +128,7 @@ void Application::Run()
 		
 		skybox.render(contextRenderer);
 		Terrain.Render(contextRenderer);
-
+		
 		_Draw(*m_window);
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);	//Set view mode in wireframe

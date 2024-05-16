@@ -1,4 +1,4 @@
-#include "ExempleToolImpl.h"
+#include "SettingsToolWindow.h"
 
 #include "Core/ProceduralGeneration.h"
 
@@ -16,17 +16,17 @@ namespace
 	static float filter = 0.5f;
 }
 
-ExempleToolImpl::ExempleToolImpl(const std::string& title, bool open)
+SettingsToolWindow::SettingsToolWindow(const std::string& title, bool open)
 	: ToolWindow(title, open), CurrentTerrain(nullptr)
 {
 
 }
 
-ExempleToolImpl::~ExempleToolImpl()
+SettingsToolWindow::~SettingsToolWindow()
 {
 }
 
-void ExempleToolImpl::Draw()
+void SettingsToolWindow::Draw()
 {
 	//ToolWindow::Draw();
 
@@ -40,7 +40,7 @@ void ExempleToolImpl::Draw()
 
 	ImGui::Combo("List", &m_selectedMethode, ProceduralGen::Names.begin(), (int)ProceduralGen::Names.size());
 
-	//// Lui temporaire à déplacer à l'endroit qui lui correspond.
+	//// Lui temporaire a deplacer a l'endroit qui lui correspond.
 	//ProceduralGen_t var;
 	//if (m_selectedMethode == 0) { var = std::variant_alternative_t<0, ProceduralGen_t>(); }
 	//if (m_selectedMethode == 1) { var = std::variant_alternative_t<1, ProceduralGen_t>(); }
