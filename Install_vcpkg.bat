@@ -19,6 +19,10 @@ ECHO =============================
 cd %currentPath%
 cmake -DCMAKE_TOOLCHAIN_FILE=%currentPath%/vcpkg/scripts/buildsystems/vcpkg.cmake -S %currentPath% -B %currentPath%/build
 
+ECHO Transfer ressources files
+ECHO =============================
+xcopy .\DefaultApp\ressources\ .\build\DefaultApp\ressources\ /s /e
+
 ECHO =============================
 ECHO Install done
 pause

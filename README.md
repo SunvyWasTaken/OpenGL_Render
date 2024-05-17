@@ -1,2 +1,3 @@
-# MiniMotor
- MiniMotorForGraphique Render
+Launch Install_vcpkg.bat
+
+Launch App annd enjoy !
