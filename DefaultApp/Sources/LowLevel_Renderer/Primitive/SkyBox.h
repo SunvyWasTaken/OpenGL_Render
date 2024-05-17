@@ -166,6 +166,9 @@ void SkyBox<Type>::render(ContextRenderer& contextRenderer)
 	glDepthMask(GL_FALSE);
 	glCullFace(GL_FRONT);
 
+	//Update Skybox position to the camera position to avoid player from exit the skybox
+	this->transform.position = contextRenderer.camera.transform.position;
+
 	parent::render(contextRenderer);
 
 	glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
