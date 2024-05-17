@@ -2,7 +2,16 @@
 #include "ToolWindow.h"
 #include "Editor/Observer/SignalSlot.h"
 
+#include <memory>
+
 DECLARE_MULTICAST_DELEGATE(FOnRegenaretedTerrain, int /*= iteration*//*, float / * = x* /, float/ * = y* /*/)
+
+struct MidDisData
+{
+	float roughness = 0.f;
+	float minHeight = 0.f;
+	float maxHeight = 50.f;
+};
 
 class SettingsToolWindow : public ToolWindow
 {
@@ -17,6 +26,9 @@ public:
 	class BaseTerrain* CurrentTerrain;
 
 private:
+
+	// Datas
+	std::unique_ptr<MidDisData> currentMidDisData;
 
 	int m_selectedMethode = 0;
 	int NbrIteration = 50;
