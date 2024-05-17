@@ -18,6 +18,8 @@ public:
 
 	void InitTerrain(const int terrainSize);
 
+	void InitTerrainWithMethode(const int terrainSize, int Methode);
+
 	void Destroy();
 
 	void Render(ContextRenderer& contextRenderer); 

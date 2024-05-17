@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-BaseTerrain::BaseTerrain() : m_GenerationMethode(std::variant_alternative_t<0, ProceduralGen_t>(this))
+BaseTerrain::BaseTerrain() : m_GenerationMethode(DefaultGenType(this))
 {
 }
 
@@ -24,6 +24,12 @@ void BaseTerrain::InitTerrain(const int terrainsize)
 {
 	m_terrainSize = terrainsize;
 	m_heightMap.InitArray2D(m_terrainSize, m_terrainSize, 0.0f);
+}
+
+void BaseTerrain::InitTerrainWithMethode(const int terrainSize, int Methode)
+{
+	InitTerrain(terrainSize);
+	SetGenMethode(Methode);
 }
 
 void BaseTerrain::Destroy()
@@ -40,8 +46,10 @@ void BaseTerrain::Render(ContextRenderer& contextRenderer)
 void BaseTerrain::SetGenMethode(const int index)
 {
 	m_currentIndeMethode = index;
-	if (index == 0) { m_GenerationMethode = std::variant_alternative_t<0, ProceduralGen_t>(this); return; }
-	if (index == 1) { m_GenerationMethode = std::variant_alternative_t<1, ProceduralGen_t>(this); return; }
+	if (index == 0) { m_GenerationMethode = ProceduralGenTypeAt<0>(this); return; }
+	if (index == 1) { m_GenerationMethode = ProceduralGenTypeAt<1>(this); return; }
+	if (index == 2) { m_GenerationMethode = ProceduralGenTypeAt<2>(this); return; }
+
 	// Add if there is more methode
 }
 

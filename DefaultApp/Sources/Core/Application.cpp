@@ -217,8 +217,8 @@ void Application::InitializeTerrain()
 	m_settingsUI->CurrentTerrain = &m_Terrain;
 	m_Terrain.transform.position = { -25.f, -25.f, -25.f };
 	m_Terrain.transform.scale = { 1.f, 1.f, 1.f };
-	m_Terrain.InitTerrain(500);
-	m_Terrain.GenerateProceduralTerrain<FaultFormation>(1000, 0, 50, 0.75f);
+	m_Terrain.InitTerrain(512);
+	m_Terrain.GenerateProceduralTerrain<DefaultGenType>(1000, 0, 50, 0.75f);
 	primitiveCount += m_Terrain.GetTerrainSize() * m_Terrain.GetTerrainSize() * 2;
 	objects++;
 }

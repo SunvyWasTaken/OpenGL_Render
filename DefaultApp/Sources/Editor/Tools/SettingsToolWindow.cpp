@@ -16,12 +16,14 @@ namespace
 }
 
 SettingsToolWindow::SettingsToolWindow(const std::string& title, bool open, Point2Di position, Point2Di size)
-	: ToolWindow(title, open, position, size), CurrentTerrain(nullptr), m_selectedMethode(0), NbrIteration(1000)
+	: ToolWindow(title, open, position, size), CurrentTerrain(nullptr), m_selectedMethode(0), NbrIteration(1000),
+	currentMidDisData(std::unique_ptr<MidDisData>(new MidDisData()))
 {
 }
 
 SettingsToolWindow::~SettingsToolWindow()
 {
+	
 }
 
 
@@ -36,20 +38,15 @@ void SettingsToolWindow::Draw()
 	{
 		CurrentTerrain->SetGenMethode(m_selectedMethode);
 	}
-	//CurrentTerrain->SetGenMethode(m_selectedMethode);
-	//// Lui temporaire a deplacer a l'endroit qui lui correspond.
-	//ProceduralGen_t var;
-	//if (m_selectedMethode == 0) { var = std::variant_alternative_t<0, ProceduralGen_t>(); }
-	//if (m_selectedMethode == 1) { var = std::variant_alternative_t<1, ProceduralGen_t>(); }
+
+	ImGui::Separator();
+	ImgUISpacing(0, 10);
+
+	ImGui::Text("Parameters");
 
 	CheckVariant(CurrentTerrain->m_GenerationMethode,
 		[&](FaultFormation)
 		{
-			ImGui::Separator();
-			ImgUISpacing(0, 10);
-
-			ImGui::Text("Parameters");
-
 			ImGui::DragInt("Iteration", &NbrIteration, 1);
 			if (NbrIteration <= 0) { NbrIteration = 0; }
 			ImGui::DragFloat("Min height", &MinHeight, 1);
@@ -63,6 +60,43 @@ void SettingsToolWindow::Draw()
 				CurrentTerrain->GenerateProceduralTerrain<FaultFormation>(NbrIteration, MinHeight, MaxHeight, filter);
 			}
 
+		},
+		[&](MidpointDispTerrain)
+		{
+			int size = CurrentTerrain->GetTerrainSize();
+			float minRoughness = 0.f;
+			float maxRoughness = 0.f;
+			if (size <= 128)
+			{
+				minRoughness = 0.01f;
+				maxRoughness = 0.2f;
+			}
+			else if (size > 128 && size <= 512)
+			{
+				minRoughness = 0.02f;
+				maxRoughness = 0.4f;
+			}
+			else
+			{
+				minRoughness = 0.05f;
+				maxRoughness = 0.8f;
+			}
+			if (currentMidDisData->roughness < minRoughness || currentMidDisData->roughness > maxRoughness)
+			{
+				currentMidDisData->roughness = minRoughness + ((minRoughness - maxRoughness) / 2.f);
+			}
+			ImGui::SliderFloat("Rougness", &currentMidDisData->roughness, minRoughness, maxRoughness, "%.2f");
+
+			ImGui::DragFloat("Min height", &currentMidDisData->minHeight, 1);
+
+			if (currentMidDisData->minHeight <= 0) { currentMidDisData->minHeight = 0; }
+			ImGui::DragFloat("Max height", &currentMidDisData->maxHeight, 1);
+			if (currentMidDisData->maxHeight <= 0) { currentMidDisData->maxHeight = 0; }
+
+			if (ImGui::Button("GenerateTerrain"))
+			{
+				CurrentTerrain->GenerateProceduralTerrain<MidpointDispTerrain>(currentMidDisData->roughness, currentMidDisData->minHeight, currentMidDisData->maxHeight);
+			}
 		},
 		[&](NoGeneration)
 		{

@@ -34,7 +34,7 @@ void FaultFormation::GenerationMethode(int Iterations, float MinHeight, float Ma
 
 				if (CrossProduct > 0)
 				{
-					float CurHeight = m_terrain->GetHeight(x, z);
+					float CurHeight = GetHeight({x, z});
 					m_terrain->SetHeight({x, z}, CurHeight + Height);
 				}
 			}
@@ -68,7 +68,7 @@ void FaultFormation::ApplyFIRFilter(float Filter)
 {
 	// left to right
 	for (int z = 0; z < GetTerrainSize(); z++) {
-		float PrevVal = m_terrain->GetHeight(0, z);
+		float PrevVal = GetHeight({0, z});
 		for (int x = 1; x < GetTerrainSize(); x++) {
 			PrevVal = FIRFilterSinglePoint(x, z, PrevVal, Filter);
 		}
@@ -76,7 +76,7 @@ void FaultFormation::ApplyFIRFilter(float Filter)
 
 	// right to left
 	for (int z = 0; z < GetTerrainSize(); z++) {
-		float PrevVal = m_terrain->GetHeight(GetTerrainSize() - 1, z);
+		float PrevVal = GetHeight({GetTerrainSize() - 1, z});
 		for (int x = GetTerrainSize() - 2; x >= 0; x--) {
 			PrevVal = FIRFilterSinglePoint(x, z, PrevVal, Filter);
 		}
@@ -84,7 +84,7 @@ void FaultFormation::ApplyFIRFilter(float Filter)
 
 	// bottom to top
 	for (int x = 0; x < GetTerrainSize(); x++) {
-		float PrevVal = m_terrain->GetHeight(x, 0);
+		float PrevVal = GetHeight({x, 0});
 		for (int z = 1; z < GetTerrainSize(); z++) {
 			PrevVal = FIRFilterSinglePoint(x, z, PrevVal, Filter);
 		}
@@ -92,7 +92,7 @@ void FaultFormation::ApplyFIRFilter(float Filter)
 
 	// top to bottom
 	for (int x = 0; x < GetTerrainSize(); x++) {
-		float PrevVal = m_terrain->GetHeight(x, GetTerrainSize() - 1);
+		float PrevVal = GetHeight({x, GetTerrainSize() - 1});
 		for (int z = GetTerrainSize() - 2; z >= 0; z--) {
 			PrevVal = FIRFilterSinglePoint(x, z, PrevVal, Filter);
 		}
@@ -101,7 +101,7 @@ void FaultFormation::ApplyFIRFilter(float Filter)
 
 float FaultFormation::FIRFilterSinglePoint(int x, int z, float PrevVal, float Filter)
 {
-	float CurVal = m_terrain->GetHeight(x, z);
+	float CurVal = GetHeight({x, z});
 	float NewVal = Filter * PrevVal + (1 - Filter) * CurVal;
 	m_terrain->SetHeight({x, z}, NewVal);
 	return NewVal;
