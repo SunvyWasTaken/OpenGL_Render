@@ -37,15 +37,17 @@ public:
 		m_triangleList.CreateTriangleList(m_terrainSize, m_terrainSize, this);
 	}
 
-	float GetHeight(int x, int z) const { return m_heightMap.Get(x, z); }
+	void SetGenMethode(const int index);
+
+	int GetMethodeIndex() const { return m_currentIndeMethode; }
 
 	int GetTerrainSize() const { return m_terrainSize; }
 
-	void SetGenMethode(const int index);
+	float GetHeight(int x, int z) const { return m_heightMap.Get(x, z); }
+
+	void SetHeight(Point2i coord, float height) { m_heightMap.Set(coord.x, coord.y, height); }
 
 	float GetHeightInterpolated(float x, float z) const;
-
-	void SetHeight(Point2i coord, float height) {m_heightMap.Set(coord.x, coord.y, height); }
 
 	FTransform transform;
 
@@ -54,11 +56,13 @@ public:
 	float m_minHeight = 0.0f;
 	float m_maxHeight = 0.0f;
 
+	ProceduralGen_t m_GenerationMethode;
+
 private:
+	
+	int m_currentIndeMethode = 0;
 
 	int m_terrainSize = 50;
-
-	ProceduralGen_t m_GenerationMethode;
 
 	TriangleList m_triangleList;
 };

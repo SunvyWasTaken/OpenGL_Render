@@ -1,5 +1,5 @@
 #include "SettingsToolWindow.h"
-#include "Core/ProceduralGeneration.h"
+#include "Procedural/BaseTerrain/BaseTerrain.h"
 
 #include <imgui.h>
 #include <vector>
@@ -32,39 +32,42 @@ void SettingsToolWindow::Draw()
 	ImgUISpacing(0, 10);
 	ImGui::Text("Generation Method");
 	ImGui::Combo(" ", &m_selectedMethode, ProceduralGen::Names().begin(), (int)ProceduralGen::Names().size());
-
+	if (m_selectedMethode != CurrentTerrain->GetMethodeIndex())
+	{
+		CurrentTerrain->SetGenMethode(m_selectedMethode);
+	}
+	//CurrentTerrain->SetGenMethode(m_selectedMethode);
 	//// Lui temporaire a deplacer a l'endroit qui lui correspond.
 	//ProceduralGen_t var;
 	//if (m_selectedMethode == 0) { var = std::variant_alternative_t<0, ProceduralGen_t>(); }
 	//if (m_selectedMethode == 1) { var = std::variant_alternative_t<1, ProceduralGen_t>(); }
 
-	//CheckVariant(var,
-	//	[&](FaultFormation obj)
-	//	{
-	ImGui::Separator();
-	ImgUISpacing(0, 10);
-	
-	ImGui::Text("Parameters");
+	CheckVariant(CurrentTerrain->m_GenerationMethode,
+		[&](FaultFormation)
+		{
+			ImGui::Separator();
+			ImgUISpacing(0, 10);
 
-	ImGui::DragInt("Iteration", &NbrIteration, 1);
-	if (NbrIteration <= 0) { NbrIteration = 0; }
-	ImGui::DragFloat("Min height", &MinHeight, 1);
-	
-	if (MinHeight <= 0) { MinHeight = 0; }
-	ImGui::DragFloat("Max height", &MaxHeight, 1);
-	if (MaxHeight <= 0) { MaxHeight = 0; }
-	ImGui::SliderFloat("Filter", &filter, 0.01f, 0.99f,  "%.2f");
-	if (ImGui::Button("GenerateTerrain"))
-	{
-		/*CurrentTerrain->CreateFaultFormationInternal(NbrIteration, MinHeight, MaxHeight, filter);*/
-	}
+			ImGui::Text("Parameters");
 
-	//	},
-	//	[&](NoGeneration obj)
-	//	{
-	//		ImGui::Text("No Generation");
-	//		ImGui::TextWrapped("Sorry other methode where not implemented yet sry");
-	//	});
+			ImGui::DragInt("Iteration", &NbrIteration, 1);
+			if (NbrIteration <= 0) { NbrIteration = 0; }
+			ImGui::DragFloat("Min height", &MinHeight, 1);
 
-	OnRegeneratedTerrain.Broadcast(10);
+			if (MinHeight <= 0) { MinHeight = 0; }
+			ImGui::DragFloat("Max height", &MaxHeight, 1);
+			if (MaxHeight <= 0) { MaxHeight = 0; }
+			ImGui::SliderFloat("Filter", &filter, 0.01f, 0.99f, "%.2f");
+			if (ImGui::Button("GenerateTerrain"))
+			{
+				CurrentTerrain->GenerateProceduralTerrain<FaultFormation>(NbrIteration, MinHeight, MaxHeight, filter);
+			}
+
+		},
+		[&](NoGeneration)
+		{
+			ImGui::Text("No Generation");
+			ImGui::TextWrapped("Sorry other methode where not implemented yet sry");
+		}
+	);
 }
