@@ -1,6 +1,7 @@
 #pragma once
 
 #include <typeinfo>
+#include <initializer_list>
 
 template <typename Type>
 constexpr const char* type_to_string() { return typeid(Type).name(); }

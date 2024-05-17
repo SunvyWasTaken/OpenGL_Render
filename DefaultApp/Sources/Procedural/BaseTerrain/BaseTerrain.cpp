@@ -11,9 +11,18 @@
 
 #include <iostream>
 
+BaseTerrain::BaseTerrain() : m_GenerationMethode(std::variant_alternative_t<0, ProceduralGen_t>(this))
+{
+}
+
 BaseTerrain::~BaseTerrain()
 {
 	Destroy();
+}
+
+void BaseTerrain::InitTerrain()
+{
+	m_heightMap.InitArray2D(m_terrainSize, m_terrainSize, 0.0f);
 }
 
 void BaseTerrain::Destroy()
@@ -25,6 +34,13 @@ void BaseTerrain::Destroy()
 void BaseTerrain::Render(ContextRenderer& contextRenderer)
 {
 	m_triangleList.Render(contextRenderer);
+}
+
+void BaseTerrain::SetGenMethode(const int index)
+{
+	if (index == 0) { m_GenerationMethode = std::variant_alternative_t<0, ProceduralGen_t>(this); return; }
+	if (index == 1) { m_GenerationMethode = std::variant_alternative_t<1, ProceduralGen_t>(this); return; }
+	// Add if there is more methode
 }
 
 float BaseTerrain::GetHeightInterpolated(float x, float z) const

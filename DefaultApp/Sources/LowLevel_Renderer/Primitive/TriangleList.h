@@ -13,7 +13,7 @@ struct ContextRenderer;
 using vertex_type = Vertex<float>;
 using uint = unsigned int;
 
-class TriangleList
+class TriangleList final
 {
  public:
     TriangleList();
@@ -31,10 +31,14 @@ class TriangleList
  private:
 
     void ChangeVertice(vertex_type& vertex, int x, int z);
+
     void InitVertices(std::vector<vertex_type>& Vertices);
+
     void InitIndices(std::vector<uint>& Indices);
 
     void CalcNormals(std::vector<vertex_type>& Vertices, std::vector<uint>& Indices);
+
+private:
 
     int m_width;
     int m_depth;

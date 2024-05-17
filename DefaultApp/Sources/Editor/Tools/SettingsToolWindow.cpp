@@ -56,7 +56,7 @@ void SettingsToolWindow::Draw()
 	ImGui::SliderFloat("Filter", &filter, 0.01f, 0.99f,  "%.2f");
 	if (ImGui::Button("GenerateTerrain"))
 	{
-		CurrentTerrain->CreateFaultFormationInternal(NbrIteration, MinHeight, MaxHeight, filter);
+		/*CurrentTerrain->CreateFaultFormationInternal(NbrIteration, MinHeight, MaxHeight, filter);*/
 	}
 
 	//	},
