@@ -39,6 +39,7 @@ void BaseTerrain::Render(ContextRenderer& contextRenderer)
 
 void BaseTerrain::SetGenMethode(const int index)
 {
+	m_currentIndeMethode = index;
 	if (index == 0) { m_GenerationMethode = std::variant_alternative_t<0, ProceduralGen_t>(this); return; }
 	if (index == 1) { m_GenerationMethode = std::variant_alternative_t<1, ProceduralGen_t>(this); return; }
 	// Add if there is more methode
