@@ -4,7 +4,6 @@
 #include "Vertex.h"
 #include "Math/Transform.h"
 #include "LowLevel_Renderer/Shader/Shader.h"
-#include "Math/Matrix.h"
 
 #include <glad/glad.h>
 #include <array>
@@ -23,9 +22,8 @@ public:
 	SkyBox();
 	~SkyBox();
 
-	void load();
-	void update();
-	void render(ContextRenderer& contextRenderer);
+	virtual void load() override;
+	virtual void render(ContextRenderer& contextRenderer) override;
 
 private:
 	std::string m_skyBoxImagesPath;
@@ -55,8 +53,8 @@ void SkyBox<Type>::load()
 		vertex_type({  1.f,	1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }, { 0.f, 0.f, 1.f}),
 
 		//Right
-		vertex_type({ 1.f,		1.f,	1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }, { 1.f, 0.f, 0.f}),
-		vertex_type({ 1.f,		-1.f,	1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }, { 1.f, 0.f, 0.f}),
+		vertex_type({ 1.f,		1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		0.0f }, { 1.f, 0.f, 0.f}),
+		vertex_type({ 1.f,		-1.f,	 1.f }, { 1.0f,	1.0f,	1.0f }, {  0.0f,		1.0f }, { 1.f, 0.f, 0.f}),
 		vertex_type({ 1.f,		-1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		1.0f }, { 1.f, 0.f, 0.f}),
 		vertex_type({ 1.f,		1.f,	-1.f }, { 1.0f,	1.0f,	1.0f }, {  1.0f,		0.0f }, { 1.f, 0.f, 0.f}),
 
@@ -153,11 +151,6 @@ void SkyBox<Type>::load()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture);
-}
-
-template <typename Type>
-void SkyBox<Type>::update()
-{
 }
 
 template <typename Type>

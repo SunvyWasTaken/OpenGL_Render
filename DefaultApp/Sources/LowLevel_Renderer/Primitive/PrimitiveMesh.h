@@ -79,8 +79,7 @@ void PrimitiveMesh<Type>::render(ContextRenderer& contextRenderer)
 	m_shaders->setMat4("model", transform.getMatrix());
 
 	m_shaders->setVec3("viewPosition", contextRenderer.camera.transform.position);
-	m_shaders->setInt("pointLightsCount", contextRenderer.pointLights.size());
-
+	m_shaders->setInt("pointLightsCount", (*contextRenderer.pointLights).size());
 
 	if(m_material)
 	{
