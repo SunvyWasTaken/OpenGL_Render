@@ -120,7 +120,9 @@ void SkyBox<Type>::load()
 
 	int widthImage, heightImage, numColCh;
 	for (size_t i = 0; i < SkyBoxImages.size(); ++i) {
+
 		std::string completePath = m_skyBoxImagesPath + SkyBoxImages[i];
+		stbi_set_flip_vertically_on_load(false);
 		unsigned char* bytes = stbi_load(completePath.c_str(), &widthImage, &heightImage, &numColCh, 0);
 		if (bytes) {
 			//GL_TEXTURE_CUBE_MAP_POSITIVE_X + i : will iterate in this order : Right, Left, Top, Bottom, Back, Front
