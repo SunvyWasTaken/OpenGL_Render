@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cmath>
+
 namespace Math
 {
 	template <typename T>
@@ -85,6 +87,11 @@ namespace Math
 		Point2D(const Point2D& point)
 			: x(point.x), y(point.y)
 		{
+		}
+
+		bool operator==(const Point2D<T>& other) const
+		{
+			return x == other.x && y == other.y;
 		}
 
 		T x, y;

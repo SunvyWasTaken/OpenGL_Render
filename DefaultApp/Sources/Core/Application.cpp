@@ -8,7 +8,7 @@
 #include "LowLevel_Renderer/Primitive/Cube.h"
 #include "LowLevel_Renderer/Primitive/SkyBox.h"
 #include "LowLevel_Renderer/Primitive/Vertex.h"
-#include "ProceduralGeneration.h"
+
 
 #include <stdexcept>
 
@@ -124,15 +124,15 @@ void Application::ChangeFOV(float newFov)
 
 void Application::InitializePrimitives()
 {
-	Material* boxMaterial = new Material();
+	std::shared_ptr<Material> boxMaterial = std::make_shared<Material>();
 	boxMaterial->LoadTexture<diffuse>("Ressources\\mat_test_diffuse.png");
 	boxMaterial->LoadTexture<specular>("Ressources\\mat_test_specular.png");
 	boxMaterial->shininess = 32.f;
 
-	Material* catMaterial = new Material();
-	catMaterial->LoadTexture<diffuse>("Ressources\\sc.png");
-	catMaterial->LoadTexture<specular>("Ressources\\sc.png");
-	catMaterial->shininess = 32.f;
+	//Material* catMaterial = new Material();
+	//catMaterial->LoadTexture<diffuse>("Ressources\\sc.png");
+	//catMaterial->LoadTexture<specular>("Ressources\\sc.png");
+	//catMaterial->shininess = 32.f;
 
 	std::vector<ShaderInfo> basicShaders = {
 		{GL_VERTEX_SHADER,  "default.vert"},
@@ -217,7 +217,8 @@ void Application::InitializeTerrain()
 	m_settingsUI->CurrentTerrain = &m_Terrain;
 	m_Terrain.transform.position = { -25.f, -25.f, -25.f };
 	m_Terrain.transform.scale = { 1.f, 1.f, 1.f };
-	m_Terrain.GenerateTerrain(500, 1000, 0, 50, 0.75f);
+	m_Terrain.InitTerrain(500);
+	m_Terrain.GenerateProceduralTerrain<FaultFormation>(1000, 0, 50, 0.75f);
 	primitiveCount += m_Terrain.GetTerrainSize() * m_Terrain.GetTerrainSize() * 2;
 	objects++;
 }

@@ -1,6 +1,4 @@
 #pragma once
-#include <chrono>
-#include <memory>
 
 #include "ContextRenderer.h"
 #include "Editor/Observer/SignalSlot.h"
@@ -9,9 +7,13 @@
 #include "LowLevel_Renderer/Primitive/PrimitiveMesh.h"
 #include "LowLevel_Renderer/Viewports/Viewport.h"
 #include "LowLevel_Renderer/Lights/PointLight.h"
+
+#include "Procedural/BaseTerrain/BaseTerrain.h"
+
+#include <chrono>
+#include <memory>
 #include <vector>
 
-#include "Procedural/FaultFormation/FaultFormation.h"
 
 class ToolsManager;
 
@@ -57,7 +59,7 @@ private:
 	DirectionalLight m_SceneSun;
 
 	void InitializeTerrain();
-	FaultFormation m_Terrain;
+	BaseTerrain m_Terrain;
 
 	bool WireframeMode = false;
 

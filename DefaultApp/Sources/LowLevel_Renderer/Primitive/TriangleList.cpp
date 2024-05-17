@@ -1,9 +1,10 @@
 
-#include "PrimitiveUtils.h"
+#include "TriangleList.h"
 
+#include "PrimitiveUtils.h"
 #include "Core\ContextRenderer.h"
 #include "Procedural/BaseTerrain/BaseTerrain.h"
-#include "TriangleList.h"
+#include "LowLevel_Renderer/Texture/TextureGenerator.h"
 
 #include <assert.h>
 #include <stdio.h>
@@ -165,12 +166,12 @@ void TriangleList::Render(ContextRenderer& contextRenderer)
 
 void TriangleList::Load()
 {
-	TextureGenerator textureGen;
+	TextureGenerator<3> textureGen;
 	textureGen.LoadTile("Ressources\\Landscape\\Stone_BaseColor.jpg");
 	textureGen.LoadTile("Ressources\\Landscape\\Grass_BaseColor.jpg");
 	textureGen.LoadTile("Ressources\\Landscape\\Snow_BaseColor.jpg");
 
-	m_material.ApplyTexture<diffuse>(textureGen.GenerateTexture(2048, m_terrain, m_terrain->GetMinHeight(), m_terrain->GetMaxHeight()));
+	m_material.ApplyTexture<diffuse>(textureGen.GenerateTexture(2048, m_terrain, m_terrain->m_minHeight, m_terrain->m_maxHeight));
 
 	m_material.LoadTexture<specular>("Ressources\\Landscape\\Grass_Specular.jpg");
 
@@ -180,7 +181,6 @@ void TriangleList::Load()
 	Vertices.resize(m_width * m_depth, vertex_type(vertex_type::P3D(0), vertex_type::Color()));
 
 	InitVertices(Vertices);
-	//InitVertices(m_terrain, Vertices);
 
 	std::vector<GLuint> Indices;
 	int NumQuads = (m_width - 1) * (m_depth - 1);

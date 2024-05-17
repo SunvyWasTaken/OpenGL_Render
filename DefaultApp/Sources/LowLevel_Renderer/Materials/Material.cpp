@@ -10,6 +10,9 @@ Material::Material() : shininess(0.f)
 
 Material::~Material()
 {
+	if(m_texturesMap.empty())
+		return;
+
 	for (auto& [key, value] : m_texturesMap)
 	{
 		if (value)
@@ -17,6 +20,8 @@ Material::~Material()
 
 		value = nullptr;
 	}
+
+	m_texturesMap.clear();
 }
 
 void Material::Bind()
