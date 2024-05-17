@@ -14,6 +14,8 @@ struct TextureHeightDesc
 
 struct TextureTile final
 {
+	TextureTile() = default;
+
 	TextureHeightDesc HeightDesc;
 	Texture Image;
 };
@@ -26,7 +28,7 @@ public:
 
 	~TextureGenerator()
 	{
-		for (int i = numTexture; i > -1; --i)
+		for (int i = numTexture - 1; i > -1; --i)
 		{
 			delete m_textureTiles[i];
 		}

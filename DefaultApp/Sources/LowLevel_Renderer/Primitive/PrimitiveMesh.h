@@ -20,7 +20,7 @@ public:
 	virtual void load();
 	virtual void render(ContextRenderer& contextRenderer);
 	Material* getMaterial() { return m_material.get(); }
-	void applyMaterial(Material* material);
+	void applyMaterial(std::shared_ptr<Material> material);
 	void addShaders(std::vector<ShaderInfo> shaders);
 
 	Transform transform;
@@ -33,7 +33,7 @@ protected:
 	GLuint m_ebo;
 	Shader* m_shaders;
 	
-	std::unique_ptr<Material> m_material;
+	std::shared_ptr<Material> m_material;
 };
 
 template <typename Type>
@@ -99,9 +99,9 @@ void PrimitiveMesh<Type>::render(ContextRenderer& contextRenderer)
 }
 
 template <typename Type>
-void PrimitiveMesh<Type>::applyMaterial(Material* material)
+void PrimitiveMesh<Type>::applyMaterial(std::shared_ptr<Material> material)
 {
-	m_material = std::unique_ptr<Material>(material);
+	m_material = material;
 }
 
 template <typename Type>

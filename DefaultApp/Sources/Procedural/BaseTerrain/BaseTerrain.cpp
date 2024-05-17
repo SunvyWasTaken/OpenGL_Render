@@ -20,8 +20,9 @@ BaseTerrain::~BaseTerrain()
 	Destroy();
 }
 
-void BaseTerrain::InitTerrain()
+void BaseTerrain::InitTerrain(const int terrainsize)
 {
+	m_terrainSize = terrainsize;
 	m_heightMap.InitArray2D(m_terrainSize, m_terrainSize, 0.0f);
 }
 

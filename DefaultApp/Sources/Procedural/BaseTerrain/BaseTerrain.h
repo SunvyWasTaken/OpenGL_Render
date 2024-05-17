@@ -16,7 +16,7 @@ public:
 
 	virtual ~BaseTerrain();
 
-	void InitTerrain();
+	void InitTerrain(const int terrainSize);
 
 	void Destroy();
 
