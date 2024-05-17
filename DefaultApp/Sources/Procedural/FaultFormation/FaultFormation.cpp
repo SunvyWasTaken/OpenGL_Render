@@ -6,6 +6,9 @@
 
 void FaultFormation::GenerationMethode(int Iterations, float MinHeight, float MaxHeight, float Filter)
 {
+	m_terrain->m_minHeight = MinHeight;
+	m_terrain->m_maxHeight = MaxHeight;
+
 	float DeltaHeight = MaxHeight - MinHeight;
 
 	for (int CurIter = 0; CurIter < Iterations; CurIter++)
