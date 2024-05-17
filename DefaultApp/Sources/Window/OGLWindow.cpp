@@ -126,7 +126,7 @@ void OGLWindow::SwitchCameraMode()
 
 void OGLWindow::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	sensitivity += yoffset * 0.05f;
+	sensitivity += yoffset * 0.075f;
 	sensitivity = std::clamp(sensitivity, 0.1f, 10.f);
 }
 

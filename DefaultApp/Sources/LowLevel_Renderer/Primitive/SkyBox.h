@@ -36,6 +36,7 @@ template <typename Type>
 SkyBox<Type>::SkyBox()
 	: parent(), m_skyBoxImagesPath("")
 {
+	this->triCount = 12;
 }
 
 template <typename Type>

@@ -12,23 +12,21 @@
 
 #include <stdexcept>
 
-#include "LowLevel_Renderer/Primitive/CubeLight.h"
-#include "LowLevel_Renderer/Primitive/Plane.h"
-
 using Point2Di = Math::Point2D<int>;
 
 Application::Application()
 	: m_window(new OGLWindow(1240, 720, "Procedural map generation")), m_toolsManager(new ToolsManager())
 {
-	m_settingsUI = new SettingsToolWindow("Settings", true, Point2Di(10, 10), Point2Di(300, 400));
+	m_settingsUI = new SettingsToolWindow("TERRAIN SETTINGS", true, Point2Di(10, 10), Point2Di(300, 400));
+	m_infosUI = new InfosToolWindow("SCENE", true, Point2Di(1030, 10), Point2Di(200, 405));
 	m_settingsUI->AddToEditorManager(m_toolsManager.get());
-	m_infosUI = new InfosToolWindow("INFOS", true, Point2Di(1030, 10), Point2Di(200, 400));
 	m_infosUI->AddToEditorManager(m_toolsManager.get());
 	OnUpdateFPS.Bind(m_infosUI, &InfosToolWindow::UpdateFPS);
 	m_window->sensitivityChanged.Bind(m_infosUI, &InfosToolWindow::UpdateSensitivity);
 	m_infosUI->wireframeModeChanged.Bind(this, &Application::SwitchWireframeMode);
 	m_infosUI->fovChanged.Bind(this, &Application::ChangeFOV);
 	m_infosUI->toggleModeChanged.Bind(m_window.get(), &OGLWindow::ToggleCameraRotationMode);
+	m_infosUI->sunDirectionChanged.Bind(this, &Application::ChangeSunDirection);
 }
 
 Application::~Application()
@@ -46,6 +44,10 @@ void Application::Run()
 	InitializeTerrain();
 	InitializeLights();
 	InitializeRenderer(120.f);
+	m_infosUI->SetTriObjectNbr(primitiveCount, objects);
+
+	camera.transform.position = { 0.f, 20.f, 0.f };
+	camera.transform.rotation = { 0.f, 4.f, 0.f };
 
 	while (!m_window->isWindowShouldClose())
 	{
@@ -163,6 +165,12 @@ void Application::InitializePrimitives()
 	cube2->addShaders(basicShaders);
 	cube2->load();
 	m_meshes.emplace_back(cube2);
+
+	for (auto& mesh : m_meshes)
+	{
+		primitiveCount += mesh->triCount;
+		objects++;
+	}
 }
 
 
@@ -174,6 +182,7 @@ void Application::InitializeLights()
 	directionalLight.ambient = directionalLight.diffuse * 0.2f;
 	directionalLight.specular = {1.f, 1.f, 1.f};
 	m_SceneSun = directionalLight;
+	objects++;
 
 	PointLight* pointLight = new PointLight();
 	pointLight->position = { 1.f, 0.5f, -3.f };
@@ -188,6 +197,19 @@ void Application::InitializeLights()
 	pointLight2->ambient = pointLight2->diffuse * 2.f;
 	pointLight2->specular = 1.f;
 	m_lights.emplace_back(pointLight2);
+	
+	objects += m_lights.size();
+}
+
+void Application::ChangeSunDirection(Math::Vector3D<float> newDirection)
+{
+	m_SceneSun.direction = Math::Point3D<float>{newDirection.x, newDirection.y, newDirection.z};
+	m_renderer = ContextRenderer{
+		m_viewport.getMatrixProjection(),
+		camera,
+		m_SceneSun,
+		&m_lights,
+	};
 }
 
 void Application::InitializeTerrain()
@@ -195,5 +217,7 @@ void Application::InitializeTerrain()
 	m_settingsUI->CurrentTerrain = &m_Terrain;
 	m_Terrain.transform.position = { -25.f, -25.f, -25.f };
 	m_Terrain.transform.scale = { 1.f, 1.f, 1.f };
-	m_Terrain.GenerateTerrain(500, 100, 0, 50, 0.5f);
+	m_Terrain.GenerateTerrain(500, 1000, 0, 50, 0.75f);
+	primitiveCount += m_Terrain.GetTerrainSize() * m_Terrain.GetTerrainSize() * 2;
+	objects++;
 }

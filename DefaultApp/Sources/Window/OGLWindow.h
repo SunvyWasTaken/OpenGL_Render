@@ -45,5 +45,5 @@ private:
 	bool cursorIsHidden = false;
 	float cameraSpeed = 0.05f;
 	float cameraRotationSpeed = 0.0005f;
-	static inline float sensitivity = 0.5f;
+	static inline float sensitivity = 5.f;
 };

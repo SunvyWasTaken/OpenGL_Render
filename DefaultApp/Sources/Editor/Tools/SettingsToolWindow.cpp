@@ -8,15 +8,15 @@
 
 namespace
 {
-	static int TerrainSize = 50;
-	static int NbrIteration = 50;
-	static float MinHeight = 10.f;
+	static int TerrainSize = 500;
+	static int NbrIteration = 1000;
+	static float MinHeight = 0.f;
 	static float MaxHeight = 50.f;
-	static float filter = 0.5f;
+	static float filter = 0.75f;
 }
 
 SettingsToolWindow::SettingsToolWindow(const std::string& title, bool open, Point2Di position, Point2Di size)
-	: ToolWindow(title, open, position, size), CurrentTerrain(nullptr)
+	: ToolWindow(title, open, position, size), CurrentTerrain(nullptr), m_selectedMethode(0), NbrIteration(1000)
 {
 }
 
@@ -44,7 +44,7 @@ void SettingsToolWindow::Draw()
 	ImGui::Separator();
 	ImgUISpacing(0, 10);
 	
-	ImGui::Text("Fault Formation");
+	ImGui::Text("Parameters");
 
 	ImGui::DragInt("Iteration", &NbrIteration, 1);
 	if (NbrIteration <= 0) { NbrIteration = 0; }

@@ -53,6 +53,7 @@ private:
 	void InitializeLights();
 	std::vector<std::unique_ptr<PointLight>> m_lights;
 
+	void ChangeSunDirection(Math::Vector3D<float> newDirection);
 	DirectionalLight m_SceneSun;
 
 	void InitializeTerrain();
@@ -61,4 +62,5 @@ private:
 	bool WireframeMode = false;
 
 	int primitiveCount = 0;
+	int objects = 0;
 };

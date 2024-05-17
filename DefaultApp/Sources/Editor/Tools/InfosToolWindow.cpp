@@ -4,7 +4,8 @@
 #include <iostream>
 
 InfosToolWindow::InfosToolWindow(const std::string& title, bool open, Point2Di position, Point2Di size)
-    : ToolWindow(title, open, position, size), fps(0), verticesCount(0), primitivesCount(0), sensitivity(0), lastFOV(0), FOV(120)
+    : ToolWindow(title, open, position, size), fps(0), objectsCount(0), primitivesCount(0), sensitivity(0), lastFOV(0), FOV(120),
+    lastWireframeMode(false), lastToggleMode(false), sunRotation(1.f, -1.f, -0.3f), lastSunRotation(-0.f, -0.f, -0.f)
 {
 }
 
@@ -16,9 +17,9 @@ void InfosToolWindow::Draw()
 {
     ImGui::SeparatorText("SCENE INFOS");
     ImGui::Text("FPS: %d", fps);
-    ImGui::Text("Vertices: %d", verticesCount);
-    ImGui::Text("Primitives: %d", primitivesCount);
-    ImgUISpacing(0, 30);
+    ImGui::Text("Triangles: %d", primitivesCount);
+    ImGui::Text("Objects: %d", objectsCount);
+    ImgUISpacing(0, 15);
     ImGui::SeparatorText("CAMERA SETTINGS");
     ImgUISpacing(0, 5);    
     ImGui::SliderFloat("FOV", &FOV, 20.f, 170.f, "%.0f");
@@ -27,6 +28,14 @@ void InfosToolWindow::Draw()
     ImgUISpacing(0, 5);    
     ImGui::Checkbox("Toggle Rotation Mode", &toggleChecked);
     ImGui::Checkbox("Wireframe View", &wireFrameChecked);
+    ImgUISpacing(0, 15);
+    ImGui::SeparatorText("SUN SETTINGS");
+    ImgUISpacing(0, 5);
+    ImGui::Text("Sun Rotation :");
+    ImGui::SliderFloat("X", &sunRotation.x, -1.f, 1.f, "%.2f");
+    ImGui::SliderFloat("Y", &sunRotation.y, -1.f, 1.f, "%.2f");
+    ImGui::SliderFloat("Z", &sunRotation.z, -1.f, 1.f, "%.2f");
+    
 
     if (lastWireframeMode != wireFrameChecked)
     {
@@ -42,5 +51,10 @@ void InfosToolWindow::Draw()
     {
         lastToggleMode = toggleChecked;
         toggleModeChanged.Broadcast();
+    }
+    if (sunRotation != lastSunRotation)
+    {
+        lastSunRotation = sunRotation;
+        sunDirectionChanged.Broadcast(sunRotation);
     }
 }

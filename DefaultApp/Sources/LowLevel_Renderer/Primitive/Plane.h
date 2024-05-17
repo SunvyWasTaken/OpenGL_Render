@@ -21,6 +21,7 @@ public:
 	Plane()
 		: parent()
 	{
+		this->triCount = 2;
 	}
 
 	~Plane()

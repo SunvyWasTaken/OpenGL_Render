@@ -14,6 +14,12 @@ namespace Math
 		{
 			return Vector3D<VectorType>(x * sensitivity, y * sensitivity, z * sensitivity);
 		}
+
+		bool operator!=(const Vector3D<VectorType>& vector) const
+		{
+			return (x != vector.x || y != vector.y || z != vector.z);
+		}
+		
 		VectorType x, y, z;
 	};
 

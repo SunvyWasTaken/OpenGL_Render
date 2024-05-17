@@ -31,6 +31,6 @@ protected:
 
 private:
 	std::string m_title;
-	bool m_open;
+	bool m_open = true;
 
 };
