@@ -126,7 +126,7 @@ void Application::Run()
 		camera,
 		directionalLight,
 		std::vector<PointLight>{},
-		Plane{{0,-1,0},-15}
+		Plane{{0,-1,0},15}
 	};
 
 	FaultFormation Terrain;
@@ -180,6 +180,8 @@ void Application::Run()
 
 		contextRenderer.camera.transform.position.y += distance;
 		contextRenderer.camera.transform.rotation.z = -contextRenderer.camera.transform.rotation.z;
+
+		contextRenderer.waterPlane = Plane{ {0,1,0},-15 };
 
 		//Second render to refraction water buffer
 		water.BindRefractionFrameBuffer();
