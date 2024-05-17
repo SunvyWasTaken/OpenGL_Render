@@ -78,14 +78,16 @@ void PrimitiveMesh<Type>::render(ContextRenderer& contextRenderer)
 	m_shaders->setMat4("view", contextRenderer.camera.getMatrixView());
 	m_shaders->setMat4("model", transform.getMatrix());
 
-	m_shaders->setVec3("viewPostion", contextRenderer.camera.transform.position);
-	m_shaders->setInt("pointLightsCount", contextRenderer.pointLights->size());
+	m_shaders->setVec3("viewPosition", contextRenderer.camera.transform.position);
+	m_shaders->setInt("pointLightsCount", contextRenderer.pointLights.size());
 
-	m_shaders->setInt("material.diffuse", 0);
-	m_shaders->setInt("material.specular", 1);
 
 	if(m_material)
+	{
+		m_shaders->setInt("material.diffuse", 0);
+		m_shaders->setInt("material.specular", 1);
 		m_shaders->setFloat("material.shininess", m_material->shininess);
+	}
 
 	contextRenderer.directionalLight.getUniform(m_shaders);
 	

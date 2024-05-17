@@ -110,12 +110,12 @@ void SkyBox<Type>::load()
 	m_skyBoxImagesPath = "Ressources\\SkyBox\\";
 
 	std::vector<std::string> SkyBoxImages = {
-		"right.png",
-		"left.png",
-		"top.png",
-		"bottom.png",
-		"front.png",
-		"back.png"
+		"right.jpg",
+		"left.jpg",
+		"top.jpg",
+		"bottom.jpg",
+		"front.jpg",
+		"back.jpg"
 	};
 
 	int widthImage, heightImage, numColCh;
@@ -124,7 +124,7 @@ void SkyBox<Type>::load()
 		unsigned char* bytes = stbi_load(completePath.c_str(), &widthImage, &heightImage, &numColCh, 0);
 		if (bytes) {
 			//GL_TEXTURE_CUBE_MAP_POSITIVE_X + i : will iterate in this order : Right, Left, Top, Bottom, Back, Front
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, widthImage, heightImage, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, widthImage, heightImage, 0, GL_RGB, GL_UNSIGNED_BYTE, bytes);
 			stbi_image_free(bytes);
 		}
 		else {
