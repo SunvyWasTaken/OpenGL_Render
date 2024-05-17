@@ -14,5 +14,5 @@ struct ContextRenderer
 	mat4 projection = mat4::identity();
 	Camera camera;
 	DirectionalLight directionalLight;
-	std::vector<PointLight> pointLights;
+	std::vector<std::unique_ptr<PointLight>>* pointLights;
 };

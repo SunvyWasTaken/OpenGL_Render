@@ -1,5 +1,4 @@
 #include "SettingsToolWindow.h"
-
 #include "Core/ProceduralGeneration.h"
 
 #include <imgui.h>
@@ -7,19 +6,17 @@
 #include <string>
 #include <cstring>
 
-
-
 namespace
 {
-	static int TerrainSize = 50;
-	static int NbrIteration = 50;
-	static float MinHeight = 10.f;
+	static int TerrainSize = 500;
+	static int NbrIteration = 1000;
+	static float MinHeight = 0.f;
 	static float MaxHeight = 50.f;
-	static float filter = 0.5f;
+	static float filter = 0.75f;
 }
 
 SettingsToolWindow::SettingsToolWindow(const std::string& title, bool open, Point2Di position, Point2Di size)
-	: ToolWindow(title, open, position, size), CurrentTerrain(nullptr)
+	: ToolWindow(title, open, position, size), CurrentTerrain(nullptr), m_selectedMethode(0), NbrIteration(1000)
 {
 }
 
@@ -27,13 +24,12 @@ SettingsToolWindow::~SettingsToolWindow()
 {
 }
 
-#define Spacing(x, y) \
-ImGui::Dummy(ImVec2(x,y))
+
 
 void SettingsToolWindow::Draw()
 {
 	//ToolWindow::Draw();
-	Spacing(0, 10);
+	ImgUISpacing(0, 10);
 	ImGui::Text("Generation Method");
 	ImGui::Combo(" ", &m_selectedMethode, ProceduralGen::Names().begin(), (int)ProceduralGen::Names().size());
 
@@ -46,17 +42,18 @@ void SettingsToolWindow::Draw()
 	//	[&](FaultFormation obj)
 	//	{
 	ImGui::Separator();
-	Spacing(0, 10);
+	ImgUISpacing(0, 10);
 	
-	ImGui::Text("Fault Formation");
+	ImGui::Text("Parameters");
 
 	ImGui::DragInt("Iteration", &NbrIteration, 1);
 	if (NbrIteration <= 0) { NbrIteration = 0; }
 	ImGui::DragFloat("Min height", &MinHeight, 1);
+	
 	if (MinHeight <= 0) { MinHeight = 0; }
 	ImGui::DragFloat("Max height", &MaxHeight, 1);
 	if (MaxHeight <= 0) { MaxHeight = 0; }
-	ImGui::DragFloat("Filter", &filter, 0.005f, 0.f, 1.f);
+	ImGui::SliderFloat("Filter", &filter, 0.01f, 0.99f,  "%.2f");
 	if (ImGui::Button("GenerateTerrain"))
 	{
 		CurrentTerrain->CreateFaultFormationInternal(NbrIteration, MinHeight, MaxHeight, filter);

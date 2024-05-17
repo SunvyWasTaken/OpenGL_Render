@@ -1,5 +1,6 @@
 #pragma once
 
+#include <imgui.h>
 #include <string>
 
 #include "Math/Point.h"
@@ -7,6 +8,9 @@
 class ToolsManager;
 
 using Point2Di = Math::Point2D<int>;
+
+#define ImgUISpacing(x, y) \
+ImGui::Dummy(ImVec2(x,y))
 
 class ToolWindow
 {
@@ -27,6 +31,6 @@ protected:
 
 private:
 	std::string m_title;
-	bool m_open;
+	bool m_open = true;
 
 };

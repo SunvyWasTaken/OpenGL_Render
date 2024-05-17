@@ -29,6 +29,7 @@ template <typename Type>
 Cube<Type>::Cube()
 	: parent()
 {
+	this->triCount = 12;
 }
 
 template <typename Type>

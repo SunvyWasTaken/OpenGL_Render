@@ -1,5 +1,6 @@
 #include "OGLWindow.h"
 
+#include <algorithm>
 #include <iostream>
 
 #include <imgui.h>
@@ -79,17 +80,40 @@ void OGLWindow::PollEvent(Camera& cam)
 	}
 
 	Math::Mat4<float> rotationMat = Math::Mat4<float>::rotation(cam.transform.rotation);
-	Math::Vector3D<float> worldMovement = rotationMat * movement;
+	Math::Vector3D<float> worldMovement = rotationMat * (movement * sensitivity);
 	cam.transform.position = cam.transform.position + worldMovement;
 
-	static int oldState = GLFW_PRESS;
-	int newState = glfwGetMouseButton(m_windowOpenGL, GLFW_MOUSE_BUTTON_RIGHT);
-	if (newState == GLFW_PRESS && oldState == GLFW_RELEASE)
+	if (toggleModeEnabled)
 	{
-		std::cout << "Mouse click" << std::endl;
-		SwitchCameraMode();
+		static int oldState = GLFW_PRESS;
+		int newState = glfwGetMouseButton(m_windowOpenGL, GLFW_MOUSE_BUTTON_RIGHT);
+		if (newState == GLFW_PRESS && oldState == GLFW_RELEASE)
+		{
+			std::cout << "Mouse click" << std::endl;
+			SwitchCameraMode();
+		}
+		oldState = newState;
 	}
-	oldState = newState;
+	else
+	{
+		if (glfwGetMouseButton(m_windowOpenGL, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+		{
+			glfwSetInputMode(m_windowOpenGL, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+			glfwSetInputMode(m_windowOpenGL, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			glfwSetCursorPos(m_windowOpenGL, m_width / 2, m_height / 2);
+			cursorIsHidden = true;
+		}
+		else
+		{
+			glfwSetInputMode(m_windowOpenGL, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			glfwSetInputMode(m_windowOpenGL, GLFW_RAW_MOUSE_MOTION, GLFW_FALSE);
+			cursorIsHidden = false;
+		}
+	}
+
+	sensitivityChanged.Broadcast(sensitivity);
+	
+	glfwSetScrollCallback(m_windowOpenGL, ScrollCallback);
 }
 
 void OGLWindow::SwitchCameraMode()
@@ -100,10 +124,20 @@ void OGLWindow::SwitchCameraMode()
 	cursorIsHidden = !cursorIsHidden;
 }
 
+void OGLWindow::ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	sensitivity += yoffset * 0.075f;
+	sensitivity = std::clamp(sensitivity, 0.1f, 10.f);
+}
 
 bool OGLWindow::FreeCamMode()
 {
 	return cursorIsHidden;
+}
+
+void OGLWindow::ToggleCameraRotationMode()
+{
+	toggleModeEnabled = !toggleModeEnabled;
 }
 
 void OGLWindow::Init()
@@ -115,7 +149,7 @@ void OGLWindow::Init()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
-	m_windowOpenGL = glfwCreateWindow(1240, 720, m_title.c_str(), nullptr, nullptr);
+	m_windowOpenGL = glfwCreateWindow(m_width, m_height, m_title.c_str(), nullptr, nullptr);
 	if (!m_windowOpenGL)
 	{
 		std::cout << "Failed to create GLFW window 1" << std::endl;

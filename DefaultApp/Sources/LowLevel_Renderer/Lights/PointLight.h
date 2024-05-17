@@ -5,6 +5,8 @@ struct Shader;
 
 struct PointLight : ILight
 {
+	PointLight() = default;
+	virtual ~PointLight() override = default;
 	void getUniform(Shader* shader) override;
 	void getUniform(Shader* shader, size_t index) override;
 
