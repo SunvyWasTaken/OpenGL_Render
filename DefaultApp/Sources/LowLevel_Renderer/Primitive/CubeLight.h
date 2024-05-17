@@ -35,6 +35,8 @@ template <typename Type>
 void CubeLight<Type>::load()
 {
 	parent::load();
+
+	this->position = this->transform.position;
 }
 
 template <typename Type>
@@ -51,6 +53,5 @@ template <typename Type>
 void CubeLight<Type>::setColor(const Color& color)
 {
 	this->diffuse = color;
-	this->ambient = this->diffuse * 2.f;
-	this->specular = 1.f;
+	this->ambient = this->diffuse * 0.2f;
 }
